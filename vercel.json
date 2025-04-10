@@ -1,0 +1,6 @@
+{ 
+  "version": 2, 
+  "buildCommand": "cd \"Marketing for Small Businesses\" && npm install && npm run build", 
+  "outputDirectory": "Marketing for Small Businesses/.next", 
+  "framework": "nextjs" 
+} 
