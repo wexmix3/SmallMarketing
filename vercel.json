@@ -1,29 +1,12 @@
 {
   "version": 2,
-  "buildCommand": "npm run build",
+  "buildCommand": "if [ -f build.sh ]; then chmod +x build.sh && ./build.sh; else build.cmd; fi",
   "installCommand": "npm install",
-  "framework": "nextjs",
+  "framework": null,
+  "outputDirectory": ".next",
   "regions": ["iad1"],
-  "headers": [
-    {
-      "source": "/(.*)",
-      "headers": [
-        {
-          "key": "X-Content-Type-Options",
-          "value": "nosniff"
-        },
-        {
-          "key": "X-Frame-Options",
-          "value": "DENY"
-        },
-        {
-          "key": "X-XSS-Protection",
-          "value": "1; mode=block"
-        }
-      ]
-    }
-  ],
   "env": {
-    "NEXT_PUBLIC_API_URL": "https://api.marketpro.com"
+    "NEXT_PUBLIC_API_URL": "https://api.marketpro.com",
+    "NODE_ENV": "production"
   }
 }

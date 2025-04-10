@@ -4,7 +4,12 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "chmod +x build.sh && ./build.sh",
+    "build": "next build",
     "start": "next start"
+  },
+  "dependencies": {
+    "next": "13.4.19",
+    "react": "18.2.0",
+    "react-dom": "18.2.0"
   }
 }
