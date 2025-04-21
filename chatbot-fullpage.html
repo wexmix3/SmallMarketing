@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Customer Service Assistant - Full Page Demo</title>
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  
+  <!-- Chatbot Styles -->
+  <link rel="stylesheet" href="chatbot-base.css">
+  <link rel="stylesheet" href="chatbot-messages.css">
+  <link rel="stylesheet" href="chatbot-settings.css">
+  <link rel="stylesheet" href="chatbot-widget.css">
+</head>
+<body class="light">
+  <div class="chatbot-container">
+    <div class="chatbot-header">
+      <h1>AI Customer Service Assistant</h1>
+      <button class="theme-toggle" id="theme-toggle">
+        <i class="fas fa-moon"></i>
+      </button>
+    </div>
+    
+    <div class="chatbot-main">
+      <div class="chat-container">
+        <div class="chat-header">
+          <div class="chat-title">
+            <div class="status"></div>
+            <h2>AI Customer Service Assistant</h2>
+          </div>
+          <div class="chat-actions">
+            <button class="chat-action" id="clear-chat" title="Clear Chat">
+              <i class="fas fa-trash"></i>
+            </button>
+            <button class="chat-action" id="back-to-demo" title="Back to Demo">
+              <i class="fas fa-arrow-left"></i>
+            </button>
+          </div>
+        </div>
+        
+        <div class="chat-messages" id="chatMessages">
+          <!-- Messages will be added here -->
+        </div>
+        
+        <div class="chat-input">
+          <textarea id="messageInput" placeholder="Type your message..."></textarea>
+          <button id="sendButton" class="send-button">
+            <i class="fas fa-paper-plane"></i>
+          </button>
+        </div>
+      </div>
+      
+      <div class="settings-panel">
+        <div class="settings-header">
+          <h2>Settings</h2>
+        </div>
+        <div class="settings-content">
+          <div class="settings-section">
+            <h3>Appearance</h3>
+            <div class="form-group">
+              <label for="themeSelect">Theme</label>
+              <select id="themeSelect" class="form-select">
+                <option value="light">Light</option>
+                <option value="dark">Dark</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="primaryColor">Primary Color</label>
+              <input type="color" id="primaryColor" value="#0071e3">
+              <div class="color-preview">
+                <span id="primaryColorValue">#0071e3</span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="fontSelect">Font</label>
+              <select id="fontSelect" class="form-select">
+                <option value="SF Pro Display, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif">SF Pro (Apple)</option>
+                <option value="Segoe UI, Tahoma, Geneva, Verdana, sans-serif">Segoe UI (Microsoft)</option>
+                <option value="Roboto, Arial, sans-serif">Roboto (Google)</option>
+                <option value="Inter, sans-serif">Inter</option>
+              </select>
+            </div>
+          </div>
+          
+          <div class="settings-section">
+            <h3>Knowledge Base</h3>
+            <div class="form-group">
+              <p>This demo includes a basic knowledge base with information about business hours, returns, shipping, and payment methods.</p>
+              <p>In a real implementation, you would be able to customize and expand the knowledge base with your own FAQs and information.</p>
+            </div>
+          </div>
+          
+          <div class="settings-section">
+            <h3>Sample Questions</h3>
+            <div class="form-group">
+              <ul class="sample-questions">
+                <li><a href="#" class="sample-question">What are your business hours?</a></li>
+                <li><a href="#" class="sample-question">How can I return a product?</a></li>
+                <li><a href="#" class="sample-question">Do you offer free shipping?</a></li>
+                <li><a href="#" class="sample-question">What payment methods do you accept?</a></li>
+                <li><a href="#" class="sample-question">How can I track my order?</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="settings-footer">
+          <button class="apply-button" id="applyButton">Apply Changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Chatbot Scripts -->
+  <script src="chatbot.js"></script>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Initialize theme toggle
+      const themeToggle = document.getElementById('theme-toggle');
+      themeToggle.addEventListener('click', function() {
+        const currentTheme = document.body.className;
+        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+        document.body.className = newTheme;
+        themeToggle.innerHTML = newTheme === 'light' ? '<i class="fas fa-moon"></i>' : '<i class="fas fa-sun"></i>';
+        
+        // Update theme select
+        document.getElementById('themeSelect').value = newTheme;
+      });
+      
+      // Back to demo button
+      document.getElementById('back-to-demo').addEventListener('click', function() {
+        window.location.href = 'chatbot-demo-enhanced.html';
+      });
+      
+      // Clear chat button
+      document.getElementById('clear-chat').addEventListener('click', function() {
+        const chatMessages = document.getElementById('chatMessages');
+        
+        // Remove all messages except the welcome message
+        while (chatMessages.childNodes.length > 1) {
+          chatMessages.removeChild(chatMessages.lastChild);
+        }
+        
+        // If no welcome message, add one
+        if (chatMessages.childNodes.length === 0) {
+          showWelcomeMessage();
+        }
+      });
+      
+      // Sample questions
+      document.querySelectorAll('.sample-question').forEach(question => {
+        question.addEventListener('click', function(e) {
+          e.preventDefault();
+          const text = this.textContent;
+          document.getElementById('messageInput').value = text;
+          sendMessage();
+        });
+      });
+      
+      // Apply button
+      document.getElementById('applyButton').addEventListener('click', function() {
+        const theme = document.getElementById('themeSelect').value;
+        const color = document.getElementById('primaryColor').value;
+        const font = document.getElementById('fontSelect').value;
+        
+        // Apply theme
+        document.body.className = theme;
+        
+        // Apply color
+        document.documentElement.style.setProperty('--primary-color', color);
+        
+        // Apply font
+        document.documentElement.style.setProperty('--font-family', font);
+        
+        // Update theme toggle icon
+        themeToggle.innerHTML = theme === 'light' ? '<i class="fas fa-moon"></i>' : '<i class="fas fa-sun"></i>';
+        
+        // Show confirmation
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.textContent = 'Settings applied!';
+        document.body.appendChild(toast);
+        
+        // Remove toast after 3 seconds
+        setTimeout(() => {
+          toast.classList.add('hide');
+          setTimeout(() => {
+            toast.remove();
+          }, 300);
+        }, 3000);
+      });
+      
+      // Update color value display
+      document.getElementById('primaryColor').addEventListener('input', function() {
+        document.getElementById('primaryColorValue').textContent = this.value;
+        document.documentElement.style.setProperty('--primary-color', this.value);
+      });
+      
+      // Add scroll to bottom button
+      const scrollButton = document.createElement('div');
+      scrollButton.className = 'scroll-to-bottom';
+      scrollButton.innerHTML = '<i class="fas fa-chevron-down"></i>';
+      scrollButton.addEventListener('click', scrollToBottom);
+      document.getElementById('chatMessages').appendChild(scrollButton);
+    });
+  </script>
+</body>
+</html>

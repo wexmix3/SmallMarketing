@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Attachment Demo</title>
+    <style>
+        :root {
+            --primary-color: #0071e3;
+            --secondary-color: #f5f5f7;
+            --text-color: #1d1d1f;
+            --background-color: #ffffff;
+            --border-color: #d2d2d7;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        }
+
+        body {
+            font-family: var(--font-family);
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+            color: var(--text-color);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .page-header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .page-content {
+            padding: 1rem;
+            max-width: 800px;
+            margin: 0 auto;
+            flex: 1;
+        }
+
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            width: 350px;
+            height: 500px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px var(--shadow-color);
+            background-color: var(--background-color);
+            border: 1px solid var(--border-color);
+            margin: 2rem auto;
+        }
+
+        .chat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .chat-title {
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .chat-input-container {
+            display: flex;
+            padding: 12px 16px;
+            border-top: 1px solid var(--border-color);
+            background-color: var(--background-color);
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 10px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            font-family: var(--font-family);
+            font-size: 14px;
+            outline: none;
+        }
+
+        .chat-input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(0, 113, 227, 0.2);
+        }
+
+        .send-button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            margin-left: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s;
+        }
+
+        .send-button:hover {
+            background-color: #005bbf;
+        }
+
+        .send-button:active {
+            transform: scale(0.95);
+        }
+
+        .attachment-button {
+            background-color: var(--secondary-color);
+            color: var(--text-color);
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            margin-right: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s;
+        }
+
+        .attachment-button:hover {
+            background-color: #e5e5ea;
+        }
+
+        .attachment-button:active {
+            transform: scale(0.95);
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 10px 14px;
+            border-radius: 18px;
+            font-size: 14px;
+            line-height: 1.4;
+            position: relative;
+            word-wrap: break-word;
+            animation: sendMessage 0.3s ease;
+        }
+
+        @keyframes sendMessage {
+            0% {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .user-message {
+            align-self: flex-end;
+            background-color: #e7f3ff;
+            color: var(--text-color);
+            border-bottom-right-radius: 4px;
+        }
+
+        .bot-message {
+            align-self: flex-start;
+            background-color: var(--secondary-color);
+            color: var(--text-color);
+            border-bottom-left-radius: 4px;
+        }
+
+        .message-time {
+            font-size: 10px;
+            color: #86868b;
+            margin-top: 4px;
+            text-align: right;
+        }
+
+        .file-preview {
+            margin-top: 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+            background-color: var(--secondary-color);
+            padding: 8px;
+            display: flex;
+            align-items: center;
+        }
+
+        .file-icon {
+            margin-right: 8px;
+            font-size: 24px;
+        }
+
+        .file-info {
+            flex: 1;
+        }
+
+        .file-name {
+            font-weight: 500;
+            margin-bottom: 2px;
+        }
+
+        .file-size {
+            font-size: 12px;
+            color: #86868b;
+        }
+
+        .file-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .file-action-button {
+            background: none;
+            border: none;
+            color: var(--primary-color);
+            cursor: pointer;
+            font-size: 12px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+
+        .file-action-button:hover {
+            background-color: rgba(0, 113, 227, 0.1);
+        }
+
+        .image-preview {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 8px;
+            margin-top: 8px;
+        }
+
+        .file-upload-progress {
+            height: 4px;
+            background-color: #e5e5ea;
+            border-radius: 2px;
+            margin-top: 4px;
+            overflow: hidden;
+        }
+
+        .file-upload-progress-bar {
+            height: 100%;
+            background-color: var(--primary-color);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .upload-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .upload-overlay.visible {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .upload-panel {
+            background-color: var(--background-color);
+            border-radius: 12px;
+            padding: 20px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 4px 20px var(--shadow-color);
+        }
+
+        .upload-panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .upload-panel-title {
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        .upload-panel-close {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: #86868b;
+        }
+
+        .upload-dropzone {
+            border: 2px dashed var(--border-color);
+            border-radius: 8px;
+            padding: 32px 16px;
+            text-align: center;
+            margin-bottom: 16px;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+
+        .upload-dropzone:hover {
+            border-color: var(--primary-color);
+        }
+
+        .upload-dropzone-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+            color: #86868b;
+        }
+
+        .upload-dropzone-text {
+            color: #86868b;
+            margin-bottom: 8px;
+        }
+
+        .upload-button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .upload-button:hover {
+            background-color: #005bbf;
+        }
+
+        .upload-file-list {
+            margin-top: 16px;
+        }
+
+        .upload-file-item {
+            display: flex;
+            align-items: center;
+            padding: 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+
+        .upload-file-icon {
+            margin-right: 8px;
+            font-size: 20px;
+        }
+
+        .upload-file-info {
+            flex: 1;
+        }
+
+        .upload-file-name {
+            font-weight: 500;
+            margin-bottom: 2px;
+        }
+
+        .upload-file-size {
+            font-size: 12px;
+            color: #86868b;
+        }
+
+        .upload-file-remove {
+            background: none;
+            border: none;
+            color: #ff3b30;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        /* Icons */
+        .icon-send:before {
+            content: "➤";
+        }
+        .icon-attachment:before {
+            content: "📎";
+        }
+        .icon-image:before {
+            content: "🖼️";
+        }
+        .icon-file:before {
+            content: "📄";
+        }
+        .icon-pdf:before {
+            content: "📕";
+        }
+        .icon-doc:before {
+            content: "📘";
+        }
+        .icon-xls:before {
+            content: "📗";
+        }
+        .icon-zip:before {
+            content: "🗜️";
+        }
+        .icon-download:before {
+            content: "⬇️";
+        }
+        .icon-close:before {
+            content: "✕";
+        }
+        .icon-upload:before {
+            content: "⬆️";
+        }
+        .icon-remove:before {
+            content: "🗑️";
+        }
+    </style>
+</head>
+<body>
+    <header class="page-header">
+        <h1>File Attachment Demo</h1>
+    </header>
+
+    <main class="page-content">
+        <h2>AI Customer Service Assistant - File Attachment Feature</h2>
+        <p>This demo showcases the file attachment capabilities added to the AI Customer Service Assistant. You can now share images, documents, and other files during your conversation.</p>
+        
+        <div class="chat-container">
+            <div class="chat-header">
+                <div class="chat-title">AI Customer Service</div>
+            </div>
+            <div class="chat-messages" id="chatMessages">
+                <!-- Messages will be added here -->
+            </div>
+            <div class="chat-input-container">
+                <button id="attachmentButton" class="attachment-button" aria-label="Attach file">
+                    <i class="icon-attachment"></i>
+                </button>
+                <input type="text" id="messageInput" class="chat-input" placeholder="Type your message...">
+                <button id="sendButton" class="send-button" aria-label="Send message">
+                    <i class="icon-send"></i>
+                </button>
+                <input type="file" id="fileInput" class="file-input" multiple>
+            </div>
+        </div>
+
+        <!-- Upload Overlay -->
+        <div class="upload-overlay" id="uploadOverlay">
+            <div class="upload-panel">
+                <div class="upload-panel-header">
+                    <div class="upload-panel-title">Upload Files</div>
+                    <button class="upload-panel-close" id="closeUploadPanel">
+                        <i class="icon-close"></i>
+                    </button>
+                </div>
+                <div class="upload-dropzone" id="uploadDropzone">
+                    <div class="upload-dropzone-icon">
+                        <i class="icon-upload"></i>
+                    </div>
+                    <div class="upload-dropzone-text">
+                        Drag and drop files here or click to browse
+                    </div>
+                    <button class="upload-button" id="browseFilesButton">Browse Files</button>
+                </div>
+                <div class="upload-file-list" id="uploadFileList">
+                    <!-- Selected files will be listed here -->
+                </div>
+                <button class="upload-button" id="sendFilesButton" style="width: 100%; margin-top: 16px;">
+                    Send Files
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // DOM Elements
+        const chatMessages = document.getElementById('chatMessages');
+        const messageInput = document.getElementById('messageInput');
+        const sendButton = document.getElementById('sendButton');
+        const attachmentButton = document.getElementById('attachmentButton');
+        const fileInput = document.getElementById('fileInput');
+        const uploadOverlay = document.getElementById('uploadOverlay');
+        const closeUploadPanel = document.getElementById('closeUploadPanel');
+        const uploadDropzone = document.getElementById('uploadDropzone');
+        const browseFilesButton = document.getElementById('browseFilesButton');
+        const uploadFileList = document.getElementById('uploadFileList');
+        const sendFilesButton = document.getElementById('sendFilesButton');
+
+        // Selected files for upload
+        let selectedFiles = [];
+
+        // Initialize chat
+        function initChat() {
+            // Add welcome message
+            addBotMessage("Hello! How can I help you today? You can now share files with me by clicking the attachment button.");
+        }
+
+        // Add user message to chat
+        function addUserMessage(message) {
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('message', 'user-message');
+            messageElement.innerHTML = message + 
+                `<div class="message-time">${new Date().toLocaleTimeString()} ✓</div>`;
+            chatMessages.appendChild(messageElement);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Add bot message to chat
+        function addBotMessage(message) {
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('message', 'bot-message');
+            messageElement.innerHTML = message + 
+                `<div class="message-time">${new Date().toLocaleTimeString()}</div>`;
+            chatMessages.appendChild(messageElement);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Add file message to chat
+        function addFileMessage(files) {
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('message', 'user-message');
+            
+            let messageContent = '';
+            
+            // Add each file to the message
+            files.forEach(file => {
+                const fileSize = formatFileSize(file.size);
+                const fileIcon = getFileIcon(file.type);
+                
+                messageContent += `
+                    <div class="file-preview">
+                        <div class="file-icon">
+                            <i class="${fileIcon}"></i>
+                        </div>
+                        <div class="file-info">
+                            <div class="file-name">${file.name}</div>
+                            <div class="file-size">${fileSize}</div>
+                            <div class="file-upload-progress">
+                                <div class="file-upload-progress-bar" style="width: 100%;"></div>
+                            </div>
+                        </div>
+                        <div class="file-actions">
+                            <button class="file-action-button">
+                                <i class="icon-download"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                // Add image preview if file is an image
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.classList.add('image-preview');
+                        messageElement.appendChild(img);
+                        chatMessages.scrollTop = chatMessages.scrollHeight;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+            
+            messageContent += `<div class="message-time">${new Date().toLocaleTimeString()} ✓</div>`;
+            messageElement.innerHTML = messageContent;
+            
+            chatMessages.appendChild(messageElement);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            
+            // Simulate upload progress
+            const progressBars = messageElement.querySelectorAll('.file-upload-progress-bar');
+            progressBars.forEach(bar => {
+                bar.style.width = '0%';
+                simulateUploadProgress(bar);
+            });
+        }
+
+        // Simulate file upload progress
+        function simulateUploadProgress(progressBar) {
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += Math.random() * 10;
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(interval);
+                }
+                progressBar.style.width = `${progress}%`;
+            }, 200);
+        }
+
+        // Get file icon based on file type
+        function getFileIcon(fileType) {
+            if (fileType.startsWith('image/')) {
+                return 'icon-image';
+            } else if (fileType === 'application/pdf') {
+                return 'icon-pdf';
+            } else if (fileType.includes('word') || fileType === 'application/msword' || fileType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
+                return 'icon-doc';
+            } else if (fileType.includes('excel') || fileType === 'application/vnd.ms-excel' || fileType === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
+                return 'icon-xls';
+            } else if (fileType.includes('zip') || fileType === 'application/zip' || fileType === 'application/x-zip-compressed') {
+                return 'icon-zip';
+            } else {
+                return 'icon-file';
+            }
+        }
+
+        // Format file size
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // Send message
+        function sendMessage() {
+            const message = messageInput.value.trim();
+            
+            if (message) {
+                addUserMessage(message);
+                messageInput.value = '';
+                
+                // Simulate bot response
+                setTimeout(() => {
+                    let response;
+                    
+                    if (message.toLowerCase().includes('file') || message.toLowerCase().includes('attachment') || message.toLowerCase().includes('upload')) {
+                        response = "You can upload files by clicking the attachment button (📎) next to the message input. I support images, documents, and other common file types.";
+                    } else if (message.toLowerCase().includes('image') || message.toLowerCase().includes('picture') || message.toLowerCase().includes('photo')) {
+                        response = "You can share images by clicking the attachment button. I support JPG, PNG, GIF, and other common image formats.";
+                    } else if (message.toLowerCase().includes('document') || message.toLowerCase().includes('pdf') || message.toLowerCase().includes('word')) {
+                        response = "You can share documents by clicking the attachment button. I support PDF, Word, Excel, and other common document formats.";
+                    } else if (message.toLowerCase().includes('hello') || message.toLowerCase().includes('hi') || message.toLowerCase().includes('hey')) {
+                        response = "Hello! How can I help you today? Feel free to share any files if needed.";
+                    } else {
+                        response = "Thanks for your message. Is there anything else you'd like to know about our file sharing capabilities?";
+                    }
+                    
+                    addBotMessage(response);
+                }, 1000);
+            }
+        }
+
+        // Show upload overlay
+        function showUploadOverlay() {
+            uploadOverlay.classList.add('visible');
+            uploadFileList.innerHTML = '';
+            selectedFiles = [];
+        }
+
+        // Hide upload overlay
+        function hideUploadOverlay() {
+            uploadOverlay.classList.remove('visible');
+        }
+
+        // Handle file selection
+        function handleFileSelection(files) {
+            // Convert FileList to Array and add to selectedFiles
+            Array.from(files).forEach(file => {
+                // Check if file is already selected
+                const isDuplicate = selectedFiles.some(f => f.name === file.name && f.size === file.size);
+                if (!isDuplicate) {
+                    selectedFiles.push(file);
+                }
+            });
+            
+            // Update file list UI
+            updateFileList();
+        }
+
+        // Update file list UI
+        function updateFileList() {
+            uploadFileList.innerHTML = '';
+            
+            selectedFiles.forEach((file, index) => {
+                const fileItem = document.createElement('div');
+                fileItem.classList.add('upload-file-item');
+                
+                const fileIcon = getFileIcon(file.type);
+                const fileSize = formatFileSize(file.size);
+                
+                fileItem.innerHTML = `
+                    <div class="upload-file-icon">
+                        <i class="${fileIcon}"></i>
+                    </div>
+                    <div class="upload-file-info">
+                        <div class="upload-file-name">${file.name}</div>
+                        <div class="upload-file-size">${fileSize}</div>
+                    </div>
+                    <button class="upload-file-remove" data-index="${index}">
+                        <i class="icon-remove"></i>
+                    </button>
+                `;
+                
+                uploadFileList.appendChild(fileItem);
+            });
+            
+            // Add event listeners to remove buttons
+            document.querySelectorAll('.upload-file-remove').forEach(button => {
+                button.addEventListener('click', () => {
+                    const index = parseInt(button.getAttribute('data-index'));
+                    selectedFiles.splice(index, 1);
+                    updateFileList();
+                });
+            });
+        }
+
+        // Send selected files
+        function sendSelectedFiles() {
+            if (selectedFiles.length > 0) {
+                addFileMessage(selectedFiles);
+                hideUploadOverlay();
+                
+                // Simulate bot response
+                setTimeout(() => {
+                    let response;
+                    
+                    if (selectedFiles.length === 1) {
+                        response = `Thanks for sharing this file. I've received your ${selectedFiles[0].name}. Is there anything specific you'd like me to help you with regarding this file?`;
+                    } else {
+                        response = `Thanks for sharing these files. I've received ${selectedFiles.length} files. Is there anything specific you'd like me to help you with regarding these files?`;
+                    }
+                    
+                    addBotMessage(response);
+                }, 2000);
+                
+                // Clear selected files
+                selectedFiles = [];
+            }
+        }
+
+        // Event Listeners
+        sendButton.addEventListener('click', sendMessage);
+        messageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+        
+        attachmentButton.addEventListener('click', () => {
+            showUploadOverlay();
+        });
+        
+        closeUploadPanel.addEventListener('click', hideUploadOverlay);
+        
+        // Close overlay when clicking outside the panel
+        uploadOverlay.addEventListener('click', (e) => {
+            if (e.target === uploadOverlay) {
+                hideUploadOverlay();
+            }
+        });
+        
+        // Handle file input change
+        fileInput.addEventListener('change', (e) => {
+            handleFileSelection(e.target.files);
+        });
+        
+        // Handle browse files button
+        browseFilesButton.addEventListener('click', () => {
+            fileInput.click();
+        });
+        
+        // Handle upload dropzone
+        uploadDropzone.addEventListener('click', () => {
+            fileInput.click();
+        });
+        
+        // Handle drag and drop
+        uploadDropzone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadDropzone.style.borderColor = var(--primary-color);
+        });
+        
+        uploadDropzone.addEventListener('dragleave', () => {
+            uploadDropzone.style.borderColor = '';
+        });
+        
+        uploadDropzone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadDropzone.style.borderColor = '';
+            handleFileSelection(e.dataTransfer.files);
+        });
+        
+        // Handle send files button
+        sendFilesButton.addEventListener('click', sendSelectedFiles);
+
+        // Initialize chat
+        initChat();
+    </script>
+</body>
+</html>

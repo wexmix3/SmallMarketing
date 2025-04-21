@@ -1,0 +1,2232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Integrated AI Customer Service Assistant</title>
+    <style>
+        /* Basic styling */
+        :root {
+            --primary-color: #0071e3;
+            --secondary-color: #f5f5f7;
+            --text-color: #1d1d1f;
+            --background-color: #ffffff;
+            --border-color: #d2d2d7;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --user-message-color: #e7f3ff;
+            --bot-message-color: #f5f5f7;
+            --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        }
+
+        body {
+            font-family: var(--font-family);
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+            color: var(--text-color);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .page-header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .page-content {
+            padding: 1rem;
+            max-width: 800px;
+            margin: 0 auto;
+            flex: 1;
+        }
+
+        .chat-launcher {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            border-radius: 30px;
+            background-color: var(--primary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 12px var(--shadow-color);
+            z-index: 999;
+            transition: transform 0.3s ease;
+        }
+
+        .chat-launcher:hover {
+            transform: scale(1.05);
+        }
+
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            width: 350px;
+            height: 500px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px var(--shadow-color);
+            background-color: var(--background-color);
+            border: 1px solid var(--border-color);
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            visibility: hidden;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+        }
+
+        .chat-container.visible {
+            visibility: visible;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .chat-container.minimized {
+            height: 60px;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .chat-title {
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .chat-controls {
+            display: flex;
+            gap: 8px;
+        }
+
+        .chat-controls button {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s;
+        }
+
+        .chat-controls button:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            scroll-behavior: smooth;
+            will-change: transform; /* Optimize for animations */
+            contain: content; /* Improve rendering performance */
+        }
+
+        .chat-messages-container {
+            position: relative;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .load-more-messages {
+            text-align: center;
+            padding: 8px;
+            background-color: var(--secondary-color);
+            border-radius: 8px;
+            margin: 8px auto;
+            font-size: 12px;
+            cursor: pointer;
+            opacity: 0.8;
+            transition: opacity 0.2s;
+        }
+
+        .load-more-messages:hover {
+            opacity: 1;
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 10px 14px;
+            border-radius: 18px;
+            font-size: 14px;
+            line-height: 1.4;
+            position: relative;
+            word-wrap: break-word;
+            animation: sendMessage 0.3s ease;
+        }
+
+        @keyframes sendMessage {
+            0% {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .user-message {
+            align-self: flex-end;
+            background-color: var(--user-message-color);
+            color: var(--text-color);
+            border-bottom-right-radius: 4px;
+        }
+
+        .bot-message {
+            align-self: flex-start;
+            background-color: var(--bot-message-color);
+            color: var(--text-color);
+            border-bottom-left-radius: 4px;
+        }
+
+        .message-feedback {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+            justify-content: flex-end;
+            opacity: 0.5;
+            transition: opacity 0.2s;
+        }
+
+        .bot-message:hover .message-feedback {
+            opacity: 1;
+        }
+
+        .feedback-button {
+            background: none;
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            font-size: 16px;
+            padding: 4px;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .feedback-button:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+            transform: scale(1.1);
+        }
+
+        .feedback-button.selected {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .feedback-button.thumbs-up:hover {
+            background-color: rgba(52, 199, 89, 0.1);
+            border-color: #34c759;
+            color: #34c759;
+        }
+
+        .feedback-button.thumbs-down:hover {
+            background-color: rgba(255, 59, 48, 0.1);
+            border-color: #ff3b30;
+            color: #ff3b30;
+        }
+
+        .feedback-button.thumbs-up.selected {
+            background-color: #34c759;
+            border-color: #34c759;
+        }
+
+        .feedback-button.thumbs-down.selected {
+            background-color: #ff3b30;
+            border-color: #ff3b30;
+        }
+
+        .feedback-label {
+            font-size: 12px;
+            color: #86868b;
+            margin-right: 8px;
+            align-self: center;
+        }
+
+        .message-time {
+            font-size: 10px;
+            color: #86868b;
+            margin-top: 4px;
+            text-align: right;
+        }
+
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 10px 14px;
+            background-color: var(--bot-message-color);
+            border-radius: 18px;
+            border-bottom-left-radius: 4px;
+            align-self: flex-start;
+            width: 40px;
+        }
+
+        .typing-indicator span {
+            width: 6px;
+            height: 6px;
+            background-color: #86868b;
+            border-radius: 50%;
+            display: inline-block;
+            animation: typing 1.4s infinite ease-in-out both;
+        }
+
+        .typing-indicator span:nth-child(1) {
+            animation-delay: 0s;
+        }
+
+        .typing-indicator span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-indicator span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-5px);
+            }
+        }
+
+        .chat-input-container {
+            display: flex;
+            padding: 12px 16px;
+            border-top: 1px solid var(--border-color);
+            background-color: var(--background-color);
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 10px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            font-family: var(--font-family);
+            font-size: 14px;
+            outline: none;
+        }
+
+        .attachment-button {
+            background-color: var(--secondary-color);
+            color: var(--text-color);
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            margin-right: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s;
+        }
+
+        .attachment-button:hover {
+            background-color: #e5e5ea;
+        }
+
+        .chat-input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(0, 113, 227, 0.2);
+        }
+
+        .send-button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            margin-left: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s;
+        }
+
+        .send-button:hover {
+            background-color: #005bbf;
+        }
+
+        .send-button:active {
+            transform: scale(0.95);
+        }
+
+        .suggested-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 8px;
+            align-self: flex-start;
+        }
+
+        .suggested-action {
+            background-color: var(--secondary-color);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 6px 12px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .suggested-action:hover {
+            background-color: #e5e5ea;
+        }
+
+        .file-preview {
+            margin-top: 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+            background-color: var(--secondary-color);
+            padding: 8px;
+            display: flex;
+            align-items: center;
+        }
+
+        .file-icon {
+            margin-right: 8px;
+            font-size: 24px;
+        }
+
+        .file-info {
+            flex: 1;
+        }
+
+        .file-name {
+            font-weight: 500;
+            margin-bottom: 2px;
+        }
+
+        .file-size {
+            font-size: 12px;
+            color: #86868b;
+        }
+
+        .image-preview {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 8px;
+            margin-top: 8px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .image-preview.loaded {
+            opacity: 1;
+        }
+
+        /* Processing indicator styles */
+        .processing-indicator {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            margin: 8px 0;
+            background-color: var(--secondary-color);
+            border-radius: 12px;
+            box-shadow: 0 1px 2px var(--shadow-color);
+        }
+
+        .processing-spinner {
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(0, 113, 227, 0.2);
+            border-top-color: var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 8px;
+        }
+
+        .processing-text {
+            font-size: 14px;
+            color: var(--text-color);
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .image-placeholder {
+            width: 100%;
+            height: 150px;
+            background-color: #f0f0f0;
+            border-radius: 8px;
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #86868b;
+            font-size: 14px;
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .chat-container {
+                width: 100%;
+                height: 100%;
+                max-height: 100%;
+                border-radius: 0;
+                bottom: 0;
+                right: 0;
+            }
+
+            .chat-launcher {
+                bottom: 10px;
+                right: 10px;
+            }
+
+            .message {
+                max-width: 90%;
+            }
+
+            .chat-input {
+                padding: 12px 16px;
+                font-size: 16px; /* Larger for mobile touch */
+            }
+
+            .send-button, .attachment-button {
+                width: 44px;
+                height: 44px;
+            }
+        }
+
+        /* Tablet styles */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .chat-container {
+                width: 400px;
+                height: 600px;
+            }
+        }
+
+        /* Landscape orientation on mobile */
+        @media (max-width: 768px) and (orientation: landscape) {
+            .chat-container {
+                height: 100%;
+            }
+
+            .chat-messages {
+                padding: 8px;
+            }
+
+            .message {
+                padding: 8px 12px;
+                margin-bottom: 8px;
+            }
+        }
+
+        /* Icons */
+        .icon-chat:before {
+            content: "💬";
+        }
+        .icon-close:before {
+            content: "✕";
+        }
+        .icon-minimize:before {
+            content: "−";
+        }
+        .icon-send:before {
+            content: "➤";
+        }
+        .icon-attachment:before {
+            content: "📎";
+        }
+        .icon-image:before {
+            content: "🖼️";
+        }
+        .icon-file:before {
+            content: "📄";
+        }
+        .icon-pdf:before {
+            content: "📕";
+        }
+        .icon-doc:before {
+            content: "📘";
+        }
+        .icon-xls:before {
+            content: "📗";
+        }
+        .icon-zip:before {
+            content: "🗀️";
+        }
+    </style>
+</head>
+<body>
+    <header class="page-header">
+        <h1>Integrated AI Customer Service Assistant</h1>
+    </header>
+
+    <main class="page-content">
+        <h2>Welcome to the Integrated AI Customer Service Assistant</h2>
+        <p>This is a comprehensive implementation that combines all the advanced features:</p>
+        <ul>
+            <li>File attachment capabilities</li>
+            <li>Enhanced AI with improved intent recognition</li>
+            <li>Feedback mechanism for continuous improvement</li>
+        </ul>
+        <p>Click the chat button in the bottom right corner to start a conversation.</p>
+    </main>
+
+    <!-- Chat Launcher Button -->
+    <div class="chat-launcher" id="chatLauncher">
+        <i class="icon-chat"></i>
+    </div>
+
+    <!-- Chat Widget -->
+    <div class="chat-container" id="chatContainer">
+        <div class="chat-header">
+            <div class="chat-title">AI Customer Service</div>
+            <div class="chat-controls">
+                <button class="minimize-button" id="minimizeButton" aria-label="Minimize chat">
+                    <i class="icon-minimize"></i>
+                </button>
+                <button class="close-button" id="closeButton" aria-label="Close chat">
+                    <i class="icon-close"></i>
+                </button>
+            </div>
+        </div>
+        <div class="chat-messages-container">
+            <div class="chat-messages" id="chatMessages">
+                <!-- Messages will be added here -->
+            </div>
+        </div>
+        <div class="chat-input-container">
+            <button id="attachmentButton" class="attachment-button" aria-label="Attach file">
+                <i class="icon-attachment"></i>
+            </button>
+            <input type="text" id="messageInput" class="chat-input" placeholder="Type your message...">
+            <button id="sendButton" class="send-button" aria-label="Send message">
+                <i class="icon-send"></i>
+            </button>
+            <input type="file" id="fileInput" style="display: none;" multiple>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const chatLauncher = document.getElementById('chatLauncher');
+        const chatContainer = document.getElementById('chatContainer');
+        const chatMessages = document.getElementById('chatMessages');
+        const messageInput = document.getElementById('messageInput');
+        const sendButton = document.getElementById('sendButton');
+        const closeButton = document.getElementById('closeButton');
+        const minimizeButton = document.getElementById('minimizeButton');
+        const attachmentButton = document.getElementById('attachmentButton');
+        const fileInput = document.getElementById('fileInput');
+
+        // Performance optimization variables
+        const MAX_VISIBLE_MESSAGES = 50; // Maximum number of messages to show at once
+        let allMessages = []; // Store all messages for history
+
+        // Response caching
+        const responseCache = new Map(); // Cache for common responses
+        const CACHE_EXPIRY = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+
+        // Performance monitoring
+        const performanceMetrics = {
+            messageProcessingTimes: [],
+            renderTimes: [],
+            cacheHits: 0,
+            cacheMisses: 0,
+            totalMessages: 0,
+            imageCompressionRatios: []
+        };
+
+        // Function to log performance metrics
+        function logPerformance(metric, value) {
+            switch(metric) {
+                case 'messageProcessing':
+                    performanceMetrics.messageProcessingTimes.push(value);
+                    // Keep only the last 50 measurements
+                    if (performanceMetrics.messageProcessingTimes.length > 50) {
+                        performanceMetrics.messageProcessingTimes.shift();
+                    }
+                    break;
+                case 'render':
+                    performanceMetrics.renderTimes.push(value);
+                    // Keep only the last 50 measurements
+                    if (performanceMetrics.renderTimes.length > 50) {
+                        performanceMetrics.renderTimes.shift();
+                    }
+                    break;
+                case 'cacheHit':
+                    performanceMetrics.cacheHits++;
+                    break;
+                case 'cacheMiss':
+                    performanceMetrics.cacheMisses++;
+                    break;
+                case 'message':
+                    performanceMetrics.totalMessages++;
+                    break;
+                case 'imageCompression':
+                    performanceMetrics.imageCompressionRatios.push(value);
+                    // Keep only the last 50 measurements
+                    if (performanceMetrics.imageCompressionRatios.length > 50) {
+                        performanceMetrics.imageCompressionRatios.shift();
+                    }
+                    break;
+            }
+
+            // Log performance summary every 10 messages
+            if (performanceMetrics.totalMessages % 10 === 0) {
+                console.log('Performance Metrics:');
+                if (performanceMetrics.messageProcessingTimes.length > 0) {
+                    const avgProcessing = performanceMetrics.messageProcessingTimes.reduce((a, b) => a + b, 0) /
+                                         performanceMetrics.messageProcessingTimes.length;
+                    console.log(`Avg Message Processing Time: ${avgProcessing.toFixed(2)}ms`);
+                }
+                if (performanceMetrics.renderTimes.length > 0) {
+                    const avgRender = performanceMetrics.renderTimes.reduce((a, b) => a + b, 0) /
+                                     performanceMetrics.renderTimes.length;
+                    console.log(`Avg Render Time: ${avgRender.toFixed(2)}ms`);
+                }
+                console.log(`Cache Hits: ${performanceMetrics.cacheHits}, Misses: ${performanceMetrics.cacheMisses}`);
+                console.log(`Cache Hit Rate: ${(performanceMetrics.cacheHits / (performanceMetrics.cacheHits + performanceMetrics.cacheMisses) * 100).toFixed(2)}%`);
+                console.log(`Total Messages: ${performanceMetrics.totalMessages}`);
+            }
+        }
+
+        // Knowledge Base - Simple version for demo
+        const knowledgeBase = {
+            "hello": "Hello! How can I help you today?",
+            "hi": "Hi there! How can I assist you?",
+            "hey": "Hey! What can I help you with today?",
+            "services": "We offer a range of services including web development, mobile app development, UI/UX design, and digital marketing.",
+            "pricing": "Our pricing varies depending on the service. Basic packages start at $99/month. Would you like more specific information about a particular service?",
+            "contact": "You can reach our support team at support@example.com or call us at (555) 123-4567 during business hours.",
+            "hours": "Our business hours are Monday to Friday, 9am to 5pm EST.",
+            "support": "We offer 24/7 support for our premium customers. Standard support is available during business hours.",
+            "default": "I don't have specific information about that yet. Would you like to speak with a human representative?"
+        };
+
+        // Chat UI Functions
+        function toggleChat() {
+            chatContainer.classList.toggle('visible');
+            if (chatContainer.classList.contains('visible')) {
+                chatLauncher.style.display = 'none';
+                messageInput.focus();
+
+                // Load chat history if empty
+                if (chatMessages.children.length === 0) {
+                    // Try to load from localStorage first
+                    const savedHistory = localStorage.getItem('chatHistory');
+                    if (savedHistory && JSON.parse(savedHistory).length > 0) {
+                        // History exists, load it
+                        loadChatHistory();
+                    } else {
+                        // No history, show welcome message
+                        addBotMessage("Hello! How can I help you today?");
+                        addSuggestedActions([
+                            "What services do you offer?",
+                            "Tell me about pricing",
+                            "How do I contact support?"
+                        ]);
+                    }
+                }
+            } else {
+                chatLauncher.style.display = 'flex';
+            }
+        }
+
+        function toggleMinimize() {
+            chatContainer.classList.toggle('minimized');
+        }
+
+        function closeChat() {
+            chatContainer.classList.remove('visible');
+            chatContainer.classList.remove('minimized');
+            chatLauncher.style.display = 'flex';
+        }
+
+        // Message Handling with performance optimization and monitoring
+        function addUserMessage(message) {
+            // Start timing render
+            const startTime = performance.now();
+
+            // Create message object
+            const messageObj = {
+                type: 'user',
+                content: message,
+                time: new Date(),
+                element: null
+            };
+
+            // Add to message history
+            allMessages.push(messageObj);
+
+            // Create DOM element
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('message', 'user-message');
+            messageElement.innerHTML = message +
+                `<div class="message-time">${messageObj.time.toLocaleTimeString()} ✓</div>`;
+
+            // Store reference to DOM element
+            messageObj.element = messageElement;
+
+            // Add to chat and manage visible messages
+            chatMessages.appendChild(messageElement);
+            manageVisibleMessages();
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            // Log render time
+            const endTime = performance.now();
+            logPerformance('render', endTime - startTime);
+
+            // Save chat history
+            saveChatHistory();
+        }
+
+        function addBotMessage(message) {
+            // Start timing render
+            const startTime = performance.now();
+
+            // Create message object
+            const messageObj = {
+                type: 'bot',
+                content: message,
+                time: new Date(),
+                element: null,
+                feedback: null
+            };
+
+            // Add to message history
+            allMessages.push(messageObj);
+
+            // Create DOM element
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('message', 'bot-message');
+            messageElement.innerHTML = message +
+                `<div class="message-time">${messageObj.time.toLocaleTimeString()}</div>`;
+
+            // Add feedback buttons
+            const feedbackElement = document.createElement('div');
+            feedbackElement.classList.add('message-feedback');
+            feedbackElement.innerHTML = `
+                <div class="feedback-label">Was this helpful?</div>
+                <button class="feedback-button thumbs-up" aria-label="Thumbs up">👍</button>
+                <button class="feedback-button thumbs-down" aria-label="Thumbs down">👎</button>
+            `;
+
+            messageElement.appendChild(feedbackElement);
+
+            // Store reference to DOM element
+            messageObj.element = messageElement;
+
+            // Add to chat and manage visible messages
+            chatMessages.appendChild(messageElement);
+            manageVisibleMessages();
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            // Add event listeners to feedback buttons
+            const thumbsUpButton = feedbackElement.querySelector('.thumbs-up');
+            const thumbsDownButton = feedbackElement.querySelector('.thumbs-down');
+
+            thumbsUpButton.addEventListener('click', () => {
+                handleFeedback(messageElement, message, 'positive');
+                thumbsUpButton.classList.add('selected');
+                thumbsDownButton.classList.remove('selected');
+                messageObj.feedback = 'positive';
+            });
+
+            thumbsDownButton.addEventListener('click', () => {
+                handleFeedback(messageElement, message, 'negative');
+                thumbsDownButton.classList.add('selected');
+                thumbsUpButton.classList.remove('selected');
+                messageObj.feedback = 'negative';
+            });
+
+            // Log render time
+            const endTime = performance.now();
+            logPerformance('render', endTime - startTime);
+
+            // Save chat history
+            saveChatHistory();
+        }
+
+        function addSuggestedActions(actions) {
+            // Start timing render
+            const startTime = performance.now();
+
+            // Create message object for suggested actions
+            const messageObj = {
+                type: 'actions',
+                content: actions,
+                time: new Date(),
+                element: null
+            };
+
+            // Add to message history
+            allMessages.push(messageObj);
+
+            // Create DOM element
+            const actionsContainer = document.createElement('div');
+            actionsContainer.classList.add('suggested-actions');
+
+            actions.forEach(action => {
+                const actionButton = document.createElement('button');
+                actionButton.classList.add('suggested-action');
+                actionButton.textContent = action;
+                actionButton.addEventListener('click', () => {
+                    messageInput.value = action;
+                    sendMessage();
+                });
+                actionsContainer.appendChild(actionButton);
+            });
+
+            // Store reference to DOM element
+            messageObj.element = actionsContainer;
+
+            // Add to chat and manage visible messages
+            chatMessages.appendChild(actionsContainer);
+            manageVisibleMessages();
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            // Log render time
+            const endTime = performance.now();
+            logPerformance('render', endTime - startTime);
+
+            // Save chat history
+            saveChatHistory();
+        }
+
+        function showTypingIndicator() {
+            const typingIndicator = document.createElement('div');
+            typingIndicator.classList.add('typing-indicator');
+            typingIndicator.id = 'typingIndicator';
+            typingIndicator.innerHTML = '<span></span><span></span><span></span>';
+            chatMessages.appendChild(typingIndicator);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function hideTypingIndicator() {
+            const typingIndicator = document.getElementById('typingIndicator');
+            if (typingIndicator) {
+                typingIndicator.remove();
+            }
+        }
+
+        // Performance optimization functions
+        function manageVisibleMessages() {
+            // If we have more messages than the maximum allowed, implement virtual scrolling
+            if (allMessages.length > MAX_VISIBLE_MESSAGES) {
+                // Keep only the most recent messages visible
+                const visibleMessages = allMessages.slice(-MAX_VISIBLE_MESSAGES);
+                const hiddenMessages = allMessages.slice(0, -MAX_VISIBLE_MESSAGES);
+
+                // Check if we need to add a "load more" button
+                if (hiddenMessages.length > 0 && !document.querySelector('.load-more-messages')) {
+                    const loadMoreButton = document.createElement('div');
+                    loadMoreButton.classList.add('load-more-messages');
+                    loadMoreButton.textContent = `Load ${Math.min(hiddenMessages.length, 20)} more messages`;
+                    loadMoreButton.addEventListener('click', loadMoreMessages);
+
+                    // Insert at the beginning of the chat
+                    if (chatMessages.firstChild) {
+                        chatMessages.insertBefore(loadMoreButton, chatMessages.firstChild);
+                    } else {
+                        chatMessages.appendChild(loadMoreButton);
+                    }
+                }
+
+                // Remove messages that should be hidden
+                const currentMessages = Array.from(chatMessages.children);
+                currentMessages.forEach(element => {
+                    // Skip the load more button
+                    if (element.classList.contains('load-more-messages')) {
+                        return;
+                    }
+
+                    // Check if this element should be visible
+                    const shouldBeVisible = visibleMessages.some(msg => msg.element === element);
+
+                    if (!shouldBeVisible && !element.classList.contains('typing-indicator')) {
+                        // Remove from DOM but keep in our allMessages array
+                        element.remove();
+                    }
+                });
+            }
+        }
+
+        function loadMoreMessages() {
+            // Calculate how many more messages to load
+            const currentlyVisible = chatMessages.querySelectorAll('.message, .suggested-actions').length;
+            const totalMessages = allMessages.length;
+            const hiddenMessages = totalMessages - currentlyVisible;
+            const loadCount = Math.min(hiddenMessages, 20); // Load 20 at a time
+
+            if (loadCount <= 0) return;
+
+            // Get the messages to load
+            const startIndex = totalMessages - currentlyVisible - loadCount;
+            const messagesToLoad = allMessages.slice(startIndex, startIndex + loadCount);
+
+            // Remove the load more button
+            const loadMoreButton = document.querySelector('.load-more-messages');
+            if (loadMoreButton) {
+                loadMoreButton.remove();
+            }
+
+            // Add the messages at the beginning of the chat
+            messagesToLoad.forEach(messageObj => {
+                if (messageObj.element) {
+                    if (chatMessages.firstChild) {
+                        chatMessages.insertBefore(messageObj.element.cloneNode(true), chatMessages.firstChild);
+                    } else {
+                        chatMessages.appendChild(messageObj.element.cloneNode(true));
+                    }
+                }
+            });
+
+            // Add a new load more button if there are still hidden messages
+            if (startIndex > 0) {
+                const newLoadMoreButton = document.createElement('div');
+                newLoadMoreButton.classList.add('load-more-messages');
+                newLoadMoreButton.textContent = `Load ${Math.min(startIndex, 20)} more messages`;
+                newLoadMoreButton.addEventListener('click', loadMoreMessages);
+
+                chatMessages.insertBefore(newLoadMoreButton, chatMessages.firstChild);
+            }
+        }
+
+        // Intent patterns with improved patterns and weights
+        const intents = [
+            {
+                name: 'business_hours',
+                patterns: [
+                    { text: 'hour', weight: 0.7 },
+                    { text: 'open', weight: 0.8 },
+                    { text: 'close', weight: 0.8 },
+                    { text: 'time', weight: 0.5 },
+                    { text: 'when', weight: 0.4 },
+                    { text: 'schedule', weight: 0.7 },
+                    { text: 'business hours', weight: 1.0 },
+                    { text: 'opening hours', weight: 1.0 },
+                    { text: 'closing time', weight: 1.0 },
+                    { text: 'weekend', weight: 0.6 },
+                    { text: 'holiday', weight: 0.6 }
+                ],
+                responses: [
+                    "Our business hours are Monday to Friday, 9am to 5pm, and Saturday from 10am to 2pm.",
+                    "We're open Monday through Friday from 9am to 5pm, and Saturdays 10am to 2pm. We're closed on Sundays."
+                ]
+            },
+            {
+                name: 'shipping_info',
+                patterns: [
+                    { text: 'ship', weight: 0.8 },
+                    { text: 'shipping', weight: 1.0 },
+                    { text: 'delivery', weight: 0.9 },
+                    { text: 'deliver', weight: 0.9 },
+                    { text: 'arrive', weight: 0.7 },
+                    { text: 'track', weight: 0.8 },
+                    { text: 'package', weight: 0.7 },
+                    { text: 'mail', weight: 0.6 },
+                    { text: 'send', weight: 0.6 },
+                    { text: 'shipping cost', weight: 1.0 },
+                    { text: 'shipping fee', weight: 1.0 },
+                    { text: 'free shipping', weight: 1.0 },
+                    { text: 'how long', weight: 0.5 },
+                    { text: 'how soon', weight: 0.5 },
+                    { text: 'international', weight: 0.7 }
+                ],
+                responses: [
+                    "We offer free shipping on orders over $50. Standard shipping takes 3-5 business days.",
+                    "Our standard shipping is free for orders over $50 and takes 3-5 business days. Express shipping is available for $9.99 and takes 1-2 business days."
+                ]
+            },
+            {
+                name: 'return_policy',
+                patterns: [
+                    { text: 'return', weight: 1.0 },
+                    { text: 'refund', weight: 1.0 },
+                    { text: 'money back', weight: 1.0 },
+                    { text: 'exchange', weight: 0.9 },
+                    { text: 'warranty', weight: 0.8 },
+                    { text: 'cancel', weight: 0.7 },
+                    { text: 'change my order', weight: 0.8 },
+                    { text: 'send back', weight: 0.9 },
+                    { text: 'return policy', weight: 1.0 },
+                    { text: 'return period', weight: 1.0 },
+                    { text: 'don\'t want', weight: 0.6 },
+                    { text: 'changed my mind', weight: 0.7 }
+                ],
+                responses: [
+                    "Our return policy allows returns within 30 days of purchase with the original receipt. Items must be unused and in original packaging.",
+                    "You can return items within 30 days of purchase. We offer full refunds with original receipt, or store credit without receipt."
+                ]
+            },
+            {
+                name: 'order_help',
+                patterns: [
+                    { text: 'help', weight: 0.5 },
+                    { text: 'order', weight: 0.8 },
+                    { text: 'purchase', weight: 0.7 },
+                    { text: 'bought', weight: 0.7 },
+                    { text: 'problem', weight: 0.8 },
+                    { text: 'issue', weight: 0.8 },
+                    { text: 'wrong', weight: 0.8 },
+                    { text: 'mistake', weight: 0.8 },
+                    { text: 'incorrect', weight: 0.9 },
+                    { text: 'order status', weight: 1.0 },
+                    { text: 'where is my order', weight: 1.0 },
+                    { text: 'missing item', weight: 0.9 },
+                    { text: 'damaged', weight: 0.9 },
+                    { text: 'not received', weight: 0.9 },
+                    { text: 'late', weight: 0.7 }
+                ],
+                responses: [
+                    "I'd be happy to help with your order. Could you please provide your order number so I can look up the details?",
+                    "I can help resolve any issues with your order. Do you have your order number handy? That will help me look up the specific details."
+                ]
+            },
+            {
+                name: 'greeting',
+                patterns: [
+                    { text: 'hi', weight: 1.0 },
+                    { text: 'hello', weight: 1.0 },
+                    { text: 'hey', weight: 1.0 },
+                    { text: 'greetings', weight: 1.0 },
+                    { text: 'good morning', weight: 1.0 },
+                    { text: 'good afternoon', weight: 1.0 },
+                    { text: 'good evening', weight: 1.0 },
+                    { text: 'howdy', weight: 1.0 },
+                    { text: 'sup', weight: 0.8 },
+                    { text: 'what\'s up', weight: 0.8 },
+                    { text: 'hiya', weight: 0.9 }
+                ],
+                responses: [
+                    "Hello! How can I help you today?",
+                    "Hi there! What can I assist you with?",
+                    "Hey! How can I be of service today?"
+                ]
+            },
+            {
+                name: 'farewell',
+                patterns: [
+                    { text: 'bye', weight: 1.0 },
+                    { text: 'goodbye', weight: 1.0 },
+                    { text: 'see you', weight: 0.9 },
+                    { text: 'farewell', weight: 1.0 },
+                    { text: 'thanks', weight: 0.7 },
+                    { text: 'thank you', weight: 0.8 },
+                    { text: 'that\'s all', weight: 0.7 },
+                    { text: 'that will be all', weight: 0.8 },
+                    { text: 'have a good day', weight: 0.9 },
+                    { text: 'have a nice day', weight: 0.9 },
+                    { text: 'take care', weight: 0.8 }
+                ],
+                responses: [
+                    "Thank you for chatting with us. Have a great day!",
+                    "Thanks for reaching out. If you need anything else, don't hesitate to ask!",
+                    "You're welcome! Have a wonderful day."
+                ]
+            },
+            {
+                name: 'product_info',
+                patterns: [
+                    { text: 'product', weight: 0.7 },
+                    { text: 'item', weight: 0.6 },
+                    { text: 'details', weight: 0.5 },
+                    { text: 'specifications', weight: 0.8 },
+                    { text: 'specs', weight: 0.8 },
+                    { text: 'features', weight: 0.8 },
+                    { text: 'dimensions', weight: 0.9 },
+                    { text: 'size', weight: 0.7 },
+                    { text: 'color', weight: 0.7 },
+                    { text: 'material', weight: 0.8 },
+                    { text: 'what is', weight: 0.5 },
+                    { text: 'tell me about', weight: 0.6 }
+                ],
+                responses: [
+                    "I'd be happy to provide more information about our products. Could you specify which product you're interested in?",
+                    "Our products come with detailed specifications. Which specific product would you like to know more about?"
+                ]
+            },
+            {
+                name: 'file_upload',
+                patterns: [
+                    { text: 'file', weight: 0.8 },
+                    { text: 'upload', weight: 0.8 },
+                    { text: 'attachment', weight: 0.8 },
+                    { text: 'attached', weight: 0.8 },
+                    { text: 'sent', weight: 0.6 },
+                    { text: 'shared', weight: 0.7 },
+                    { text: 'document', weight: 0.7 }
+                ],
+                responses: [
+                    "I've received your file(s). Is there anything specific you'd like me to help you with regarding these files?",
+                    "Thanks for sharing these files. What would you like me to do with them?"
+                ]
+            },
+            {
+                name: 'image_upload',
+                patterns: [
+                    { text: 'image', weight: 0.9 },
+                    { text: 'picture', weight: 0.9 },
+                    { text: 'photo', weight: 0.9 },
+                    { text: 'screenshot', weight: 0.9 },
+                    { text: 'jpg', weight: 0.7 },
+                    { text: 'png', weight: 0.7 },
+                    { text: 'gif', weight: 0.7 }
+                ],
+                responses: [
+                    "I've received your image(s). Would you like me to describe what I see or help you with something specific about these images?",
+                    "Thanks for sharing these images. How can I help you with them?"
+                ]
+            },
+            {
+                name: 'document_upload',
+                patterns: [
+                    { text: 'document', weight: 0.9 },
+                    { text: 'pdf', weight: 0.9 },
+                    { text: 'word', weight: 0.8 },
+                    { text: 'text', weight: 0.7 },
+                    { text: 'doc', weight: 0.8 },
+                    { text: 'docx', weight: 0.8 },
+                    { text: 'txt', weight: 0.7 }
+                ],
+                responses: [
+                    "I've received your document(s). Would you like me to summarize the content or help you with something specific about these documents?",
+                    "Thanks for sharing these documents. How can I help you with them?"
+                ]
+            }
+        ];
+
+        // Conversation context
+        let conversationContext = {
+            lastIntent: null,
+            messageCount: 0,
+            topics: []
+        };
+
+        // Response Generation with improved pattern matching, caching and performance monitoring
+        function getResponse(message) {
+            // Start timing message processing
+            const startTime = performance.now();
+            logPerformance('message', 1);
+
+            // Check cache first for exact matches
+            const cacheKey = message.toLowerCase().trim();
+            if (responseCache.has(cacheKey)) {
+                const cachedResponse = responseCache.get(cacheKey);
+
+                // Check if cache entry is still valid
+                if (Date.now() - cachedResponse.timestamp < CACHE_EXPIRY) {
+                    console.log('Cache hit for:', cacheKey);
+                    logPerformance('cacheHit', 1);
+
+                    // Log performance for cache hit
+                    const endTime = performance.now();
+                    logPerformance('messageProcessing', endTime - startTime);
+
+                    return cachedResponse.response;
+                } else {
+                    // Cache expired, remove it
+                    responseCache.delete(cacheKey);
+                    logPerformance('cacheMiss', 1);
+                }
+            } else {
+                logPerformance('cacheMiss', 1);
+            }
+
+            // Convert message to lowercase for matching
+            const lowerMessage = cacheKey;
+
+            // Initialize results
+            const results = {
+                intent: null,
+                confidence: 0,
+                matchedPatterns: []
+            };
+
+            // Check for intents using weighted patterns
+            intents.forEach(intent => {
+                let confidenceScore = 0;
+                let totalWeight = 0;
+                let matchedPatterns = [];
+
+                intent.patterns.forEach(pattern => {
+                    totalWeight += pattern.weight;
+
+                    // Check for exact matches first (higher confidence)
+                    if (lowerMessage === pattern.text) {
+                        confidenceScore += pattern.weight * 1.5; // Boost for exact match
+                        matchedPatterns.push(pattern.text);
+                    }
+                    // Then check for includes
+                    else if (lowerMessage.includes(pattern.text)) {
+                        confidenceScore += pattern.weight;
+                        matchedPatterns.push(pattern.text);
+                    }
+                    // Check for word boundary matches (to avoid partial word matches)
+                    else {
+                        const regex = new RegExp('\\b' + pattern.text + '\\b', 'i');
+                        if (regex.test(lowerMessage)) {
+                            confidenceScore += pattern.weight * 0.8; // Slightly lower confidence
+                            matchedPatterns.push(pattern.text);
+                        }
+                    }
+                });
+
+                // Normalize confidence score
+                const normalizedConfidence = totalWeight > 0 ? confidenceScore / totalWeight : 0;
+
+                // Update if this intent has higher confidence
+                if (normalizedConfidence > results.confidence) {
+                    results.intent = intent.name;
+                    results.confidence = normalizedConfidence;
+                    results.matchedPatterns = matchedPatterns;
+                }
+            });
+
+            // Apply context awareness
+            if (results.confidence < 0.3) {
+                // Check if this could be a follow-up question
+                if (conversationContext.lastIntent) {
+                    // Simple message like "yes", "no", "ok" are likely follow-ups
+                    const simpleFollowups = ['yes', 'no', 'ok', 'sure', 'yeah', 'nope', 'correct', 'right', 'wrong'];
+                    const messageWords = lowerMessage.split(/\s+/);
+
+                    const isSimpleFollowup = messageWords.length <= 3 &&
+                        messageWords.some(word => simpleFollowups.includes(word));
+
+                    if (isSimpleFollowup) {
+                        // This is likely a follow-up to the previous intent
+                        results.intent = conversationContext.lastIntent;
+                        results.confidence = 0.6; // Higher confidence for context-aware match
+                        results.matchedPatterns.push('context: follow-up');
+                    }
+                    // Check if it's a question about the previous topic
+                    else if (lowerMessage.includes('?') ||
+                             lowerMessage.startsWith('how') ||
+                             lowerMessage.startsWith('what') ||
+                             lowerMessage.startsWith('why') ||
+                             lowerMessage.startsWith('when') ||
+                             lowerMessage.startsWith('where') ||
+                             lowerMessage.startsWith('who') ||
+                             lowerMessage.startsWith('can')) {
+                        // Boost confidence for the previous intent
+                        if (results.confidence < 0.2) {
+                            results.intent = conversationContext.lastIntent;
+                            results.confidence = 0.4; // Medium confidence for question follow-up
+                            results.matchedPatterns.push('context: question about previous topic');
+                        }
+                    }
+                }
+
+                // If still low confidence, use default
+                if (results.confidence < 0.2) {
+                    results.intent = 'unknown';
+                    results.confidence = 0.1;
+                }
+            }
+
+            // Update conversation context
+            conversationContext.lastIntent = results.intent;
+            conversationContext.messageCount++;
+
+            if (!conversationContext.topics.includes(results.intent)) {
+                conversationContext.topics.push(results.intent);
+            }
+
+            // Log for debugging
+            console.log('Intent detected:', results.intent);
+            console.log('Confidence:', results.confidence);
+            console.log('Matched patterns:', results.matchedPatterns);
+
+            // Get response based on intent
+            const response = getResponseFromIntent(results.intent);
+
+            // Cache the response if confidence is high enough
+            if (results.confidence > 0.5) {
+                responseCache.set(cacheKey, {
+                    response: response,
+                    timestamp: Date.now(),
+                    confidence: results.confidence
+                });
+                console.log('Added to cache:', cacheKey);
+
+                // Limit cache size to prevent memory issues
+                if (responseCache.size > 100) {
+                    // Remove oldest entry
+                    const oldestKey = responseCache.keys().next().value;
+                    responseCache.delete(oldestKey);
+                    console.log('Cache full, removed oldest entry:', oldestKey);
+                }
+            }
+
+            // Log performance for full message processing
+            const endTime = performance.now();
+            const processingTime = endTime - startTime;
+            logPerformance('messageProcessing', processingTime);
+            console.log(`Message processing time: ${processingTime.toFixed(2)}ms`);
+
+            return response;
+        }
+
+        function getResponseFromIntent(intentName) {
+            // Find the matching intent
+            const matchedIntent = intents.find(intent => intent.name === intentName);
+
+            if (matchedIntent) {
+                // Get a random response for this intent
+                const randomIndex = Math.floor(Math.random() * matchedIntent.responses.length);
+                return matchedIntent.responses[randomIndex];
+            } else {
+                // Fallback response
+                return knowledgeBase.default;
+            }
+        }
+
+        // Message Sending
+        function sendMessage() {
+            const message = messageInput.value.trim();
+
+            if (message) {
+                // Add user message to chat
+                addUserMessage(message);
+                messageInput.value = '';
+
+                // Show typing indicator
+                showTypingIndicator();
+
+                // Process message and get response with a delay to simulate thinking
+                setTimeout(() => {
+                    hideTypingIndicator();
+                    const response = getResponse(message);
+                    addBotMessage(response);
+
+                    // Add suggested actions based on detected intent
+                    if (conversationContext.lastIntent) {
+                        switch (conversationContext.lastIntent) {
+                            case 'business_hours':
+                                addSuggestedActions([
+                                    "Are you open on weekends?",
+                                    "What about holiday hours?",
+                                    "Do you have different hours for support?"
+                                ]);
+                                break;
+                            case 'shipping_info':
+                                addSuggestedActions([
+                                    "How do I track my order?",
+                                    "Do you ship internationally?",
+                                    "How long does shipping take?"
+                                ]);
+                                break;
+                            case 'return_policy':
+                                addSuggestedActions([
+                                    "How do I start a return?",
+                                    "Do you offer exchanges?",
+                                    "What's your warranty policy?"
+                                ]);
+                                break;
+                            case 'order_help':
+                                addSuggestedActions([
+                                    "My order hasn't arrived",
+                                    "I received the wrong item",
+                                    "I need to change my order"
+                                ]);
+                                break;
+                            case 'file_upload':
+                                addSuggestedActions([
+                                    "Can you process this file?",
+                                    "What can you tell me about this file?",
+                                    "I need help understanding this file"
+                                ]);
+                                break;
+                            case 'image_upload':
+                                addSuggestedActions([
+                                    "What do you see in this image?",
+                                    "Can you describe this image?",
+                                    "Can you extract text from this image?"
+                                ]);
+                                break;
+                            case 'document_upload':
+                                addSuggestedActions([
+                                    "Can you summarize this document?",
+                                    "What is this document about?",
+                                    "Can you extract key points from this?"
+                                ]);
+                                break;
+                            case 'greeting':
+                                addSuggestedActions([
+                                    "What services do you offer?",
+                                    "Tell me about pricing",
+                                    "How do I contact support?"
+                                ]);
+                                break;
+                        }
+                    }
+                }, 1000);
+            }
+        }
+
+        // Feedback handling
+        let feedbackStats = {
+            total: 0,
+            positive: 0,
+            negative: 0
+        };
+
+        function handleFeedback(messageElement, message, type) {
+            // Update stats
+            feedbackStats.total++;
+            if (type === 'positive') {
+                feedbackStats.positive++;
+                console.log('Positive feedback received');
+            } else {
+                feedbackStats.negative++;
+                console.log('Negative feedback received');
+            }
+
+            // Show thank you message
+            const thankYouElement = document.createElement('div');
+            thankYouElement.style.fontSize = '12px';
+            thankYouElement.style.color = '#86868b';
+            thankYouElement.style.marginTop = '0.5rem';
+            thankYouElement.textContent = 'Thank you for your feedback!';
+            messageElement.appendChild(thankYouElement);
+
+            // Log feedback stats
+            console.log('Feedback stats:', feedbackStats);
+
+            // Save chat history with updated feedback
+            saveChatHistory();
+        }
+
+        // File handling with Web Worker for image processing
+        let imageProcessorWorker;
+
+        // Initialize the image processor worker
+        function initImageProcessorWorker() {
+            if (window.Worker && !imageProcessorWorker) {
+                try {
+                    imageProcessorWorker = new Worker('image-processor.worker.js');
+                    console.log('Image processor worker initialized');
+
+                    // Set up message handler
+                    imageProcessorWorker.onmessage = function(e) {
+                        const { status, action, result, error } = e.data;
+
+                        if (status === 'error') {
+                            console.error(`Worker error (${action}):`, error);
+                            return;
+                        }
+
+                        if (action === 'compress') {
+                            console.log(`Image compressed: ${result.originalSize} -> ${result.compressedSize} (${Math.round(result.compressionRatio)}x)`);
+                            logPerformance('imageCompression', result.compressionRatio);
+                        } else if (action === 'createThumbnail') {
+                            console.log(`Thumbnail created: ${result.width}x${result.height}`);
+                        }
+                    };
+
+                    // Set up error handler
+                    imageProcessorWorker.onerror = function(error) {
+                        console.error('Worker error:', error);
+                    };
+                } catch (error) {
+                    console.error('Failed to initialize image processor worker:', error);
+                }
+            } else if (!window.Worker) {
+                console.warn('Web Workers not supported in this browser. Image processing will run on the main thread.');
+            }
+        }
+
+        // Compress an image using the worker
+        function compressImage(file) {
+            return new Promise((resolve, reject) => {
+                if (!imageProcessorWorker) {
+                    // Fallback to synchronous processing if worker is not available
+                    console.warn('Image processor worker not available, using synchronous processing');
+                    resolve(file);
+                    return;
+                }
+
+                // Read the file as array buffer
+                const reader = new FileReader();
+                reader.onload = function() {
+                    // Send the image data to the worker
+                    const startTime = performance.now();
+
+                    // Set up a timeout to handle worker hanging
+                    const timeoutId = setTimeout(() => {
+                        console.warn('Image compression timed out, using original file');
+                        resolve(file);
+                    }, 5000); // 5 second timeout
+
+                    // Set up one-time message handler for this specific compression
+                    const messageHandler = function(e) {
+                        const { status, action, result, error } = e.data;
+
+                        if (action !== 'compress') return; // Not our message
+
+                        // Remove the handler and timeout
+                        imageProcessorWorker.removeEventListener('message', messageHandler);
+                        clearTimeout(timeoutId);
+
+                        if (status === 'error') {
+                            console.error('Compression error:', error);
+                            resolve(file); // Use original file on error
+                            return;
+                        }
+
+                        // Create a new file from the compressed data
+                        const compressedFile = new File(
+                            [result.compressedData],
+                            file.name,
+                            { type: 'image/jpeg' }
+                        );
+
+                        const endTime = performance.now();
+                        console.log(`Image compressed in ${(endTime - startTime).toFixed(2)}ms`);
+
+                        resolve(compressedFile);
+                    };
+
+                    // Add the message handler
+                    imageProcessorWorker.addEventListener('message', messageHandler);
+
+                    // Send the compression request
+                    imageProcessorWorker.postMessage({
+                        action: 'compress',
+                        data: {
+                            imageData: reader.result,
+                            maxWidth: 1200,
+                            maxHeight: 1200,
+                            quality: 0.8
+                        }
+                    });
+                };
+
+                reader.onerror = function() {
+                    console.error('Error reading file:', file.name);
+                    reject(new Error(`Failed to read file: ${file.name}`));
+                };
+
+                reader.readAsArrayBuffer(file);
+            });
+        }
+
+        // File selection handler
+        function handleFileSelection() {
+            // Initialize the worker if not already done
+            if (!imageProcessorWorker) {
+                initImageProcessorWorker();
+            }
+
+            fileInput.click();
+        }
+
+        // File handling with Web Worker for image processing
+
+        // Initialize the image processor worker
+        function initImageProcessorWorker() {
+            if (window.Worker && !imageProcessorWorker) {
+                try {
+                    imageProcessorWorker = new Worker('image-processor.worker.js');
+                    console.log('Image processor worker initialized');
+
+                    // Set up message handler
+                    imageProcessorWorker.onmessage = function(e) {
+                        const { status, action, result, error } = e.data;
+
+                        if (status === 'error') {
+                            console.error(`Worker error (${action}):`, error);
+                            return;
+                        }
+
+                        if (action === 'compress') {
+                            console.log(`Image compressed: ${result.originalSize} -> ${result.compressedSize} (${Math.round(result.compressionRatio)}x)`);
+                            logPerformance('imageCompression', result.compressionRatio);
+                        } else if (action === 'createThumbnail') {
+                            console.log(`Thumbnail created: ${result.width}x${result.height}`);
+                        }
+                    };
+
+                    // Set up error handler
+                    imageProcessorWorker.onerror = function(error) {
+                        console.error('Worker error:', error);
+                    };
+                } catch (error) {
+                    console.error('Failed to initialize image processor worker:', error);
+                }
+            } else if (!window.Worker) {
+                console.warn('Web Workers not supported in this browser. Image processing will run on the main thread.');
+            }
+        }
+
+        // Compress an image using the worker
+        function compressImage(file) {
+            return new Promise((resolve, reject) => {
+                if (!imageProcessorWorker) {
+                    // Fallback to synchronous processing if worker is not available
+                    console.warn('Image processor worker not available, using synchronous processing');
+                    resolve(file);
+                    return;
+                }
+
+                // Read the file as array buffer
+                const reader = new FileReader();
+                reader.onload = function() {
+                    // Send the image data to the worker
+                    const startTime = performance.now();
+
+                    // Set up a timeout to handle worker hanging
+                    const timeoutId = setTimeout(() => {
+                        console.warn('Image compression timed out, using original file');
+                        resolve(file);
+                    }, 5000); // 5 second timeout
+
+                    // Set up one-time message handler for this specific compression
+                    const messageHandler = function(e) {
+                        const { status, action, result, error } = e.data;
+
+                        if (action !== 'compress') return; // Not our message
+
+                        // Remove the handler and timeout
+                        imageProcessorWorker.removeEventListener('message', messageHandler);
+                        clearTimeout(timeoutId);
+
+                        if (status === 'error') {
+                            console.error('Compression error:', error);
+                            resolve(file); // Use original file on error
+                            return;
+                        }
+
+                        // Create a new file from the compressed data
+                        const compressedFile = new File(
+                            [result.compressedData],
+                            file.name,
+                            { type: 'image/jpeg' }
+                        );
+
+                        const endTime = performance.now();
+                        console.log(`Image compressed in ${(endTime - startTime).toFixed(2)}ms`);
+
+                        resolve(compressedFile);
+                    };
+
+                    // Add the message handler
+                    imageProcessorWorker.addEventListener('message', messageHandler);
+
+                    // Send the compression request
+                    imageProcessorWorker.postMessage({
+                        action: 'compress',
+                        data: {
+                            imageData: reader.result,
+                            maxWidth: 1200,
+                            maxHeight: 1200,
+                            quality: 0.8
+                        }
+                    });
+                };
+
+                reader.onerror = function() {
+                    console.error('Error reading file:', file.name);
+                    reject(new Error(`Failed to read file: ${file.name}`));
+                };
+
+                reader.readAsArrayBuffer(file);
+            });
+        }
+
+        // Helper functions for file handling
+        function getFileIcon(fileType) {
+            if (fileType.startsWith('image/')) {
+                return 'icon-image';
+            } else if (fileType === 'application/pdf') {
+                return 'icon-pdf';
+            } else if (fileType.includes('word') || fileType === 'application/msword' || fileType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
+                return 'icon-doc';
+            } else if (fileType.includes('excel') || fileType === 'application/vnd.ms-excel' || fileType === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
+                return 'icon-xls';
+            } else if (fileType.includes('zip') || fileType === 'application/zip' || fileType === 'application/x-zip-compressed') {
+                return 'icon-zip';
+            } else {
+                return 'icon-file';
+            }
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // Process a single file and return its HTML content
+        function processFile(file, messageElement) {
+            return new Promise((resolve, reject) => {
+                try {
+                    const fileSize = formatFileSize(file.size);
+                    const fileIcon = getFileIcon(file.type);
+
+                    let content = `
+                        <div class="file-preview">
+                            <div class="file-icon">
+                                <i class="${fileIcon}"></i>
+                            </div>
+                            <div class="file-info">
+                                <div class="file-name">${file.name}</div>
+                                <div class="file-size">${fileSize}</div>
+                            </div>
+                        </div>
+                    `;
+
+                    // For images, add lazy-loaded preview
+                    if (file.type.startsWith('image/')) {
+                        // Add placeholder while image loads
+                        const placeholder = document.createElement('div');
+                        placeholder.classList.add('image-placeholder');
+                        placeholder.textContent = 'Loading image...';
+                        messageElement.appendChild(placeholder);
+
+                        // Use Intersection Observer for lazy loading
+                        const observer = new IntersectionObserver((entries, observer) => {
+                            entries.forEach(entry => {
+                                if (entry.isIntersecting) {
+                                    // Load the image when it's in view
+                                    const reader = new FileReader();
+                                    reader.onload = function(e) {
+                                        try {
+                                            const img = document.createElement('img');
+                                            img.src = e.target.result;
+                                            img.classList.add('image-preview');
+
+                                            // Add load event to fade in the image
+                                            img.onload = function() {
+                                                // Replace placeholder with image
+                                                if (placeholder.parentNode) {
+                                                    placeholder.replaceWith(img);
+                                                    // Fade in the image
+                                                    setTimeout(() => {
+                                                        img.classList.add('loaded');
+                                                        chatMessages.scrollTop = chatMessages.scrollHeight;
+                                                    }, 10);
+                                                }
+                                            };
+
+                                            img.onerror = function() {
+                                                if (placeholder.parentNode) {
+                                                    placeholder.textContent = 'Error loading image';
+                                                }
+                                            };
+                                        } catch (imgError) {
+                                            console.error('Error displaying image preview:', imgError);
+                                            if (placeholder.parentNode) {
+                                                placeholder.textContent = 'Error loading image';
+                                            }
+                                        }
+                                    };
+                                    reader.onerror = function() {
+                                        console.error('Error reading file:', file.name);
+                                        if (placeholder.parentNode) {
+                                            placeholder.textContent = 'Error loading image';
+                                        }
+                                    };
+                                    reader.readAsDataURL(file);
+
+                                    // Stop observing once loaded
+                                    observer.disconnect();
+                                }
+                            });
+                        }, { threshold: 0.1 });
+
+                        // Start observing the placeholder
+                        observer.observe(placeholder);
+                    }
+
+                    resolve({
+                        valid: true,
+                        content: content
+                    });
+                } catch (error) {
+                    console.error('Error processing file:', file.name, error);
+                    reject(error);
+                }
+            });
+        }
+
+        async function handleFileUpload(event) {
+            const files = event.target.files;
+            if (files.length > 0) {
+                try {
+                    // Show a processing indicator
+                    const processingMessage = document.createElement('div');
+                    processingMessage.classList.add('processing-indicator');
+                    processingMessage.innerHTML = `
+                        <div class="processing-spinner"></div>
+                        <div class="processing-text">Processing ${files.length} file(s)...</div>
+                    `;
+                    chatMessages.appendChild(processingMessage);
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+
+                    // Check file size limits
+                    const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+                    const MAX_TOTAL_SIZE = 20 * 1024 * 1024; // 20MB
+                    let totalSize = 0;
+                    let oversizedFiles = [];
+
+                    Array.from(files).forEach(file => {
+                        totalSize += file.size;
+                        if (file.size > MAX_FILE_SIZE) {
+                            oversizedFiles.push(file.name);
+                        }
+                    });
+
+                    // Check for oversized files
+                    if (oversizedFiles.length > 0) {
+                        processingMessage.remove();
+                        const errorMessage = `The following file(s) exceed the 10MB limit: ${oversizedFiles.join(', ')}. Please upload smaller files.`;
+                        addBotMessage(errorMessage);
+                        fileInput.value = '';
+                        return;
+                    }
+
+                    // Check total size
+                    if (totalSize > MAX_TOTAL_SIZE) {
+                        processingMessage.remove();
+                        const errorMessage = `The total size of all files (${formatFileSize(totalSize)}) exceeds the 20MB limit. Please upload smaller files.`;
+                        addBotMessage(errorMessage);
+                        fileInput.value = '';
+                        return;
+                    }
+
+                    // Create a message with the file(s)
+                    const messageElement = document.createElement('div');
+                    messageElement.classList.add('message', 'user-message');
+
+                    let messageContent = '';
+                    let validFiles = true;
+                    let processedFiles = [];
+
+                    // Process each file
+                    Array.from(files).forEach(file => {
+                            // If it's an image, compress it first
+                            if (file.type.startsWith('image/')) {
+                                // Compress image if needed
+                                    compressImage(file)
+                                        .then(compressedFile => {
+                                            processedFiles.push({
+                                                original: file,
+                                                processed: compressedFile,
+                                                compressed: compressedFile !== file
+                                            });
+                                            return processFile(compressedFile, messageElement);
+                                        })
+                                        .catch(error => {
+                                            console.error('Error compressing image:', error);
+                                            processedFiles.push({
+                                                original: file,
+                                                processed: file,
+                                                compressed: false,
+                                                error: error.message
+                                            });
+                                            return processFile(file, messageElement);
+                                        })
+                                );
+                            } else {
+                                // For non-image files, just process them directly
+                                processedFiles.push({
+                                    original: file,
+                                    processed: file,
+                                    compressed: false
+                                });
+                                batchPromises.push(processFile(file, messageElement));
+                            }
+
+                            messageContent += `
+                                <div class="file-preview">
+                                    <div class="file-icon">
+                                        <i class="${fileIcon}"></i>
+                                    </div>
+                                    <div class="file-info">
+                                        <div class="file-name">${file.name}</div>
+                                        <div class="file-size">${fileSize}</div>
+                                    </div>
+                                </div>
+                            `;
+
+                            // Add image preview if file is an image
+                            if (file.type.startsWith('image/')) {
+                                try {
+                                    // Check if we should compress the image
+                                    if (file.size > 1024 * 1024) { // Compress images larger than 1MB
+                                        console.log(`Large image detected (${formatFileSize(file.size)}), will compress`);
+
+                                        // Initialize the worker if not already done
+                                        if (!imageProcessorWorker) {
+                                            initImageProcessorWorker();
+                                        }
+                                    }
+
+                                    // Add placeholder while image loads
+                                    const placeholder = document.createElement('div');
+                                    placeholder.classList.add('image-placeholder');
+                                    placeholder.textContent = 'Loading image...';
+                                    messageElement.appendChild(placeholder);
+
+                                    // Use Intersection Observer for lazy loading
+                                    const observer = new IntersectionObserver((entries, observer) => {
+                                        entries.forEach(entry => {
+                                            if (entry.isIntersecting) {
+                                                // Load the image when it's in view
+                                                const reader = new FileReader();
+                                                reader.onload = function(e) {
+                                                    try {
+                                                        // Check if we should optimize the image
+                                                        let imgSrc = e.target.result;
+
+                                                        // Log image size for debugging
+                                                        if (file.size > 1024 * 1024) { // If larger than 1MB
+                                                            console.log(`Large image detected: ${formatFileSize(file.size)}`);
+                                                            // Initialize worker if needed
+                                                            if (!imageProcessorWorker) {
+                                                                initImageProcessorWorker();
+                                                            }
+                                                        }
+
+                                                        const img = document.createElement('img');
+                                                        img.src = imgSrc;
+                                                        img.classList.add('image-preview');
+
+                                                        // Add loading attribute for better performance
+                                                        img.loading = 'lazy';
+
+                                                        // Add load event to fade in the image
+                                                        img.onload = function() {
+                                                            // Replace placeholder with image
+                                                            if (placeholder.parentNode) { // Check if placeholder is still in the DOM
+                                                                placeholder.replaceWith(img);
+                                                                // Fade in the image
+                                                                setTimeout(() => {
+                                                                    img.classList.add('loaded');
+                                                                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                                                                }, 10);
+                                                            }
+                                                        };
+
+                                                        img.onerror = function() {
+                                                            if (placeholder.parentNode) {
+                                                                placeholder.textContent = 'Error loading image';
+                                                            }
+                                                        };
+                                                    } catch (imgError) {
+                                                        console.error('Error displaying image preview:', imgError);
+                                                        if (placeholder.parentNode) {
+                                                            placeholder.textContent = 'Error loading image';
+                                                        }
+                                                    }
+                                                };
+                                                reader.onerror = function() {
+                                                    console.error('Error reading file:', file.name);
+                                                    if (placeholder.parentNode) {
+                                                        placeholder.textContent = 'Error loading image';
+                                                    }
+                                                };
+                                                reader.readAsDataURL(file);
+
+                                                // Stop observing once loaded
+                                                observer.disconnect();
+                                            }
+                                        });
+                                    }, { threshold: 0.1 }); // Start loading when 10% of the element is visible
+
+                                    // Start observing the placeholder
+                                    observer.observe(placeholder);
+                                } catch (readerError) {
+                                    console.error('Error creating FileReader:', readerError);
+                                }
+                            }
+                        } catch (fileError) {
+                            console.error('Error processing file:', file.name, fileError);
+                            validFiles = false;
+                        }
+                    });
+
+                    if (!validFiles) {
+                        addBotMessage("There was an error processing one or more files. Please try again with different files.");
+                        fileInput.value = '';
+                        return;
+                    }
+
+                    messageContent += `<div class="message-time">${new Date().toLocaleTimeString()} ✓</div>`;
+                    messageElement.innerHTML = messageContent;
+
+                    chatMessages.appendChild(messageElement);
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+
+                    // Create message object for history
+                    const messageObj = {
+                        type: 'user',
+                        content: `Uploaded ${files.length} file(s)`,
+                        files: Array.from(files).map(f => ({ name: f.name, type: f.type, size: f.size })),
+                        time: new Date(),
+                        element: messageElement
+                    };
+                    allMessages.push(messageObj);
+
+                    // Update conversation context to maintain context after file upload
+                    conversationContext.messageCount++;
+                    if (!conversationContext.topics.includes('file_upload')) {
+                        conversationContext.topics.push('file_upload');
+                    }
+
+                    // Save chat history to maintain context
+                    saveChatHistory();
+
+                    // Manage visible messages
+                    manageVisibleMessages();
+
+                    // Simulate bot response
+                    showTypingIndicator();
+                    setTimeout(() => {
+                        hideTypingIndicator();
+                        let response = "Thanks for sharing ";
+                        if (files.length === 1) {
+                            response += `the file '${files[0].name}'. I'll take a look at it.`;
+                        } else {
+                            response += `these ${files.length} files. I'll take a look at them.`;
+                        }
+                        addBotMessage(response);
+
+                        // Add file-specific context to the conversation
+                        const fileTypes = Array.from(files).map(f => f.type);
+                        if (fileTypes.some(type => type.startsWith('image/'))) {
+                            conversationContext.lastIntent = 'image_upload';
+                        } else if (fileTypes.some(type => type.includes('pdf') || type.includes('word') || type.includes('text'))) {
+                            conversationContext.lastIntent = 'document_upload';
+                        } else {
+                            conversationContext.lastIntent = 'file_upload';
+                        }
+                    }, 1000);
+
+                    // Reset file input
+                    fileInput.value = '';
+                } catch (error) {
+                    console.error('Error handling file upload:', error);
+                    addBotMessage("Sorry, there was an error processing your files. Please try again later.");
+                    fileInput.value = '';
+                }
+            }
+        }
+
+        // Event Listeners
+        chatLauncher.addEventListener('click', toggleChat);
+        closeButton.addEventListener('click', closeChat);
+        minimizeButton.addEventListener('click', toggleMinimize);
+
+        sendButton.addEventListener('click', sendMessage);
+        messageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        attachmentButton.addEventListener('click', handleFileSelection);
+        fileInput.addEventListener('change', handleFileUpload);
+
+        // Save chat history to localStorage
+        function saveChatHistory() {
+            try {
+                localStorage.setItem('chatHistory', JSON.stringify(allMessages.map(msg => {
+                    // Create a simplified version without DOM elements
+                    return {
+                        type: msg.type,
+                        content: msg.content,
+                        time: msg.time,
+                        feedback: msg.feedback
+                    };
+                })));
+            } catch (error) {
+                console.error('Error saving chat history:', error);
+            }
+        }
+
+        // Load chat history from localStorage
+        function loadChatHistory() {
+            try {
+                const savedHistory = localStorage.getItem('chatHistory');
+                if (savedHistory) {
+                    const parsedHistory = JSON.parse(savedHistory);
+
+                    // Clear current messages
+                    chatMessages.innerHTML = '';
+                    allMessages = [];
+
+                    // Recreate messages
+                    parsedHistory.forEach(msg => {
+                        if (msg.type === 'user') {
+                            addUserMessage(msg.content);
+                        } else if (msg.type === 'bot') {
+                            addBotMessage(msg.content);
+
+                            // Restore feedback if any
+                            if (msg.feedback) {
+                                const lastMessage = document.querySelector('.bot-message:last-child');
+                                const feedbackButtons = lastMessage.querySelectorAll('.feedback-button');
+
+                                if (msg.feedback === 'positive') {
+                                    feedbackButtons[0].classList.add('selected');
+                                } else if (msg.feedback === 'negative') {
+                                    feedbackButtons[1].classList.add('selected');
+                                }
+                            }
+                        } else if (msg.type === 'actions' && Array.isArray(msg.content)) {
+                            addSuggestedActions(msg.content);
+                        }
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading chat history:', error);
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Chat is initially hidden
+
+            // Load chat history if available
+            loadChatHistory();
+        });
+    </script>
+</body>
+</html>

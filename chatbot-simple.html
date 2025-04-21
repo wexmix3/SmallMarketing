@@ -1,0 +1,2022 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UAT - AI Customer Service Assistant</title>
+    <style>
+        :root {
+            --primary-color: #0071e3;
+            --primary-light: rgba(0, 113, 227, 0.1);
+            --secondary-color: #34c759;
+            --error-color: #ff3b30;
+            --warning-color: #ff9500;
+            --background-color: #f5f5f7;
+            --chat-bg: #ffffff;
+            --text-color: #1d1d1f;
+            --text-light: #86868b;
+            --border-color: #e5e5ea;
+            --message-user-bg: #0071e3;
+            --message-user-text: #ffffff;
+            --message-bot-bg: #f2f2f7;
+            --message-bot-text: #1d1d1f;
+            --shadow-light: 0 2px 10px rgba(0, 0, 0, 0.1);
+            --shadow-medium: 0 4px 20px rgba(0, 0, 0, 0.15);
+            --border-radius-sm: 8px;
+            --border-radius-md: 12px;
+            --border-radius-lg: 18px;
+            --spacing-xs: 5px;
+            --spacing-sm: 10px;
+            --spacing-md: 15px;
+            --spacing-lg: 20px;
+            --font-size-xs: 12px;
+            --font-size-sm: 14px;
+            --font-size-md: 16px;
+            --font-size-lg: 18px;
+            --transition-fast: 0.2s;
+            --transition-normal: 0.3s;
+        }
+
+        /* Dark mode support */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --background-color: #1a1a1a;
+                --chat-bg: #2c2c2e;
+                --text-color: #f5f5f7;
+                --text-light: #aeaeb2;
+                --border-color: #3a3a3c;
+                --message-bot-bg: #3a3a3c;
+                --message-bot-text: #f5f5f7;
+                --shadow-light: 0 2px 10px rgba(0, 0, 0, 0.3);
+                --shadow-medium: 0 4px 20px rgba(0, 0, 0, 0.4);
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.5;
+            transition: background-color var(--transition-normal), color var(--transition-normal);
+        }
+
+        /* Responsive container */
+        .chat-container {
+            max-width: 400px;
+            width: 100%;
+            margin: 50px auto;
+            background-color: var(--chat-bg);
+            border-radius: var(--border-radius-md);
+            box-shadow: var(--shadow-medium);
+            overflow: hidden;
+            transition: all var(--transition-normal);
+            position: relative;
+        }
+
+        @media (max-width: 480px) {
+            .chat-container {
+                max-width: 100%;
+                margin: 0;
+                height: 100vh;
+                border-radius: 0;
+            }
+        }
+
+        /* Chat header */
+        .chat-header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: var(--spacing-md);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .chat-header h2 {
+            margin: 0;
+            font-size: var(--font-size-lg);
+            font-weight: 600;
+        }
+
+        .chat-header-buttons {
+            display: flex;
+            gap: var(--spacing-sm);
+        }
+
+        .chat-header-button {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: var(--font-size-md);
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background-color var(--transition-fast);
+        }
+
+        .chat-header-button:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Chat messages area */
+        .chat-messages {
+            height: 400px;
+            overflow-y: auto;
+            padding: var(--spacing-md);
+            scroll-behavior: smooth;
+            background-color: var(--chat-bg);
+            position: relative;
+        }
+
+        @media (max-width: 480px) {
+            .chat-messages {
+                height: calc(100vh - 130px); /* Adjust for header and input area */
+            }
+        }
+
+        /* Scrollbar styling */
+        .chat-messages::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chat-messages::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background-color: var(--border-color);
+            border-radius: 3px;
+        }
+
+        /* Message bubbles */
+        .message {
+            margin-bottom: var(--spacing-md);
+            max-width: 80%;
+            animation: fadeIn 0.3s ease-out;
+            position: relative;
+            clear: both;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .user-message {
+            float: right;
+            background-color: var(--message-user-bg);
+            color: var(--message-user-text);
+            border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 var(--border-radius-lg);
+            padding: var(--spacing-sm) var(--spacing-md);
+            box-shadow: var(--shadow-light);
+        }
+
+        .bot-message {
+            float: left;
+            background-color: var(--message-bot-bg);
+            color: var(--message-bot-text);
+            border-radius: var(--border-radius-lg) var(--border-radius-lg) var(--border-radius-lg) 0;
+            padding: var(--spacing-sm) var(--spacing-md);
+            box-shadow: var(--shadow-light);
+        }
+
+        /* Time stamps (optional) */
+        .message::after {
+            content: attr(data-time);
+            display: block;
+            font-size: 10px;
+            margin-top: 5px;
+            opacity: 0.7;
+            clear: both;
+        }
+
+        /* Input area */
+        .chat-input {
+            display: flex;
+            padding: var(--spacing-md);
+            border-top: 1px solid var(--border-color);
+            background-color: var(--chat-bg);
+            position: relative;
+            z-index: 2;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: var(--spacing-sm) var(--spacing-md);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            outline: none;
+            font-family: inherit;
+            font-size: var(--font-size-md);
+            background-color: var(--chat-bg);
+            color: var(--text-color);
+            transition: border-color var(--transition-fast);
+        }
+
+        .chat-input input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px var(--primary-light);
+        }
+
+        .chat-input button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            margin-left: var(--spacing-sm);
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background-color var(--transition-fast), transform var(--transition-fast);
+        }
+
+        .chat-input button:hover {
+            background-color: #005bbf;
+            transform: scale(1.05);
+        }
+
+        .chat-input button:active {
+            transform: scale(0.95);
+        }
+
+        .attachment-button {
+            background-color: var(--message-bot-bg);
+            color: var(--primary-color);
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            margin-right: var(--spacing-sm);
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background-color var(--transition-fast), transform var(--transition-fast);
+        }
+
+        .attachment-button:hover {
+            background-color: var(--primary-light);
+            transform: scale(1.05);
+        }
+
+        .attachment-button:active {
+            transform: scale(0.95);
+        }
+
+        /* UAT elements */
+        .uat-indicator {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background-color: var(--warning-color);
+            color: white;
+            padding: 5px 10px;
+            border-radius: var(--border-radius-sm);
+            font-size: var(--font-size-xs);
+            font-weight: bold;
+            z-index: 10000;
+            box-shadow: var(--shadow-light);
+        }
+
+        .uat-feedback-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: var(--border-radius-sm);
+            cursor: pointer;
+            font-size: var(--font-size-sm);
+            z-index: 9999;
+            box-shadow: var(--shadow-light);
+            transition: background-color var(--transition-fast), transform var(--transition-fast);
+        }
+
+        .uat-feedback-button:hover {
+            background-color: #2aa147;
+            transform: scale(1.05);
+        }
+
+        .uat-test-case {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            background-color: #2196F3;
+            color: white;
+            padding: 5px 10px;
+            border-radius: var(--border-radius-sm);
+            font-size: var(--font-size-xs);
+            font-weight: bold;
+            z-index: 10000;
+            box-shadow: var(--shadow-light);
+        }
+
+        .uat-test-controls {
+            position: fixed;
+            top: 40px;
+            left: 10px;
+            background-color: var(--chat-bg);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-sm);
+            padding: 10px;
+            z-index: 10000;
+            box-shadow: var(--shadow-light);
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .uat-test-button {
+            background-color: #2196F3;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: var(--border-radius-sm);
+            cursor: pointer;
+            font-size: var(--font-size-xs);
+            transition: background-color var(--transition-fast), transform var(--transition-fast);
+        }
+
+        .uat-test-button:hover {
+            transform: scale(1.05);
+        }
+
+        .uat-test-button.pass {
+            background-color: var(--secondary-color);
+        }
+
+        .uat-test-button.fail {
+            background-color: var(--error-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="uat-indicator">UAT MODE</div>
+
+    <div class="chat-container">
+        <div class="chat-header">
+            <h2>AI Customer Service Assistant</h2>
+            <div class="chat-header-buttons">
+                <button class="chat-header-button" id="clearButton" title="Clear Chat">🗑️</button>
+                <button class="chat-header-button" id="minimizeButton" title="Minimize">_</button>
+                <button class="chat-header-button" id="closeButton" title="Close">×</button>
+            </div>
+        </div>
+
+        <div class="chat-messages" id="chatMessages">
+            <div class="message bot-message">
+                Hello! I'm your AI Customer Service Assistant. How can I help you today?
+            </div>
+        </div>
+
+        <button class="scroll-bottom-button" id="scrollBottomButton" title="Scroll to bottom">
+            <span>↓</span>
+        </button>
+
+        <div class="chat-input">
+            <button class="attachment-button" id="attachmentButton">📎</button>
+            <input type="text" id="messageInput" placeholder="Type your message...">
+            <button id="sendButton">➤</button>
+        </div>
+    </div>
+
+    <button class="uat-feedback-button" id="feedbackButton">Provide Feedback</button>
+
+    <script>
+        // Get DOM elements
+        const chatMessages = document.getElementById('chatMessages');
+        const messageInput = document.getElementById('messageInput');
+        const sendButton = document.getElementById('sendButton');
+        const attachmentButton = document.getElementById('attachmentButton');
+        const clearButton = document.getElementById('clearButton');
+        const minimizeButton = document.getElementById('minimizeButton');
+        const closeButton = document.getElementById('closeButton');
+        const feedbackButton = document.getElementById('feedbackButton');
+        const scrollBottomButton = document.getElementById('scrollBottomButton');
+
+        // Conversation context
+        let conversationContext = {
+            // Session information
+            sessionId: generateSessionId(),
+            sessionStartTime: new Date(),
+            lastActivityTime: new Date(),
+
+            // Message tracking
+            messageCount: 0,
+            messages: [],
+
+            // Context tracking
+            lastIntent: null,
+            topics: [],
+            entities: [],
+            lastResponseTime: null,
+
+            // User information (would be populated in a real app)
+            user: {
+                isAuthenticated: false,
+                id: null,
+                name: null,
+                preferences: {}
+            },
+
+            // Conversation state
+            state: 'active', // active, minimized, closed
+            previousQuestions: [],
+            unansweredQuestions: [],
+
+            // File tracking
+            uploadedFiles: [],
+
+            // Feedback and analytics
+            feedback: null,
+            ratings: [],
+            analytics: {
+                averageResponseTime: 0,
+                topicsDiscussed: {},
+                sessionDuration: 0
+            }
+        };
+
+        // Generate a unique session ID
+        function generateSessionId() {
+            return 'session_' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+        }
+
+        // Load conversation history from localStorage if available
+        try {
+            const savedContext = localStorage.getItem('chatbotContext');
+            if (savedContext) {
+                const parsedContext = JSON.parse(savedContext);
+                conversationContext = parsedContext;
+
+                // Restore conversation history
+                if (parsedContext.messages && parsedContext.messages.length > 0) {
+                    // Clear default welcome message
+                    chatMessages.innerHTML = '';
+
+                    // Add saved messages to the chat
+                    parsedContext.messages.forEach(msg => {
+                        addMessage(msg.text, msg.sender, false);
+                    });
+                }
+            }
+        } catch (error) {
+            console.error('Error loading conversation history:', error);
+        }
+
+        // Add event listeners
+        sendButton.addEventListener('click', sendMessage);
+        messageInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        // Add scroll to bottom button functionality
+        scrollBottomButton.addEventListener('click', scrollToBottom);
+
+        // Check scroll position to show/hide scroll button
+        chatMessages.addEventListener('scroll', function() {
+            const scrollPosition = chatMessages.scrollTop + chatMessages.clientHeight;
+            const scrollHeight = chatMessages.scrollHeight;
+
+            // Show button if not at bottom (with a small threshold)
+            if (scrollHeight - scrollPosition > 50) {
+                scrollBottomButton.classList.add('visible');
+            } else {
+                scrollBottomButton.classList.remove('visible');
+            }
+        });
+
+        // Function to scroll to bottom
+        function scrollToBottom() {
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            scrollBottomButton.classList.remove('visible');
+        }
+
+        // Add drag and drop support for file uploads
+        const chatContainer = document.querySelector('.chat-container');
+
+        // Prevent default drag behaviors
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            chatContainer.addEventListener(eventName, preventDefaults, false);
+            document.body.addEventListener(eventName, preventDefaults, false);
+        });
+
+        // Highlight drop area when item is dragged over it
+        ['dragenter', 'dragover'].forEach(eventName => {
+            chatContainer.addEventListener(eventName, highlight, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            chatContainer.addEventListener(eventName, unhighlight, false);
+        });
+
+        // Handle dropped files
+        chatContainer.addEventListener('drop', handleDrop, false);
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        function highlight() {
+            chatContainer.classList.add('highlight-drop');
+        }
+
+        function unhighlight() {
+            chatContainer.classList.remove('highlight-drop');
+        }
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+
+            if (files.length > 0) {
+                handleFileUpload(files);
+            }
+        }
+
+        attachmentButton.addEventListener('click', function() {
+            // Create a hidden file input
+            const fileInput = document.createElement('input');
+            fileInput.type = 'file';
+            fileInput.multiple = true;
+            fileInput.accept = 'image/*,.pdf,.doc,.docx,.txt';
+            fileInput.style.display = 'none';
+            document.body.appendChild(fileInput);
+
+            // Trigger click on the file input
+            fileInput.click();
+
+            // Handle file selection
+            fileInput.addEventListener('change', function() {
+                if (fileInput.files.length > 0) {
+                    handleFileUpload(fileInput.files);
+                }
+
+                // Remove the file input
+                document.body.removeChild(fileInput);
+            });
+        });
+
+        minimizeButton.addEventListener('click', function() {
+            alert('Chat would be minimized in the full version.');
+        });
+
+        clearButton.addEventListener('click', function() {
+            // Confirm before clearing
+            if (confirm('Are you sure you want to clear the chat history?')) {
+                clearChat();
+            }
+        });
+
+        closeButton.addEventListener('click', function() {
+            alert('Chat would be closed in the full version.');
+        });
+
+        feedbackButton.addEventListener('click', function() {
+            alert('UAT feedback form would open in the full version.');
+        });
+
+        // Clear chat function
+        function clearChat() {
+            // Clear chat messages
+            chatMessages.innerHTML = '';
+
+            // Add welcome message
+            const welcomeMessage = document.createElement('div');
+            welcomeMessage.classList.add('message', 'bot-message');
+            welcomeMessage.textContent = "Hello! I'm your AI Customer Service Assistant. How can I help you today?";
+            chatMessages.appendChild(welcomeMessage);
+
+            // Reset conversation context
+            conversationContext = {
+                messageCount: 0,
+                lastIntent: null,
+                topics: [],
+                lastResponseTime: null,
+                sessionStartTime: new Date(),
+                messages: []
+            };
+
+            // Save empty context to localStorage
+            try {
+                localStorage.removeItem('chatbotContext');
+            } catch (error) {
+                console.error('Error clearing conversation context:', error);
+            }
+        }
+
+        // Check for test case parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const testCaseId = urlParams.get('testCase');
+
+        if (testCaseId) {
+            // Add test case indicator
+            const testCaseIndicator = document.createElement('div');
+            testCaseIndicator.classList.add('uat-test-case');
+            testCaseIndicator.textContent = 'Test Case: ' + testCaseId;
+            document.body.appendChild(testCaseIndicator);
+
+            // Add test controls
+            const testControls = document.createElement('div');
+            testControls.classList.add('uat-test-controls');
+            testControls.innerHTML = `
+                <button class="uat-test-button pass" id="passButton">Pass Test</button>
+                <button class="uat-test-button fail" id="failButton">Fail Test</button>
+                <select id="severitySelect" style="margin-top: 5px; display: none;">
+                    <option value="Critical">Critical</option>
+                    <option value="High">High</option>
+                    <option value="Medium">Medium</option>
+                    <option value="Low">Low</option>
+                </select>
+                <textarea id="testNotes" placeholder="Test notes..." style="margin-top: 5px; width: 150px; height: 60px;"></textarea>
+            `;
+            document.body.appendChild(testControls);
+
+            // Add event listeners for test controls
+            document.getElementById('passButton').addEventListener('click', function() {
+                alert('Test case ' + testCaseId + ' marked as PASSED');
+            });
+
+            document.getElementById('failButton').addEventListener('click', function() {
+                document.getElementById('severitySelect').style.display = 'block';
+            });
+
+            document.getElementById('severitySelect').addEventListener('change', function() {
+                const severity = this.value;
+                alert('Test case ' + testCaseId + ' marked as FAILED with ' + severity + ' severity');
+            });
+        }
+
+        // Send message function
+        function sendMessage() {
+            const message = messageInput.value.trim();
+
+            if (message) {
+                // Update conversation context
+                conversationContext.lastActivityTime = new Date();
+
+                // Track questions for context
+                if (message.endsWith('?')) {
+                    conversationContext.previousQuestions.push(message);
+                    conversationContext.unansweredQuestions.push(message);
+                }
+
+                // Add user message
+                addMessage(message, 'user');
+
+                // Clear input
+                messageInput.value = '';
+
+                // Show typing indicator
+                showTypingIndicator();
+
+                // Simulate bot response
+                setTimeout(() => {
+                    // Hide typing indicator
+                    hideTypingIndicator();
+                    let botResponse;
+
+                    // Enhanced response system with comprehensive intent detection
+                    const intents = [
+                        {
+                            name: 'greeting',
+                            patterns: ['hello', 'hi', 'hey', 'good morning', 'good afternoon', 'good evening', 'howdy', 'greetings', 'sup', 'whats up', 'hiya', 'yo'],
+                            responses: [
+                                "Hello! How can I assist you today?",
+                                "Hi there! What can I help you with?",
+                                "Greetings! How may I be of service today?",
+                                "Hello! I'm your AI customer service assistant. How can I help you?",
+                                "Hi! I'm here to help. What brings you here today?"
+                            ]
+                        },
+                        {
+                            name: 'business_hours',
+                            patterns: ['business hours', 'open', 'closing', 'when are you open', 'hours of operation', 'store hours', 'opening time', 'closing time', 'weekend hours', 'holiday hours', 'schedule'],
+                            responses: [
+                                "Our business hours are Monday to Friday, 9 AM to 5 PM EST.",
+                                "We're open weekdays from 9 AM to 5 PM Eastern time. We're closed on weekends and holidays.",
+                                "Our customer service team is available Monday through Friday, 9 AM to 5 PM Eastern time. We're closed on weekends and major holidays.",
+                                "You can reach us from 9 AM to 5 PM EST, Monday to Friday. Our offices are closed on weekends and holidays."
+                            ]
+                        },
+                        {
+                            name: 'shipping',
+                            patterns: ['shipping', 'delivery', 'ship', 'deliver', 'how long', 'when will I receive', 'tracking', 'shipment', 'package', 'mail', 'postal', 'carrier', 'fedex', 'ups', 'usps', 'shipping cost', 'shipping fee', 'free shipping', 'expedited', 'overnight', 'international shipping'],
+                            responses: [
+                                "We offer standard shipping (3-5 business days) and express shipping (1-2 business days).",
+                                "Shipping options include standard (3-5 days) and express (1-2 days). Would you like information on international shipping?",
+                                "For domestic orders, we offer standard shipping (3-5 business days, $5.99) and express shipping (1-2 business days, $12.99). Orders over $50 qualify for free standard shipping.",
+                                "We ship via USPS, UPS, and FedEx depending on your location and selected shipping method. You'll receive tracking information via email once your order ships.",
+                                "International shipping is available to most countries. Delivery typically takes 7-14 business days, and customs fees may apply."
+                            ]
+                        },
+                        {
+                            name: 'returns',
+                            patterns: ['return', 'refund', 'money back', 'exchange', 'cancel order', 'sent back', 'return policy', 'return process', 'return shipping', 'return label', 'damaged', 'wrong item', 'doesn\'t fit', 'not as described', 'defective'],
+                            responses: [
+                                "Our return policy allows returns within 30 days of purchase. Would you like more information?",
+                                "You can return any item within 30 days for a full refund. Would you like to know how to initiate a return?",
+                                "To return an item, please visit our Returns Center on the website or contact customer service. Returns must be initiated within 30 days of delivery.",
+                                "We offer free return shipping for all domestic orders. Simply use the prepaid return label included with your order or request one online.",
+                                "If you received a damaged or defective item, please contact us immediately. We'll send a replacement or issue a full refund including any shipping costs."
+                            ]
+                        },
+                        {
+                            name: 'products',
+                            patterns: ['product', 'service', 'item', 'merchandise', 'offer', 'sell', 'purchase', 'buy', 'catalog', 'inventory', 'in stock', 'available', 'product line', 'collection', 'bestseller', 'popular', 'new arrivals', 'featured', 'recommendation', 'suggest'],
+                            responses: [
+                                "We offer a range of products and services. Could you specify what you're interested in?",
+                                "Our product catalog includes electronics, clothing, and home goods. What specific category are you looking for?",
+                                "Our most popular categories include smartphones, laptops, smart home devices, and accessories. What are you interested in?",
+                                "We regularly update our inventory with new products. Our latest arrivals include wireless earbuds, smart watches, and portable chargers.",
+                                "Based on customer favorites, I'd recommend checking out our premium headphones, wireless chargers, and protective cases. Would you like more details on any of these?"
+                            ]
+                        },
+                        {
+                            name: 'pricing',
+                            patterns: ['price', 'cost', 'how much', 'discount', 'sale', 'promotion', 'coupon', 'deal', 'offer', 'special', 'clearance', 'bargain', 'cheap', 'expensive', 'affordable', 'budget', 'price match', 'price guarantee', 'best price', 'lowest price'],
+                            responses: [
+                                "Our prices vary by product. Could you specify which item you're interested in?",
+                                "We offer competitive pricing and regular promotions. Are you looking for something specific?",
+                                "We have products at various price points to fit different budgets. Our entry-level models start at $29.99, while premium options range from $99.99 to $299.99.",
+                                "We're currently running a summer sale with up to 40% off select items. You can also sign up for our newsletter to receive a 10% discount on your first order.",
+                                "We offer a price match guarantee. If you find a lower price on an identical item from a qualified retailer, we'll match it. Some restrictions apply."
+                            ]
+                        },
+                        {
+                            name: 'contact',
+                            patterns: ['contact', 'phone', 'email', 'speak to someone', 'representative', 'person', 'human', 'customer service', 'support', 'helpline', 'help desk', 'live chat', 'call center', 'manager', 'supervisor', 'complaint', 'feedback', 'contact form', 'get in touch', 'reach out'],
+                            responses: [
+                                "You can contact our customer service team at support@example.com or call us at (555) 123-4567.",
+                                "Our support team is available by email at support@example.com or by phone at (555) 123-4567 during business hours.",
+                                "For immediate assistance, you can call our customer service line at (555) 123-4567 or use the live chat feature on our website during business hours.",
+                                "To speak with a human representative, please call (555) 123-4567 and press 2 at the prompt. Our average wait time is currently under 5 minutes.",
+                                "For complex issues or complaints, you can email our dedicated resolution team at resolution@example.com. They typically respond within one business day."
+                            ]
+                        },
+                        {
+                            name: 'order_status',
+                            patterns: ['order status', 'track order', 'where is my order', 'order tracking', 'check order', 'order number', 'purchase status', 'delivery status', 'shipping status', 'order confirmation', 'order history', 'recent order', 'order details', 'order problem', 'missing order', 'delayed order', 'order not received'],
+                            responses: [
+                                "To check your order status, please visit the Order History section of your account or use the tracking number provided in your shipping confirmation email.",
+                                "You can track your order using the tracking number sent to your email. Alternatively, log into your account and go to Order History.",
+                                "If you have your order number, I can help you check the status. Please provide the order number, and I'll look it up for you.",
+                                "Orders typically process within 1-2 business days before shipping. Once shipped, you'll receive a confirmation email with tracking information.",
+                                "If your order is delayed or you haven't received a shipping confirmation within 3 business days, please contact our customer service team with your order number."
+                            ]
+                        },
+                        {
+                            name: 'account',
+                            patterns: ['account', 'login', 'password', 'sign in', 'register', 'sign up', 'profile', 'account settings', 'forgot password', 'reset password', 'change password', 'update account', 'account information', 'personal information', 'payment method', 'saved payment', 'billing address', 'shipping address', 'email preferences', 'notifications', 'delete account'],
+                            responses: [
+                                "You can manage your account by logging in on our website. From there, you can update your profile, addresses, and payment methods.",
+                                "To reset your password, click the 'Forgot Password' link on the login page. We'll send instructions to your registered email address.",
+                                "Creating an account is easy! Click 'Sign Up' on our homepage and follow the prompts. You'll need to provide an email address and create a password.",
+                                "Your account dashboard allows you to view order history, track current orders, manage addresses, and update payment methods.",
+                                "For security reasons, we cannot access your password. If you've forgotten it, please use the password reset function on the login page."
+                            ]
+                        },
+                        {
+                            name: 'warranty',
+                            patterns: ['warranty', 'guarantee', 'protection plan', 'extended warranty', 'product protection', 'coverage', 'repair', 'replace', 'defect', 'malfunction', 'broken', 'damaged', 'warranty claim', 'warranty period', 'warranty coverage', 'lifetime warranty', 'limited warranty'],
+                            responses: [
+                                "Our products come with a standard one-year limited warranty covering manufacturing defects and malfunctions.",
+                                "We offer extended warranty plans that provide coverage for up to three years, including accidental damage protection.",
+                                "To make a warranty claim, please contact our customer service with your order number and a description of the issue. We'll guide you through the process.",
+                                "Our Premium Protection Plan covers accidental damage, extended repair coverage, and priority service for $29.99 per year.",
+                                "Different products have different warranty terms. Electronics typically have a one-year warranty, while our premium products may include a two-year or lifetime warranty."
+                            ]
+                        },
+                        {
+                            name: 'thanks',
+                            patterns: ['thanks', 'thank you', 'appreciate', 'helpful', 'great', 'awesome', 'excellent', 'wonderful', 'fantastic', 'perfect', 'good job', 'well done', 'appreciate it', 'appreciate your help', 'thank you for your help', 'thanks for the information', 'that helps', 'that was helpful'],
+                            responses: [
+                                "You're welcome! Is there anything else I can help you with?",
+                                "Happy to help! Let me know if you need anything else.",
+                                "My pleasure! Is there something else you'd like to know?",
+                                "Glad I could assist! Don't hesitate to reach out if you have more questions.",
+                                "You're very welcome! I'm here anytime you need assistance with our products or services."
+                            ]
+                        },
+                        {
+                            name: 'goodbye',
+                            patterns: ['bye', 'goodbye', 'see you', 'farewell', 'end', 'quit', 'exit', 'thats all', 'that will be all', 'no more questions', 'nothing else', 'have a good day', 'have a nice day', 'talk to you later', 'catch you later', 'until next time', 'signing off', 'logging off'],
+                            responses: [
+                                "Goodbye! Have a great day!",
+                                "Thanks for chatting with us. Have a wonderful day!",
+                                "Farewell! Please come back if you have any more questions.",
+                                "It was a pleasure assisting you today. Have a great day ahead!",
+                                "Thank you for contacting us. If you need anything else, we're just a message away!"
+                            ]
+                        },
+                        {
+                            name: 'help',
+                            patterns: ['help', 'assist', 'support', 'guidance', 'what can you do', 'how do you work', 'what are you', 'who are you', 'your purpose', 'your function', 'your capabilities', 'your features', 'how to use', 'instructions', 'guide me', 'confused', 'lost', 'not sure', 'don\'t understand', 'explain'],
+                            responses: [
+                                "I'm your AI customer service assistant. I can help with product information, order status, returns, shipping, and more. What do you need help with?",
+                                "I can assist with various topics including account management, product details, shipping information, returns, and technical support. How can I help you today?",
+                                "I'm here to answer questions about our products, services, policies, and procedures. Feel free to ask anything specific you'd like to know.",
+                                "You can ask me about products, pricing, shipping, returns, warranties, or contact information. I'm designed to provide quick and helpful responses to your questions.",
+                                "I'm an AI assistant designed to help with customer service inquiries. I can provide information, answer questions, and guide you through various processes. What can I help you with?"
+                            ]
+                        },
+                        {
+                            name: 'complaint',
+                            patterns: ['complaint', 'unhappy', 'dissatisfied', 'disappointed', 'frustrated', 'angry', 'upset', 'not satisfied', 'poor service', 'bad experience', 'terrible', 'horrible', 'awful', 'unacceptable', 'problem', 'issue', 'trouble', 'wrong', 'mistake', 'error', 'fail', 'failure', 'complain', 'speak to manager', 'speak to supervisor', 'escalate'],
+                            responses: [
+                                "I'm sorry to hear you're having an issue. I'd be happy to help resolve this or connect you with our customer service team.",
+                                "I apologize for your negative experience. Could you provide more details about what happened so we can address it properly?",
+                                "We take all feedback seriously and want to make things right. Please share the details of your concern, and I'll help find a solution.",
+                                "I'm sorry you're disappointed. For complex issues, you can email our dedicated resolution team at resolution@example.com or call (555) 123-4567 to speak with a supervisor.",
+                                "Your satisfaction is important to us. Please provide your order number and details about the issue, and I'll ensure it gets addressed by the appropriate team."
+                            ]
+                        }
+                    ];
+
+                    // Find matching intent with context awareness
+                    let matchedIntent = null;
+                    let highestScore = 0;
+
+                    const messageLower = message.toLowerCase();
+
+                    // Extract potential entities (simple implementation)
+                    const extractedEntities = extractEntities(messageLower);
+
+                    // Add entities to context if found
+                    if (extractedEntities.length > 0) {
+                        conversationContext.entities = [...conversationContext.entities, ...extractedEntities];
+                    }
+
+                    // Check for follow-up questions based on context
+                    const contextualIntent = checkContextualIntent(messageLower);
+                    if (contextualIntent) {
+                        matchedIntent = contextualIntent;
+                    } else {
+                        // Standard intent matching if no contextual match
+                        intents.forEach(intent => {
+                            intent.patterns.forEach(pattern => {
+                                if (messageLower.includes(pattern)) {
+                                    // Enhanced scoring: longer patterns get higher scores
+                                    // Context-aware: previous topics get a bonus
+                                    let score = pattern.length;
+
+                                    // Bonus for exact matches
+                                    if (messageLower === pattern) {
+                                        score += 10;
+                                    }
+
+                                    // Bonus if this intent is related to previous topics
+                                    if (conversationContext.topics.includes(intent.name)) {
+                                        score += 5;
+                                    }
+
+                                    // Bonus if this is a follow-up to the last intent
+                                    if (conversationContext.lastIntent &&
+                                        intent.name.includes(conversationContext.lastIntent)) {
+                                        score += 3;
+                                    }
+
+                                    if (score > highestScore) {
+                                        highestScore = score;
+                                        matchedIntent = intent;
+                                    }
+                                }
+                            });
+                        });
+                    }
+
+                    // Generate response based on matched intent with context awareness
+                    if (matchedIntent) {
+                        // Get base responses from the matched intent
+                        let responses = [...matchedIntent.responses];
+
+                        // Personalize response based on context
+                        responses = personalizeResponses(responses, matchedIntent.name);
+
+                        // Select a response, with preference for unused responses
+                        let responseIndex;
+
+                        // Check if we've used all responses for this intent before
+                        const usedResponses = conversationContext.analytics.topicsDiscussed[matchedIntent.name] || [];
+                        const unusedResponses = responses.filter((_, index) => !usedResponses.includes(index));
+
+                        if (unusedResponses.length > 0) {
+                            // Use an unused response
+                            responseIndex = responses.indexOf(unusedResponses[Math.floor(Math.random() * unusedResponses.length)]);
+                        } else {
+                            // All responses have been used, pick randomly
+                            responseIndex = Math.floor(Math.random() * responses.length);
+                        }
+
+                        // Get the selected response
+                        botResponse = responses[responseIndex];
+
+                        // Track used responses
+                        if (!conversationContext.analytics.topicsDiscussed[matchedIntent.name]) {
+                            conversationContext.analytics.topicsDiscussed[matchedIntent.name] = [];
+                        }
+                        conversationContext.analytics.topicsDiscussed[matchedIntent.name].push(responseIndex);
+
+                        // Update conversation context with the matched intent
+                        conversationContext.lastIntent = matchedIntent.name;
+
+                        // Add topic to topics list if not already present
+                        if (!conversationContext.topics.includes(matchedIntent.name)) {
+                            conversationContext.topics.push(matchedIntent.name);
+                        }
+
+                        // If this was a question, remove from unanswered questions
+                        if (message.endsWith('?') && conversationContext.unansweredQuestions.includes(message)) {
+                            const index = conversationContext.unansweredQuestions.indexOf(message);
+                            if (index > -1) {
+                                conversationContext.unansweredQuestions.splice(index, 1);
+                            }
+                        }
+                    } else {
+                        // Fallback response if no intent is matched
+                        const fallbackResponses = [
+                            "I'm not sure I understand. Could you please rephrase that?",
+                            "I don't have information on that topic yet. Is there something else I can help with?",
+                            "I'm still learning and don't have an answer for that. Can I help you with something else?"
+                        ];
+
+                        // If there are previous topics, suggest them
+                        if (conversationContext.topics.length > 0) {
+                            const recentTopic = conversationContext.topics[conversationContext.topics.length - 1];
+                            fallbackResponses.push(`I'm not sure about that. Would you like to continue discussing ${recentTopic.replace('_', ' ')}?`);
+                        }
+
+                        // If there are unanswered questions, suggest them
+                        if (conversationContext.unansweredQuestions.length > 0) {
+                            fallbackResponses.push("I notice you had a previous question I haven't answered yet. Would you like me to address that instead?");
+                        }
+
+                        const fallbackIndex = Math.floor(Math.random() * fallbackResponses.length);
+                        botResponse = fallbackResponses[fallbackIndex];
+                    }
+
+                    addMessage(botResponse, 'bot');
+
+                    // Add suggested actions based on the current context
+                    if (conversationContext.lastIntent) {
+                        setTimeout(() => {
+                            addSuggestedActions(conversationContext.lastIntent);
+                        }, 500);
+                    }
+                }, 1000);
+            }
+        }
+
+        // Add message to chat
+        function addMessage(text, sender, saveToContext = true) {
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('message');
+            messageElement.classList.add(sender + '-message');
+            messageElement.textContent = text;
+
+            // Add timestamp
+            const now = new Date();
+            const timestamp = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            messageElement.setAttribute('data-time', timestamp);
+
+            chatMessages.appendChild(messageElement);
+
+            // Check if user has scrolled up before scrolling to bottom
+            const isScrolledToBottom = chatMessages.scrollHeight - chatMessages.clientHeight <= chatMessages.scrollTop + 50;
+
+            if (isScrolledToBottom) {
+                // User is at the bottom, scroll to show new message
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+                scrollBottomButton.classList.remove('visible');
+            } else {
+                // User has scrolled up, show the scroll button
+                scrollBottomButton.classList.add('visible');
+            }
+
+            // Save to context if needed
+            if (saveToContext) {
+                // Update conversation context
+                conversationContext.messageCount++;
+                conversationContext.lastResponseTime = now;
+
+                // Add message to history
+                conversationContext.messages.push({
+                    text: text,
+                    sender: sender,
+                    timestamp: now.toISOString(),
+                    displayTime: timestamp
+                });
+
+                // Save context to localStorage
+                try {
+                    localStorage.setItem('chatbotContext', JSON.stringify(conversationContext));
+                } catch (error) {
+                    console.error('Error saving conversation context:', error);
+                }
+            }
+        }
+
+        // Handle file upload
+        function handleFileUpload(files) {
+            // Validate files
+            const validFiles = validateFiles(files);
+
+            if (validFiles.length === 0) {
+                return; // No valid files to upload
+            }
+
+            // Create message element
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('message', 'user-message');
+
+            // Create file list
+            const fileList = document.createElement('div');
+            fileList.classList.add('file-list');
+
+            // Track upload progress for all files
+            let totalFiles = validFiles.length;
+            let completedFiles = 0;
+
+            // Add files to the list
+            validFiles.forEach((file, index) => {
+                const fileItem = document.createElement('div');
+                fileItem.classList.add('file-item');
+                fileItem.id = `file-item-${index}`;
+
+                // Create file header (icon, name, size)
+                const fileHeader = document.createElement('div');
+                fileHeader.classList.add('file-header');
+
+                // Create file icon based on type
+                const fileIcon = document.createElement('span');
+                fileIcon.classList.add('file-icon');
+
+                // Determine file type and set appropriate icon
+                if (file.type.startsWith('image/')) {
+                    fileIcon.textContent = '🖼️'; // 🖼️
+                } else if (file.type.includes('pdf')) {
+                    fileIcon.textContent = '📄'; // 📄
+                } else if (file.type.includes('word') || file.name.endsWith('.doc') || file.name.endsWith('.docx')) {
+                    fileIcon.textContent = '📝'; // 📝
+                } else if (file.type.includes('text') || file.name.endsWith('.txt')) {
+                    fileIcon.textContent = '📃'; // 📃
+                } else if (file.type.includes('excel') || file.name.endsWith('.xls') || file.name.endsWith('.xlsx')) {
+                    fileIcon.textContent = '📂'; // 📂
+                } else if (file.type.includes('video')) {
+                    fileIcon.textContent = '🎥'; // 🎥
+                } else if (file.type.includes('audio')) {
+                    fileIcon.textContent = '🎧'; // 🎧
+                } else {
+                    fileIcon.textContent = '📎'; // 📎
+                }
+
+                // Create file info container
+                const fileInfo = document.createElement('div');
+                fileInfo.classList.add('file-info');
+
+                // Create file name and size
+                const fileName = document.createElement('span');
+                fileName.classList.add('file-name');
+                fileName.textContent = file.name;
+                fileName.title = file.name; // Add tooltip for long names
+
+                const fileSize = document.createElement('span');
+                fileSize.classList.add('file-size');
+                fileSize.textContent = formatFileSize(file.size);
+
+                // Add elements to file info
+                fileInfo.appendChild(fileName);
+                fileInfo.appendChild(fileSize);
+
+                // Add icon and info to header
+                fileHeader.appendChild(fileIcon);
+                fileHeader.appendChild(fileInfo);
+
+                // Add header to file item
+                fileItem.appendChild(fileHeader);
+
+                // Add progress bar
+                const progressContainer = document.createElement('div');
+                progressContainer.classList.add('upload-progress');
+
+                const progressBar = document.createElement('div');
+                progressBar.classList.add('upload-progress-bar');
+                progressBar.id = `progress-${index}`;
+
+                progressContainer.appendChild(progressBar);
+                fileItem.appendChild(progressContainer);
+
+                // Add status text
+                const statusText = document.createElement('div');
+                statusText.classList.add('upload-status');
+                statusText.id = `status-${index}`;
+                statusText.textContent = 'Preparing...';
+                fileItem.appendChild(statusText);
+
+                // Add file item to list
+                fileList.appendChild(fileItem);
+
+                // Simulate file upload with progress
+                simulateFileUpload(file, index, () => {
+                    // File upload complete callback
+                    completedFiles++;
+
+                    // Update status text
+                    statusText.textContent = 'Uploaded';
+
+                    // If it's an image, add preview after upload completes
+                    if (file.type.startsWith('image/')) {
+                        // For images, create a preview
+                        if (file.size < 10 * 1024 * 1024) { // Limit to 10MB
+                            try {
+                                const reader = new FileReader();
+                                reader.onload = function(e) {
+                                    // Create image preview
+                                    const imgPreview = document.createElement('img');
+                                    imgPreview.src = e.target.result;
+                                    imgPreview.classList.add('file-preview');
+
+                                    // Add preview to file item
+                                    fileItem.appendChild(imgPreview);
+
+                                    // Add file actions
+                                    addFileActions(fileItem, file);
+
+                                    // Scroll to bottom to show preview
+                                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                                };
+                                reader.readAsDataURL(file);
+                            } catch (error) {
+                                console.error('Error creating image preview:', error);
+                                addFileActions(fileItem, file);
+                            }
+                        } else {
+                            statusText.textContent = 'Uploaded (too large for preview)';
+                            addFileActions(fileItem, file);
+                        }
+                    } else {
+                        // Add file actions for non-image files
+                        addFileActions(fileItem, file);
+                    }
+
+                    // Check if all files are uploaded
+                    if (completedFiles === totalFiles) {
+                        allFilesUploaded(validFiles);
+                    }
+                });
+            });
+
+            // Add file list to message
+            messageElement.appendChild(fileList);
+
+            // Add message to chat
+            chatMessages.appendChild(messageElement);
+
+            // Scroll to bottom
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            // Update conversation context immediately
+            conversationContext.messageCount++;
+            if (!conversationContext.topics.includes('file_upload')) {
+                conversationContext.topics.push('file_upload');
+            }
+
+            // Add message to history
+            conversationContext.messages.push({
+                text: `Uploading ${validFiles.length} file(s)`,
+                sender: 'user',
+                timestamp: new Date().toISOString(),
+                files: Array.from(validFiles).map(f => ({ name: f.name, type: f.type, size: f.size }))
+            });
+
+            // Save context to localStorage
+            try {
+                localStorage.setItem('chatbotContext', JSON.stringify(conversationContext));
+            } catch (error) {
+                console.error('Error saving conversation context:', error);
+            }
+        }
+
+        // Validate files before upload
+        function validateFiles(files) {
+            const maxFileSize = 50 * 1024 * 1024; // 50MB max file size
+            const validFiles = [];
+
+            Array.from(files).forEach(file => {
+                // Check file size
+                if (file.size > maxFileSize) {
+                    addMessage(`The file '${file.name}' exceeds the maximum size limit of 50MB.`, 'bot');
+                    return;
+                }
+
+                // Check file type (optional - can be customized based on requirements)
+                const allowedTypes = [
+                    'image/', 'application/pdf', 'text/', 'application/msword',
+                    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                    'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                    'video/', 'audio/'
+                ];
+
+                const isAllowedType = allowedTypes.some(type => file.type.startsWith(type));
+
+                if (!isAllowedType && file.type !== '') {
+                    addMessage(`The file type of '${file.name}' is not supported.`, 'bot');
+                    return;
+                }
+
+                // File is valid
+                validFiles.push(file);
+            });
+
+            return validFiles;
+        }
+
+        // Simulate file upload with progress
+        function simulateFileUpload(file, index, onComplete) {
+            const progressBar = document.getElementById(`progress-${index}`);
+            const statusText = document.getElementById(`status-${index}`);
+
+            // Calculate upload time based on file size (simulate slower uploads for larger files)
+            const uploadTime = Math.min(3000, 1000 + (file.size / (1024 * 1024) * 100));
+            const steps = 20;
+            const stepTime = uploadTime / steps;
+
+            let progress = 0;
+
+            // Update progress bar
+            const updateProgress = () => {
+                progress += 100 / steps;
+                if (progress > 100) progress = 100;
+
+                progressBar.style.width = `${progress}%`;
+                statusText.textContent = `Uploading: ${Math.round(progress)}%`;
+
+                if (progress < 100) {
+                    setTimeout(updateProgress, stepTime);
+                } else {
+                    // Upload complete
+                    setTimeout(() => {
+                        statusText.textContent = 'Processing...';
+
+                        // Simulate processing time
+                        setTimeout(() => {
+                            onComplete();
+                        }, 500);
+                    }, 200);
+                }
+            };
+
+            // Start progress updates
+            setTimeout(updateProgress, 200);
+        }
+
+        // Add file actions buttons
+        function addFileActions(fileItem, file) {
+            const actionsContainer = document.createElement('div');
+            actionsContainer.classList.add('file-actions');
+
+            // View button for images and PDFs
+            if (file.type.startsWith('image/') || file.type.includes('pdf')) {
+                const viewButton = document.createElement('button');
+                viewButton.classList.add('file-action-button');
+                viewButton.textContent = 'View';
+                viewButton.addEventListener('click', () => {
+                    // In a real app, this would open the file in a viewer
+                    alert(`Viewing ${file.name} (In a real app, this would open a viewer)`);
+                });
+                actionsContainer.appendChild(viewButton);
+            }
+
+            // Download button (simulated)
+            const downloadButton = document.createElement('button');
+            downloadButton.classList.add('file-action-button');
+            downloadButton.textContent = 'Download';
+            downloadButton.addEventListener('click', () => {
+                // In a real app, this would trigger a download
+                alert(`Downloading ${file.name} (In a real app, this would download the file)`);
+            });
+            actionsContainer.appendChild(downloadButton);
+
+            // Add actions to file item
+            fileItem.appendChild(actionsContainer);
+        }
+
+        // Handle when all files are uploaded
+        function allFilesUploaded(files) {
+            // Show typing indicator
+            showTypingIndicator();
+
+            // Simulate bot response
+            setTimeout(() => {
+                hideTypingIndicator();
+
+                let response;
+                if (files.length === 1) {
+                    response = `Thanks for sharing the file '${files[0].name}'. I'll take a look at it.`;
+
+                    // Add file-specific response based on type
+                    if (files[0].type.startsWith('image/')) {
+                        response += " I can see it's an image file. Would you like me to analyze it?";
+                    } else if (files[0].type.includes('pdf')) {
+                        response += " I can see it's a PDF document. Would you like me to extract information from it?";
+                    } else if (files[0].type.includes('text')) {
+                        response += " I can see it's a text file. Would you like me to summarize its contents?";
+                    }
+                } else {
+                    response = `Thanks for sharing these ${files.length} files. I'll take a look at them.`;
+
+                    // Count file types
+                    const imageCount = files.filter(f => f.type.startsWith('image/')).length;
+                    const documentCount = files.filter(f => f.type.includes('pdf') || f.type.includes('word') || f.type.includes('text')).length;
+
+                    if (imageCount > 0 && documentCount > 0) {
+                        response += ` I can see you've shared ${imageCount} image(s) and ${documentCount} document(s). How would you like me to help with these files?`;
+                    } else if (imageCount > 0) {
+                        response += ` I can see all of these are images. Would you like me to analyze them?`;
+                    } else if (documentCount > 0) {
+                        response += ` I can see these are documents. Would you like me to extract information from them?`;
+                    }
+                }
+
+                addMessage(response, 'bot');
+
+                // Update context with file upload intent and determine the appropriate suggested actions
+                let suggestedActionType = 'file_upload';
+
+                if (files.length === 1) {
+                    // Single file - use specific file type suggestions
+                    if (files[0].type.startsWith('image/')) {
+                        suggestedActionType = 'file_upload_image';
+                        conversationContext.lastIntent = 'file_upload_image';
+                    } else if (files[0].type.includes('pdf') || files[0].type.includes('word') || files[0].type.includes('text')) {
+                        suggestedActionType = 'file_upload_document';
+                        conversationContext.lastIntent = 'file_upload_document';
+                    } else {
+                        conversationContext.lastIntent = 'file_upload';
+                    }
+                } else {
+                    // Multiple files
+                    suggestedActionType = 'file_upload_multiple';
+                    conversationContext.lastIntent = 'file_upload_multiple';
+                }
+
+                // Add suggested actions for files
+                setTimeout(() => {
+                    addSuggestedActions(suggestedActionType);
+                }, 500);
+
+            }, 1500);
+        }
+
+        // Extract entities from message (simple implementation)
+        function extractEntities(message) {
+            const entities = [];
+
+            // Simple entity extraction for demonstration
+            // In a real app, this would use NLP/NER techniques
+
+            // Extract dates
+            const datePatterns = [
+                /today|tomorrow|yesterday/gi,
+                /next (monday|tuesday|wednesday|thursday|friday|saturday|sunday)/gi,
+                /\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4}/g  // Simple date format like MM/DD/YYYY
+            ];
+
+            datePatterns.forEach(pattern => {
+                const matches = message.match(pattern);
+                if (matches) {
+                    matches.forEach(match => {
+                        entities.push({
+                            type: 'date',
+                            value: match,
+                            raw: match
+                        });
+                    });
+                }
+            });
+
+            // Extract numbers
+            const numberMatches = message.match(/\b\d+\b/g);
+            if (numberMatches) {
+                numberMatches.forEach(match => {
+                    entities.push({
+                        type: 'number',
+                        value: parseInt(match, 10),
+                        raw: match
+                    });
+                });
+            }
+
+            // Extract email addresses (simple pattern)
+            const emailMatches = message.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g);
+            if (emailMatches) {
+                emailMatches.forEach(match => {
+                    entities.push({
+                        type: 'email',
+                        value: match,
+                        raw: match
+                    });
+                });
+            }
+
+            // Extract product categories (simplified example)
+            const productCategories = ['electronics', 'clothing', 'furniture', 'books', 'toys'];
+            productCategories.forEach(category => {
+                if (message.toLowerCase().includes(category)) {
+                    entities.push({
+                        type: 'product_category',
+                        value: category,
+                        raw: category
+                    });
+                }
+            });
+
+            return entities;
+        }
+
+        // Personalize responses based on context
+        function personalizeResponses(responses, intentName) {
+            // Create a copy of the responses to modify
+            const personalizedResponses = [...responses];
+
+            // Get time of day for time-specific greetings
+            const hour = new Date().getHours();
+            let timeOfDay = '';
+
+            if (hour < 12) {
+                timeOfDay = 'morning';
+            } else if (hour < 18) {
+                timeOfDay = 'afternoon';
+            } else {
+                timeOfDay = 'evening';
+            }
+
+            // Personalize based on intent
+            if (intentName === 'greeting') {
+                // Add time-specific greeting if not already present
+                const timeGreeting = `Good ${timeOfDay}! How can I assist you today?`;
+                if (!personalizedResponses.includes(timeGreeting)) {
+                    personalizedResponses.push(timeGreeting);
+                }
+
+                // If returning user, add welcome back message
+                if (conversationContext.messageCount > 10) {
+                    personalizedResponses.push("Welcome back! How can I help you today?");
+                }
+            }
+
+            // Add context from previous topics
+            if (intentName === 'products' && conversationContext.entities.length > 0) {
+                // Check for product categories in entities
+                const productCategories = conversationContext.entities
+                    .filter(entity => entity.type === 'product_category')
+                    .map(entity => entity.value);
+
+                if (productCategories.length > 0) {
+                    // Get the most recent category
+                    const recentCategory = productCategories[productCategories.length - 1];
+                    personalizedResponses.push(`We have a great selection of ${recentCategory}. Would you like to see our bestsellers?`);
+                }
+            }
+
+            // Reference previous questions if relevant
+            if (intentName === 'business_hours' && conversationContext.previousQuestions.length > 0) {
+                // Check if user asked about specific days before
+                const dayQuestions = conversationContext.previousQuestions.filter(q =>
+                    q.toLowerCase().includes('weekend') ||
+                    q.toLowerCase().includes('saturday') ||
+                    q.toLowerCase().includes('sunday')
+                );
+
+                if (dayQuestions.length > 0) {
+                    personalizedResponses.push("As I mentioned, we're open Monday to Friday, 9 AM to 5 PM. We're closed on weekends and holidays.");
+                }
+            }
+
+            // Add follow-up suggestions based on conversation flow
+            if (conversationContext.topics.length > 1) {
+                const previousTopic = conversationContext.topics[conversationContext.topics.length - 2];
+
+                if (previousTopic === 'shipping' && intentName === 'returns') {
+                    personalizedResponses.push("Since you asked about shipping earlier, I should mention that return shipping is free for all orders.");
+                } else if (previousTopic === 'products' && intentName === 'pricing') {
+                    personalizedResponses.push("Regarding the products we discussed earlier, we offer competitive pricing and regular discounts.");
+                }
+            }
+
+            return personalizedResponses;
+        }
+
+        // Check for contextual intent based on conversation history
+        function checkContextualIntent(message) {
+            // If no previous context, return null
+            if (!conversationContext.lastIntent) {
+                return null;
+            }
+
+            // Check for follow-up questions
+            const followUpPhrases = ['what about', 'how about', 'and', 'what if', 'tell me more', 'more info'];
+            const isFollowUp = followUpPhrases.some(phrase => message.includes(phrase));
+
+            if (isFollowUp) {
+                // Find the intent that matches the previous intent
+                const previousIntent = conversationContext.lastIntent;
+
+                // Look for intents related to the previous topic
+                for (const intent of intents) {
+                    if (intent.name === previousIntent || intent.name.includes(previousIntent)) {
+                        return intent;
+                    }
+                }
+            }
+
+            // Check for references to previous questions
+            if (conversationContext.unansweredQuestions.length > 0 &&
+                (message.includes('previous question') || message.includes('earlier question'))) {
+                // Get the most recent unanswered question
+                const lastQuestion = conversationContext.unansweredQuestions[conversationContext.unansweredQuestions.length - 1];
+
+                // Remove it from unanswered questions
+                conversationContext.unansweredQuestions.pop();
+
+                // Process this question again (simplified - in a real app would be more sophisticated)
+                for (const intent of intents) {
+                    for (const pattern of intent.patterns) {
+                        if (lastQuestion.toLowerCase().includes(pattern)) {
+                            return intent;
+                        }
+                    }
+                }
+            }
+
+            // Check for references to entities mentioned earlier
+            if (conversationContext.entities.length > 0) {
+                const pronouns = ['it', 'this', 'that', 'these', 'those', 'they', 'them'];
+                const containsPronoun = pronouns.some(pronoun => message.includes(pronoun));
+
+                if (containsPronoun) {
+                    // Get the most recent entity
+                    const lastEntity = conversationContext.entities[conversationContext.entities.length - 1];
+
+                    // Find intents related to this entity type
+                    if (lastEntity.type === 'product_category') {
+                        for (const intent of intents) {
+                            if (intent.name === 'products') {
+                                return intent;
+                            }
+                        }
+                    } else if (lastEntity.type === 'date') {
+                        for (const intent of intents) {
+                            if (intent.name === 'business_hours') {
+                                return intent;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        // Format file size
+        function formatFileSize(bytes) {
+            if (bytes < 1024) {
+                return bytes + ' B';
+            } else if (bytes < 1024 * 1024) {
+                return (bytes / 1024).toFixed(1) + ' KB';
+            } else if (bytes < 1024 * 1024 * 1024) {
+                return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+            } else {
+                return (bytes / (1024 * 1024 * 1024)).toFixed(1) + ' GB';
+            }
+        }
+
+        // Show typing indicator
+        function showTypingIndicator() {
+            // Remove any existing typing indicator
+            hideTypingIndicator();
+
+            // Create typing indicator
+            const typingIndicator = document.createElement('div');
+            typingIndicator.classList.add('typing-indicator');
+            typingIndicator.id = 'typingIndicator';
+
+            // Add dots
+            for (let i = 0; i < 3; i++) {
+                const dot = document.createElement('span');
+                typingIndicator.appendChild(dot);
+            }
+
+            // Add to chat
+            chatMessages.appendChild(typingIndicator);
+
+            // Check if user has scrolled up before scrolling to bottom
+            const isScrolledToBottom = chatMessages.scrollHeight - chatMessages.clientHeight <= chatMessages.scrollTop + 50;
+
+            if (isScrolledToBottom) {
+                // User is at the bottom, scroll to show typing indicator
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+                scrollBottomButton.classList.remove('visible');
+            } else {
+                // User has scrolled up, show the scroll button
+                scrollBottomButton.classList.add('visible');
+            }
+        }
+
+        // Hide typing indicator
+        function hideTypingIndicator() {
+            const typingIndicator = document.getElementById('typingIndicator');
+            if (typingIndicator) {
+                typingIndicator.remove();
+            }
+        }
+
+        // Add suggested actions based on intent
+        function addSuggestedActions(intent) {
+            // Remove any existing suggested actions
+            const existingSuggestions = document.querySelector('.suggested-actions');
+            if (existingSuggestions) {
+                existingSuggestions.remove();
+            }
+
+            // Define suggested actions for each intent
+            const suggestedActionsByIntent = {
+                'greeting': [
+                    'What are your business hours?',
+                    'Tell me about your products',
+                    'How do I contact support?'
+                ],
+                'business_hours': [
+                    'Are you open on weekends?',
+                    'What about holiday hours?',
+                    'Do you have different hours for support?'
+                ],
+                'shipping': [
+                    'How do I track my order?',
+                    'Do you ship internationally?',
+                    'How much does shipping cost?'
+                ],
+                'returns': [
+                    'How do I start a return?',
+                    'What is your exchange policy?',
+                    'Can I return an item to your store?'
+                ],
+                'products': [
+                    'What are your bestsellers?',
+                    'Do you offer warranties?',
+                    'Can I get a product catalog?'
+                ],
+                'pricing': [
+                    'Do you offer any discounts?',
+                    'What payment methods do you accept?',
+                    'Is there a price match policy?'
+                ],
+                'contact': [
+                    'What are your business hours?',
+                    'Can I speak to a manager?',
+                    'Do you have a physical store?'
+                ],
+                'thanks': [
+                    'I have another question',
+                    'How do I contact support?',
+                    'Goodbye'
+                ],
+                'goodbye': [
+                    'Wait, I have another question',
+                    'How do I contact support?',
+                    'Start a new conversation'
+                ],
+                'file_upload': [
+                    'Can you analyze this file?',
+                    'Extract information from this file',
+                    'Summarize the content',
+                    'What can you tell me about this file?'
+                ],
+                'file_upload_image': [
+                    'What is in this image?',
+                    'Can you describe this image?',
+                    'Extract text from this image',
+                    'Are there any people in this image?'
+                ],
+                'file_upload_document': [
+                    'Summarize this document',
+                    'Extract key points',
+                    'What is this document about?',
+                    'Find important information'
+                ],
+                'file_upload_multiple': [
+                    'Process all files',
+                    'Compare these files',
+                    'Which file is most relevant?',
+                    'Organize these files'
+                ]
+            };
+
+            // Get suggested actions for the current intent
+            const suggestedActions = suggestedActionsByIntent[intent] || [
+                'Tell me about your products',
+                'What are your business hours?',
+                'How do I contact support?'
+            ];
+
+            // Create suggested actions container
+            const suggestedActionsContainer = document.createElement('div');
+            suggestedActionsContainer.classList.add('suggested-actions');
+
+            // Add suggested action buttons
+            suggestedActions.forEach(action => {
+                const actionButton = document.createElement('button');
+                actionButton.classList.add('suggested-action');
+                actionButton.textContent = action;
+
+                // Add click event to send the suggested action as a message
+                actionButton.addEventListener('click', () => {
+                    messageInput.value = action;
+                    sendMessage();
+                });
+
+                suggestedActionsContainer.appendChild(actionButton);
+            });
+
+            // Add suggested actions to chat
+            chatMessages.appendChild(suggestedActionsContainer);
+
+            // Scroll to bottom
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+    </script>
+
+    <style>
+        /* Suggested actions */
+        .suggested-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--spacing-sm);
+            margin: var(--spacing-md) 0;
+            justify-content: flex-start;
+            width: 100%;
+            clear: both;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        .suggested-action {
+            background-color: var(--message-bot-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 8px 16px;
+            font-size: var(--font-size-sm);
+            color: var(--primary-color);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            max-width: 200px;
+            text-align: center;
+            box-shadow: var(--shadow-light);
+        }
+
+        .suggested-action:hover {
+            background-color: var(--primary-light);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .suggested-action:active {
+            transform: translateY(0);
+        }
+
+        /* Typing indicator styles */
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            margin-bottom: var(--spacing-md);
+            max-width: 60px;
+            float: left;
+            clear: both;
+            background-color: var(--message-bot-bg);
+            color: var(--message-bot-text);
+            border-radius: var(--border-radius-lg) var(--border-radius-lg) var(--border-radius-lg) 0;
+            padding: 12px 16px;
+            box-shadow: var(--shadow-light);
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .typing-indicator span {
+            height: 8px;
+            width: 8px;
+            background-color: var(--text-light);
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 4px;
+            animation: typing 1.4s infinite both;
+            opacity: 0.8;
+        }
+
+        .typing-indicator span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-indicator span:nth-child(3) {
+            animation-delay: 0.4s;
+            margin-right: 0;
+        }
+
+        @keyframes typing {
+            0% { transform: translateY(0); opacity: 0.8; }
+            50% { transform: translateY(-5px); opacity: 1; }
+            100% { transform: translateY(0); opacity: 0.8; }
+        }
+
+        /* File upload styles */
+        .file-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 8px;
+            width: 100%;
+        }
+
+        .file-item {
+            display: flex;
+            flex-direction: column;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            padding: 10px;
+            color: #1d1d1f;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+            overflow: hidden;
+        }
+
+        .file-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+        }
+
+        .file-header {
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
+
+        .file-icon {
+            font-size: 24px;
+            margin-right: 10px;
+            width: 24px;
+            text-align: center;
+        }
+
+        .file-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .file-name {
+            font-size: 14px;
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: #0071e3;
+        }
+
+        .file-size {
+            font-size: 12px;
+            color: #8e8e93;
+            margin-top: 2px;
+        }
+
+        .file-preview {
+            max-width: 100%;
+            max-height: 180px;
+            border-radius: 8px;
+            margin-top: 10px;
+            object-fit: contain;
+            align-self: center;
+            border: 1px solid #e5e5ea;
+        }
+
+        .file-actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 8px;
+        }
+
+        .file-action-button {
+            background: none;
+            border: none;
+            color: #0071e3;
+            font-size: 12px;
+            padding: 4px 8px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        .file-action-button:hover {
+            background-color: rgba(0, 113, 227, 0.1);
+        }
+
+        .upload-progress {
+            width: 100%;
+            height: 4px;
+            background-color: #e5e5ea;
+            border-radius: 2px;
+            margin-top: 8px;
+            overflow: hidden;
+        }
+
+        .upload-progress-bar {
+            height: 100%;
+            background-color: #0071e3;
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        .upload-status {
+            font-size: 12px;
+            color: #8e8e93;
+            margin-top: 4px;
+            text-align: right;
+        }
+
+        /* Drag and drop styles */
+        .highlight-drop {
+            border: 2px dashed #0071e3;
+            background-color: rgba(0, 113, 227, 0.05);
+            position: relative;
+        }
+
+        .highlight-drop::after {
+            content: 'Drop files here';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 20px;
+            color: #0071e3;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+        }
+
+        /* Scroll to bottom button */
+        .scroll-bottom-button {
+            position: absolute;
+            bottom: 80px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            box-shadow: var(--shadow-light);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            z-index: 5;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity var(--transition-normal), transform var(--transition-normal);
+        }
+
+        .scroll-bottom-button.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .scroll-bottom-button:hover {
+            background-color: #005bbf;
+        }
+    </style>
+</body>
+</html>

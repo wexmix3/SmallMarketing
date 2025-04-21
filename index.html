@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Customer Service Assistant</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="public/images/favicon.svg" type="image/svg+xml">
+</head>
+<body>
+  <header>
+    <div class="container">
+      <div class="logo">
+        <img src="public/images/logo.svg" alt="AI Customer Service Assistant Logo">
+        <h1>AI Customer Service Assistant</h1>
+      </div>
+      <nav>
+        <ul>
+          <li><a href="#features">Features</a></li>
+          <li><a href="#pricing">Pricing</a></li>
+          <li><a href="#demo">Demo</a></li>
+          <li><a href="#setup" class="btn-primary">Get Started</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container">
+        <div class="hero-content">
+          <h2>Elevate Your Customer Service with AI</h2>
+          <p>Provide instant, 24/7 support to your customers with our AI-powered customer service assistant. Reduce response times, increase customer satisfaction, and save on support costs.</p>
+          <div class="hero-buttons">
+            <a href="#setup" class="btn-primary">Get Started</a>
+            <a href="#demo" class="btn-secondary">See Demo</a>
+          </div>
+        </div>
+        <div class="hero-image">
+          <img src="public/images/hero-image.svg" alt="AI Customer Service Assistant Demo">
+        </div>
+      </div>
+    </section>
+
+    <section id="features" class="features">
+      <div class="container">
+        <h2>Powerful Features for Small Businesses</h2>
+        <div class="feature-grid">
+          <div class="feature-card">
+            <div class="feature-icon">📱</div>
+            <h3>Multi-Platform Support</h3>
+            <p>Seamlessly integrate with your website, social media, and messaging platforms to provide consistent support across all channels.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🧠</div>
+            <h3>Smart Knowledge Base</h3>
+            <p>Automatically build a knowledge base from your existing content or create custom responses for frequently asked questions.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">📊</div>
+            <h3>Detailed Analytics</h3>
+            <p>Gain insights into customer questions, satisfaction rates, and support trends to continuously improve your service.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🎨</div>
+            <h3>Customizable Design</h3>
+            <p>Match your brand's colors, add your logo, and customize the chat interface to create a seamless experience.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">📅</div>
+            <h3>Appointment Scheduling</h3>
+            <p>Allow customers to book appointments directly through the chat interface, integrated with your calendar.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🔄</div>
+            <h3>Human Handoff</h3>
+            <p>Seamlessly transfer complex conversations to your human support team when needed.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="pricing" class="pricing">
+      <div class="container">
+        <h2>Simple, Transparent Pricing</h2>
+        <p class="section-description">Choose the plan that fits your business needs. All plans include our core AI assistant features.</p>
+
+        <div class="pricing-grid">
+          <div class="pricing-card">
+            <div class="pricing-header">
+              <h3>Basic</h3>
+              <div class="price">
+                <span class="amount">$29</span>
+                <span class="period">/month</span>
+              </div>
+            </div>
+            <div class="pricing-features">
+              <ul>
+                <li>500 AI interactions per month</li>
+                <li>Basic customization options</li>
+                <li>Website integration</li>
+                <li>Email support</li>
+                <li>Basic analytics</li>
+              </ul>
+            </div>
+            <div class="pricing-footer">
+              <a href="#setup" class="btn-primary">Get Started</a>
+            </div>
+          </div>
+
+          <div class="pricing-card featured">
+            <div class="pricing-badge">Most Popular</div>
+            <div class="pricing-header">
+              <h3>Standard</h3>
+              <div class="price">
+                <span class="amount">$59</span>
+                <span class="period">/month</span>
+              </div>
+            </div>
+            <div class="pricing-features">
+              <ul>
+                <li>2,000 AI interactions per month</li>
+                <li>Advanced customization options</li>
+                <li>Website & social media integration</li>
+                <li>Priority email support</li>
+                <li>Detailed analytics</li>
+                <li>Appointment scheduling</li>
+                <li>Product catalog integration</li>
+              </ul>
+            </div>
+            <div class="pricing-footer">
+              <a href="#setup" class="btn-primary">Get Started</a>
+            </div>
+          </div>
+
+          <div class="pricing-card">
+            <div class="pricing-header">
+              <h3>Premium</h3>
+              <div class="price">
+                <span class="amount">$99</span>
+                <span class="period">/month</span>
+              </div>
+            </div>
+            <div class="pricing-features">
+              <ul>
+                <li>5,000 AI interactions per month</li>
+                <li>Full customization options</li>
+                <li>Multi-platform integration</li>
+                <li>Phone & email support</li>
+                <li>Advanced analytics & reporting</li>
+                <li>Appointment scheduling</li>
+                <li>Product catalog integration</li>
+                <li>Custom AI training</li>
+              </ul>
+            </div>
+            <div class="pricing-footer">
+              <a href="#setup" class="btn-primary">Get Started</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="demo" class="demo">
+      <div class="container">
+        <h2>See It In Action</h2>
+        <p class="section-description">Try our AI Customer Service Assistant right now to experience the power of AI-driven support.</p>
+
+        <div class="demo-container">
+          <div id="chatbot-demo">
+            <!-- Simple inline chatbot -->
+            <div class="chat-widget" style="--primary-color: #0071e3;">
+              <div class="chat-header">
+                <div class="chat-title">AI Customer Service Assistant</div>
+                <div class="chat-controls">
+                  <button type="button" class="minimize-button">_</button>
+                </div>
+              </div>
+
+              <div class="chat-messages" id="chat-messages">
+                <div class="message assistant">
+                  <div class="message-content">
+                    Hello! I'm your AI Customer Service Assistant. How can I help you today?
+                  </div>
+                  <div class="message-time">Just now • AI</div>
+                </div>
+
+                <div class="suggested-actions" id="suggested-actions">
+                  <button class="action-button" onclick="sendPredefinedMessage('What services do you offer?')">What services do you offer?</button>
+                  <button class="action-button" onclick="sendPredefinedMessage('How does this work?')">How does this work?</button>
+                  <button class="action-button" onclick="sendPredefinedMessage('Pricing information')">Pricing information</button>
+                </div>
+              </div>
+
+              <div class="chat-input">
+                <input type="text" id="chat-input" placeholder="Type your message...">
+                <button onclick="sendUserMessage()">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="demo-info">
+            <h3>How It Works</h3>
+            <ol>
+              <li>The AI assistant greets your customers with a personalized welcome message.</li>
+              <li>Customers can ask questions about your business, products, or services.</li>
+              <li>The AI provides instant, accurate responses based on your knowledge base.</li>
+              <li>For complex inquiries, the AI can collect information and schedule a follow-up with your team.</li>
+              <li>All interactions are tracked and analyzed to help you improve your customer service.</li>
+            </ol>
+            <p>This demo shows just a fraction of what our AI assistant can do. Get started today to see the full capabilities!</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="setup" class="setup">
+      <div class="container">
+        <h2>Get Started in Minutes</h2>
+        <p class="section-description">Setting up your AI Customer Service Assistant is quick and easy. Follow these simple steps to get started.</p>
+
+        <div class="setup-steps">
+          <div class="setup-step">
+            <div class="step-number">1</div>
+            <h3>Create Your Account</h3>
+            <p>Sign up for an account and choose the plan that fits your business needs.</p>
+          </div>
+          <div class="setup-step">
+            <div class="step-number">2</div>
+            <h3>Configure Your Assistant</h3>
+            <p>Customize your assistant's appearance, behavior, and knowledge base to match your brand.</p>
+          </div>
+          <div class="setup-step">
+            <div class="step-number">3</div>
+            <h3>Integrate with Your Website</h3>
+            <p>Add a simple code snippet to your website or use one of our platform-specific plugins.</p>
+          </div>
+          <div class="setup-step">
+            <div class="step-number">4</div>
+            <h3>Go Live</h3>
+            <p>Launch your AI assistant and start providing 24/7 support to your customers.</p>
+          </div>
+        </div>
+
+        <div class="setup-cta">
+          <a href="#setup" class="btn-primary">Create Your Account</a>
+          <p>No credit card required to start your 14-day free trial.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="testimonials">
+      <div class="container">
+        <h2>What Our Customers Say</h2>
+
+        <div class="testimonial-slider">
+          <div class="testimonial">
+            <div class="testimonial-content">
+              <p>"The AI Customer Service Assistant has been a game-changer for our small retail store. It handles over 70% of our customer inquiries automatically, freeing up our team to focus on more complex issues."</p>
+            </div>
+            <div class="testimonial-author">
+              <img src="public/images/testimonial-1.svg" alt="Sarah Johnson">
+              <div class="author-info">
+                <h4>Sarah Johnson</h4>
+                <p>Owner, Bright Boutique</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="testimonial">
+            <div class="testimonial-content">
+              <p>"We implemented the AI assistant on our restaurant website, and our customers love being able to get instant answers about our menu, hours, and reservation policies. It's like having an extra team member who never sleeps!"</p>
+            </div>
+            <div class="testimonial-author">
+              <img src="public/images/testimonial-2.svg" alt="Michael Chen">
+              <div class="author-info">
+                <h4>Michael Chen</h4>
+                <p>Manager, Fusion Kitchen</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="testimonial">
+            <div class="testimonial-content">
+              <p>"As a small service business, we couldn't afford a full-time customer service team. The AI Customer Service Assistant provides professional support at a fraction of the cost, and our clients are impressed with the quick responses."</p>
+            </div>
+            <div class="testimonial-author">
+              <img src="public/images/testimonial-3.svg" alt="Lisa Rodriguez">
+              <div class="author-info">
+                <h4>Lisa Rodriguez</h4>
+                <p>Founder, Clean & Clear Services</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-column">
+          <div class="footer-logo">
+            <img src="public/images/logo.svg" alt="AI Customer Service Assistant Logo">
+            <h3>AI Customer Service Assistant</h3>
+          </div>
+          <p>Empowering small businesses with AI-powered customer service solutions.</p>
+        </div>
+
+        <div class="footer-column">
+          <h4>Product</h4>
+          <ul>
+            <li><a href="#features">Features</a></li>
+            <li><a href="#pricing">Pricing</a></li>
+            <li><a href="#demo">Demo</a></li>
+            <li><a href="#features">Integrations</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-column">
+          <h4>Resources</h4>
+          <ul>
+            <li><a href="#">Blog</a></li>
+            <li><a href="#">Documentation</a></li>
+            <li><a href="#">Tutorials</a></li>
+            <li><a href="#">Support</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-column">
+          <h4>Company</h4>
+          <ul>
+            <li><a href="#">About Us</a></li>
+            <li><a href="#">Contact</a></li>
+            <li><a href="#">Careers</a></li>
+            <li><a href="#">Privacy Policy</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>&copy; 2023 AI Customer Service Assistant. All rights reserved.</p>
+        <div class="social-links">
+          <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+          <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+          <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+          <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Font Awesome for social media icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  <!-- Chatbot API -->
+  <script src="api/chatbot.js"></script>
+
+  <script>
+    // Modal functionality
+    document.addEventListener('DOMContentLoaded', function() {
+      // Get all elements with href="#setup"
+      const setupLinks = document.querySelectorAll('a[href="#setup"]');
+      const signupModal = document.getElementById('signup-modal');
+      const closeModal = document.querySelector('.close-modal');
+      const signupForm = document.getElementById('signup-form');
+
+      // Function to show modal
+      function showModal() {
+        signupModal.style.display = 'block';
+        // Use setTimeout to ensure the display change takes effect before adding the class
+        setTimeout(() => {
+          signupModal.classList.add('show');
+        }, 10);
+      }
+
+      // Function to hide modal
+      function hideModal() {
+        signupModal.classList.remove('show');
+        // Wait for transition to complete before hiding
+        setTimeout(() => {
+          signupModal.style.display = 'none';
+        }, 300);
+      }
+
+      // Add click event to all setup links
+      setupLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+          e.preventDefault();
+          showModal();
+        });
+      });
+
+      // Close modal when clicking the X
+      if (closeModal) {
+        closeModal.addEventListener('click', hideModal);
+      }
+
+      // Close modal when clicking outside the content
+      window.addEventListener('click', function(e) {
+        if (e.target === signupModal) {
+          hideModal();
+        }
+      });
+
+      // Handle form submission
+      if (signupForm) {
+        signupForm.addEventListener('submit', function(e) {
+          e.preventDefault();
+
+          // Get form data
+          const formData = {
+            businessName: document.getElementById('business-name').value,
+            fullName: document.getElementById('full-name').value,
+            email: document.getElementById('email').value,
+            password: document.getElementById('password').value,
+            plan: document.getElementById('plan').value
+          };
+
+          // For demo purposes, just log the data and show success message
+          console.log('Account creation data:', formData);
+
+          // Replace form with success message
+          signupForm.innerHTML = `
+            <div class="success-message">
+              <div class="success-icon">✓</div>
+              <h3>Account Created Successfully!</h3>
+              <p>Thank you for signing up, ${formData.fullName}! We've sent a confirmation email to ${formData.email}.</p>
+              <p>Your ${formData.plan.charAt(0).toUpperCase() + formData.plan.slice(1)} plan is now active.</p>
+              <button type="button" class="btn-primary" onclick="window.location.href='dashboard.html'">Go to Dashboard</button>
+            </div>
+          `;
+
+          // In a real implementation, you would send this data to your backend
+          // and handle authentication, etc.
+        });
+      }
+    });
+
+    // Simple chatbot functions with error handling
+    function sendUserMessage() {
+      try {
+        const inputField = document.getElementById('chat-input');
+        if (!inputField) {
+          console.error('Chat input field not found');
+          return;
+        }
+
+        const text = inputField.value.trim();
+
+        if (text) {
+          addMessage(text, 'user');
+          inputField.value = '';
+          processUserMessage(text);
+        }
+      } catch (error) {
+        console.error('Error sending user message:', error);
+        showErrorMessage();
+      }
+    }
+
+    function sendPredefinedMessage(text) {
+      try {
+        if (!text) {
+          console.error('No text provided for predefined message');
+          return;
+        }
+
+        addMessage(text, 'user');
+        processUserMessage(text);
+      } catch (error) {
+        console.error('Error sending predefined message:', error);
+        showErrorMessage();
+      }
+    }
+
+    function showErrorMessage() {
+      const messagesContainer = document.getElementById('chat-messages');
+      if (!messagesContainer) return;
+
+      const errorMessage = document.createElement('div');
+      errorMessage.className = 'message assistant';
+      errorMessage.innerHTML = `
+        <div class="message-content">I'm sorry, but I encountered an error. Please try again.</div>
+        <div class="message-time">${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} • AI</div>
+      `;
+
+      messagesContainer.appendChild(errorMessage);
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+
+    function addMessage(text, sender) {
+      try {
+        const messagesContainer = document.getElementById('chat-messages');
+        if (!messagesContainer) {
+          console.error('Chat messages container not found');
+          return;
+        }
+
+        const message = document.createElement('div');
+        message.className = `message ${sender}`;
+
+        const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+        // Sanitize text to prevent XSS
+        const sanitizedText = text
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#039;');
+
+        message.innerHTML = `
+          <div class="message-content">${sanitizedText}</div>
+          <div class="message-time">${time}${sender === 'assistant' ? ' • AI' : ''}</div>
+        `;
+
+        // Remove suggested actions if present
+        const suggestedActions = document.getElementById('suggested-actions');
+        if (suggestedActions) {
+          suggestedActions.remove();
+        }
+
+        messagesContainer.appendChild(message);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+      } catch (error) {
+        console.error('Error adding message:', error);
+      }
+    }
+
+    function showTypingIndicator() {
+      try {
+        const messagesContainer = document.getElementById('chat-messages');
+        if (!messagesContainer) {
+          console.error('Chat messages container not found');
+          return;
+        }
+
+        // Remove existing typing indicator if present
+        hideTypingIndicator();
+
+        const typingIndicator = document.createElement('div');
+        typingIndicator.className = 'typing-indicator';
+        typingIndicator.id = 'typing-indicator';
+        typingIndicator.innerHTML = '<span></span><span></span><span></span>';
+
+        messagesContainer.appendChild(typingIndicator);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+      } catch (error) {
+        console.error('Error showing typing indicator:', error);
+      }
+    }
+
+    function hideTypingIndicator() {
+      try {
+        const typingIndicator = document.getElementById('typing-indicator');
+        if (typingIndicator && typingIndicator.parentNode) {
+          typingIndicator.remove();
+        }
+      } catch (error) {
+        console.error('Error hiding typing indicator:', error);
+      }
+    }
+
+    function addSuggestedActions() {
+      try {
+        const messagesContainer = document.getElementById('chat-messages');
+        if (!messagesContainer) {
+          console.error('Chat messages container not found');
+          return;
+        }
+
+        // Remove existing suggested actions if present
+        const existingSuggestedActions = document.getElementById('suggested-actions');
+        if (existingSuggestedActions) {
+          existingSuggestedActions.remove();
+        }
+
+        const suggestedActions = document.createElement('div');
+        suggestedActions.className = 'suggested-actions';
+        suggestedActions.id = 'suggested-actions';
+
+        suggestedActions.innerHTML = `
+          <button class="action-button" onclick="sendPredefinedMessage('Tell me more')">Tell me more</button>
+          <button class="action-button" onclick="sendPredefinedMessage('How do I get started?')">How do I get started?</button>
+          <button class="action-button" onclick="sendPredefinedMessage('Thank you')">Thank you</button>
+        `;
+
+        messagesContainer.appendChild(suggestedActions);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+      } catch (error) {
+        console.error('Error adding suggested actions:', error);
+      }
+    }
+
+    function addCustomSuggestedActions(actions) {
+      try {
+        if (!actions || !Array.isArray(actions) || actions.length === 0) {
+          // Fall back to default actions if none provided
+          addSuggestedActions();
+          return;
+        }
+
+        const messagesContainer = document.getElementById('chat-messages');
+        if (!messagesContainer) {
+          console.error('Chat messages container not found');
+          return;
+        }
+
+        // Remove existing suggested actions if present
+        const existingSuggestedActions = document.getElementById('suggested-actions');
+        if (existingSuggestedActions) {
+          existingSuggestedActions.remove();
+        }
+
+        const suggestedActions = document.createElement('div');
+        suggestedActions.className = 'suggested-actions';
+        suggestedActions.id = 'suggested-actions';
+
+        // Create buttons for each action
+        let buttonsHtml = '';
+        actions.forEach(action => {
+          buttonsHtml += `<button class="action-button" onclick="sendPredefinedMessage('${action.replace(/'/g, "\\'")}')">${
+            action.replace(/</g, '&lt;').replace(/>/g, '&gt;')
+          }</button>`;
+        });
+
+        suggestedActions.innerHTML = buttonsHtml;
+
+        messagesContainer.appendChild(suggestedActions);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+      } catch (error) {
+        console.error('Error adding custom suggested actions:', error);
+        // Fall back to default actions
+        addSuggestedActions();
+      }
+    }
+
+    async function processUserMessage(text) {
+      try {
+        if (!text) {
+          console.error('No text provided for processing');
+          return;
+        }
+
+        // Show typing indicator
+        showTypingIndicator();
+
+        // Process after a delay
+        setTimeout(async () => {
+          try {
+            // Hide typing indicator
+            hideTypingIndicator();
+
+            // Use the ChatbotAPI to process the message
+            let response;
+
+            // Check if we're in demo mode or using the API
+            if (window.ChatbotAPI) {
+              // Use the API to process the message
+              try {
+                response = await window.ChatbotAPI.processMessage(text);
+
+                // Add assistant message
+                addMessage(response.text, 'assistant');
+
+                // Add suggested actions from the API
+                if (response.suggestedActions && response.suggestedActions.length > 0) {
+                  addCustomSuggestedActions(response.suggestedActions);
+                } else {
+                  addSuggestedActions();
+                }
+              } catch (apiError) {
+                console.error('Error using ChatbotAPI:', apiError);
+                // Fall back to demo responses
+                fallbackResponse(text);
+              }
+            } else {
+              // Use demo responses
+              fallbackResponse(text);
+            }
+          } catch (innerError) {
+            console.error('Error in response generation:', innerError);
+            showErrorMessage();
+          }
+        }, 1000);
+      } catch (error) {
+        console.error('Error processing user message:', error);
+        hideTypingIndicator();
+        showErrorMessage();
+      }
+    }
+
+    // Fallback to demo responses when API is not available
+    function fallbackResponse(text) {
+      const lowerText = text.toLowerCase();
+      let response = '';
+
+      if (lowerText.includes('service') || lowerText.includes('offer')) {
+        response = 'We offer an AI-powered customer service assistant that can help answer customer questions, schedule appointments, and provide information about your business 24/7.';
+      } else if (lowerText.includes('work') || lowerText.includes('how')) {
+        response = 'Our AI assistant integrates with your website and uses your business information to answer customer questions automatically. It learns from your knowledge base and gets smarter over time.';
+      } else if (lowerText.includes('price') || lowerText.includes('cost')) {
+        response = 'We offer three pricing tiers: Basic ($29/month), Standard ($59/month), and Premium ($99/month). Each tier includes different features and interaction limits.';
+      } else if (lowerText.includes('thank')) {
+        response = 'You\'re welcome! Is there anything else I can help you with today?';
+      } else if (lowerText.includes('start')) {
+        response = 'Getting started is easy! Just click the "Get Started" button at the top of the page to create your account, then follow our simple setup wizard to configure your AI assistant.';
+      } else if (lowerText.includes('tell me more')) {
+        response = 'Our AI assistant uses advanced natural language processing to understand customer questions and provide accurate answers. It can handle common inquiries, schedule appointments, provide product information, and much more!';
+      } else {
+        response = 'Thank you for your question! In a real implementation, I would be trained on your specific business information to provide accurate answers to customer questions.';
+      }
+
+      // Add assistant message
+      addMessage(response, 'assistant');
+
+      // Add suggested actions
+      addSuggestedActions();
+    }
+
+    // Add event listeners when the DOM is loaded
+    document.addEventListener('DOMContentLoaded', () => {
+      try {
+        // Add event listener for Enter key
+        const inputField = document.getElementById('chat-input');
+        if (inputField) {
+          inputField.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+              sendUserMessage();
+            }
+          });
+
+          // Focus the input field for better UX
+          setTimeout(() => {
+            inputField.focus();
+          }, 500);
+        }
+
+        // Add event listener for minimize button
+        const minimizeButton = document.querySelector('.minimize-button');
+        if (minimizeButton) {
+          minimizeButton.addEventListener('click', () => {
+            const chatWidget = document.querySelector('.chat-widget');
+            if (chatWidget) {
+              chatWidget.classList.toggle('minimized');
+              minimizeButton.textContent = chatWidget.classList.contains('minimized') ? '+' : '_';
+            }
+          });
+        }
+
+        console.log('AI Customer Service Assistant initialized successfully');
+      } catch (error) {
+        console.error('Error initializing event listeners:', error);
+      }
+    });
+  </script>
+  <!-- Signup Modal -->
+  <div id="signup-modal" class="modal">
+    <div class="modal-content">
+      <span class="close-modal">&times;</span>
+      <h2>Create Your Account</h2>
+      <form id="signup-form">
+        <div class="form-group">
+          <label for="business-name">Business Name</label>
+          <input type="text" id="business-name" name="business-name" required>
+        </div>
+        <div class="form-group">
+          <label for="full-name">Full Name</label>
+          <input type="text" id="full-name" name="full-name" required>
+        </div>
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input type="email" id="email" name="email" required>
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" required>
+        </div>
+        <div class="form-group">
+          <label for="plan">Select Plan</label>
+          <select id="plan" name="plan" required>
+            <option value="">Choose a plan...</option>
+            <option value="basic">Basic - $29/month</option>
+            <option value="standard">Standard - $59/month</option>
+            <option value="premium">Premium - $99/month</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <button type="submit" class="btn-primary">Create Account</button>
+        </div>
+        <p class="form-note">By creating an account, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.</p>
+      </form>
+    </div>
+  </div>
+</body>
+</html>

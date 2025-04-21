@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AI Customer Service Assistant</title>
+    <style>
+        :root {
+            --primary-color: #0071e3;
+            --secondary-color: #f5f5f7;
+            --text-color: #1d1d1f;
+            --background-color: #ffffff;
+            --border-color: #d2d2d7;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --user-message-color: #e7f3ff;
+            --bot-message-color: #f5f5f7;
+            --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        }
+
+        body {
+            font-family: var(--font-family);
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+            color: var(--text-color);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .page-header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .page-content {
+            padding: 1rem;
+            max-width: 800px;
+            margin: 0 auto;
+            flex: 1;
+        }
+
+        .chat-launcher {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            border-radius: 30px;
+            background-color: var(--primary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 12px var(--shadow-color);
+            z-index: 999;
+            transition: transform 0.3s ease;
+        }
+
+        .chat-launcher:hover {
+            transform: scale(1.05);
+        }
+
+        .chat-launcher i {
+            font-size: 24px;
+        }
+
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            width: 350px;
+            height: 500px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px var(--shadow-color);
+            background-color: var(--background-color);
+            border: 1px solid var(--border-color);
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            visibility: hidden;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .chat-container.visible {
+            visibility: visible;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .chat-container.minimized {
+            height: 48px;
+        }
+
+        .chat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .chat-title {
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .chat-controls {
+            display: flex;
+            gap: 8px;
+        }
+
+        .chat-controls button {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s;
+        }
+
+        .chat-controls button:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .chat-input-container {
+            display: flex;
+            padding: 12px 16px;
+            border-top: 1px solid var(--border-color);
+            background-color: var(--background-color);
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 10px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            font-family: var(--font-family);
+            font-size: 14px;
+            outline: none;
+        }
+
+        .chat-input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(0, 113, 227, 0.2);
+        }
+
+        .send-button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            margin-left: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s;
+        }
+
+        .send-button:hover {
+            background-color: #005bbf;
+        }
+
+        .send-button:active {
+            transform: scale(0.95);
+        }
+
+        .send-button:disabled {
+            background-color: #b0b0b0;
+            cursor: not-allowed;
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 10px 14px;
+            border-radius: 18px;
+            font-size: 14px;
+            line-height: 1.4;
+            position: relative;
+            word-wrap: break-word;
+            animation: sendMessage 0.3s ease;
+        }
+
+        @keyframes sendMessage {
+            0% {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .user-message {
+            align-self: flex-end;
+            background-color: var(--user-message-color);
+            color: var(--text-color);
+            border-bottom-right-radius: 4px;
+        }
+
+        .bot-message {
+            align-self: flex-start;
+            background-color: var(--bot-message-color);
+            color: var(--text-color);
+            border-bottom-left-radius: 4px;
+        }
+
+        .message-time {
+            font-size: 10px;
+            color: #86868b;
+            margin-top: 4px;
+            text-align: right;
+        }
+
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 10px 14px;
+            background-color: var(--bot-message-color);
+            border-radius: 18px;
+            border-bottom-left-radius: 4px;
+            align-self: flex-start;
+            width: 40px;
+        }
+
+        .typing-indicator span {
+            width: 6px;
+            height: 6px;
+            background-color: #86868b;
+            border-radius: 50%;
+            display: inline-block;
+            animation: typing 1.4s infinite ease-in-out both;
+        }
+
+        .typing-indicator span:nth-child(1) {
+            animation-delay: 0s;
+        }
+
+        .typing-indicator span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-indicator span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-5px);
+            }
+        }
+
+        .suggested-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 8px;
+            align-self: flex-start;
+        }
+
+        .suggested-action {
+            background-color: var(--secondary-color);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 6px 12px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .suggested-action:hover {
+            background-color: #e5e5ea;
+        }
+
+        .link-preview {
+            margin-top: 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .link-preview a {
+            text-decoration: none;
+            color: var(--text-color);
+        }
+
+        .link-preview-content {
+            display: flex;
+            align-items: center;
+            padding: 8px;
+        }
+
+        .link-preview-icon {
+            margin-right: 8px;
+            font-size: 16px;
+        }
+
+        .link-preview-url {
+            font-size: 12px;
+            color: #0071e3;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .offline-status {
+            background-color: #ffcc00;
+            color: #333;
+            text-align: center;
+            padding: 6px;
+            font-size: 12px;
+        }
+
+        /* Icons */
+        .icon-chat:before {
+            content: "💬";
+        }
+        .icon-minimize:before {
+            content: "—";
+        }
+        .icon-maximize:before {
+            content: "＋";
+        }
+        .icon-close:before {
+            content: "✕";
+        }
+        .icon-trash:before {
+            content: "🗑️";
+        }
+        .icon-send:before {
+            content: "➤";
+        }
+        .icon-download:before {
+            content: "⬇️";
+        }
+
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            .chat-container {
+                width: 100%;
+                height: 100%;
+                max-height: 100%;
+                border-radius: 0;
+                bottom: 0;
+                right: 0;
+            }
+            
+            .chat-container.minimized {
+                height: 48px;
+                bottom: 0;
+            }
+            
+            .message {
+                max-width: 90%;
+            }
+
+            .chat-controls button {
+                width: 36px;
+                height: 36px;
+            }
+            
+            .send-button {
+                width: 44px;
+                height: 44px;
+            }
+            
+            .chat-input {
+                padding: 12px 16px;
+                font-size: 16px;
+            }
+
+            .chat-launcher {
+                bottom: 10px;
+                right: 10px;
+            }
+        }
+
+        /* Tablet styles */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .chat-container {
+                width: 400px;
+                height: 600px;
+            }
+        }
+
+        /* Landscape orientation on mobile */
+        @media (max-width: 768px) and (orientation: landscape) {
+            .chat-container {
+                height: 100%;
+            }
+            
+            .chat-messages {
+                padding: 8px;
+            }
+            
+            .message {
+                padding: 8px 12px;
+                margin-bottom: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="page-header">
+        <h1>AI Customer Service Assistant Demo</h1>
+    </header>
+
+    <main class="page-content">
+        <h2>Welcome to the AI Customer Service Assistant Demo</h2>
+        <p>This is an improved version of our AI-powered customer service chatbot. Click the chat button in the bottom right corner to start a conversation.</p>
+        
+        <h3>Key Features:</h3>
+        <ul>
+            <li>24/7 automated customer support</li>
+            <li>Instant responses to common questions</li>
+            <li>Persistent conversation history</li>
+            <li>Mobile-friendly interface</li>
+            <li>Offline support</li>
+        </ul>
+        
+        <p>Try asking about our services, pricing, or support options!</p>
+    </main>
+
+    <!-- Chat Launcher Button -->
+    <div class="chat-launcher" id="chatLauncher">
+        <i class="icon-chat"></i>
+    </div>
+
+    <!-- Chat Widget -->
+    <div class="chat-container" id="chatContainer">
+        <div class="chat-header">
+            <div class="chat-title">AI Customer Service</div>
+            <div class="chat-controls">
+                <button class="export-button" id="exportButton" aria-label="Export conversation">
+                    <i class="icon-download"></i>
+                </button>
+                <button class="clear-button" id="clearButton" aria-label="Clear conversation">
+                    <i class="icon-trash"></i>
+                </button>
+                <button class="minimize-button" id="minimizeButton" aria-label="Minimize chat">
+                    <i class="icon-minimize"></i>
+                </button>
+                <button class="close-button" id="closeButton" aria-label="Close chat">
+                    <i class="icon-close"></i>
+                </button>
+            </div>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+            <!-- Messages will be added here -->
+        </div>
+        <div class="chat-input-container">
+            <input type="text" id="messageInput" class="chat-input" placeholder="Type your message...">
+            <button id="sendButton" class="send-button" aria-label="Send message">
+                <i class="icon-send"></i>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const chatLauncher = document.getElementById('chatLauncher');
+        const chatContainer = document.getElementById('chatContainer');
+        const chatMessages = document.getElementById('chatMessages');
+        const messageInput = document.getElementById('messageInput');
+        const sendButton = document.getElementById('sendButton');
+        const minimizeButton = document.getElementById('minimizeButton');
+        const closeButton = document.getElementById('closeButton');
+        const clearButton = document.getElementById('clearButton');
+        const exportButton = document.getElementById('exportButton');
+
+        // Knowledge Base - Simple version for demo
+        const knowledgeBase = {
+            "hello": "Hello! How can I help you today?",
+            "hi": "Hi there! How can I assist you?",
+            "hey": "Hey! What can I help you with today?",
+            "services": "We offer a range of services including web development, mobile app development, UI/UX design, and digital marketing.",
+            "pricing": "Our pricing varies depending on the service. Basic packages start at $99/month. Would you like more specific information about a particular service?",
+            "contact": "You can reach our support team at support@example.com or call us at (555) 123-4567 during business hours.",
+            "hours": "Our business hours are Monday to Friday, 9am to 5pm EST.",
+            "support": "We offer 24/7 support for our premium customers. Standard support is available during business hours.",
+            "refund": "We offer a 30-day money-back guarantee for all our services. If you're not satisfied, please contact our support team.",
+            "website": "We can help you build a professional website tailored to your business needs. Our web development packages start at $499.",
+            "app": "Our mobile app development services include iOS and Android app development. We can create custom apps or help you optimize existing ones.",
+            "marketing": "Our digital marketing services include SEO, social media marketing, content marketing, and PPC advertising.",
+            "seo": "Our SEO services help improve your website's visibility in search engines. We offer keyword research, on-page optimization, and link building.",
+            "social media": "We can help manage your social media presence across platforms like Facebook, Instagram, Twitter, and LinkedIn.",
+            "default": "I don't have specific information about that yet. Would you like to speak with a human representative?"
+        };
+
+        // Session Management
+        function generateSessionId() {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                const r = Math.random() * 16 | 0;
+                const v = c === 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+        }
+
+        function getSessionId() {
+            let sessionId = localStorage.getItem('chatSessionId');
+            if (!sessionId) {
+                sessionId = generateSessionId();
+                localStorage.setItem('chatSessionId', sessionId);
+            }
+            return sessionId;
+        }
+
+        // Initialize session
+        const sessionId = getSessionId();
+        console.log('Chat session ID:', sessionId);
+
+        // Chat UI Functions
+        function toggleChat() {
+            chatContainer.classList.toggle('visible');
+            if (chatContainer.classList.contains('visible')) {
+                chatLauncher.style.display = 'none';
+                messageInput.focus();
+                
+                // Load chat history if empty
+                if (chatMessages.children.length === 0) {
+                    loadChatHistory();
+                }
+            } else {
+                chatLauncher.style.display = 'flex';
+            }
+        }
+
+        function minimizeChat() {
+            const isMinimized = chatContainer.classList.toggle('minimized');
+            
+            if (isMinimized) {
+                minimizeButton.querySelector('i').classList.remove('icon-minimize');
+                minimizeButton.querySelector('i').classList.add('icon-maximize');
+            } else {
+                minimizeButton.querySelector('i').classList.remove('icon-maximize');
+                minimizeButton.querySelector('i').classList.add('icon-minimize');
+                messageInput.focus();
+            }
+        }
+
+        function closeChat() {
+            chatContainer.classList.remove('visible');
+            chatLauncher.style.display = 'flex';
+        }
+
+        // Message Handling
+        function formatMessage(text) {
+            // Replace emojis
+            text = replaceEmojis(text);
+            
+            // Convert URLs to links
+            text = text.replace(
+                /(https?:\/\/[^\s]+)/g, 
+                '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>'
+            );
+            
+            // Bold text
+            text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            
+            // Italic text
+            text = text.replace(/\*(.*?)\*/g, '<em>$1</em>');
+            
+            // Line breaks
+            text = text.replace(/\n/g, '<br>');
+            
+            return text;
+        }
+
+        function replaceEmojis(text) {
+            const emojiMap = {
+                ':)': '😊',
+                ':D': '😃',
+                ':(': '😞',
+                ':P': '😛',
+                '<3': '❤️',
+                ':+1:': '👍',
+                ':-1:': '👎'
+            };
+            
+            // Replace emoji codes with actual emojis
+            Object.keys(emojiMap).forEach(code => {
+                const regex = new RegExp(escapeRegExp(code), 'g');
+                text = text.replace(regex, emojiMap[code]);
+            });
+            
+            return text;
+        }
+
+        function escapeRegExp(string) {
+            return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        }
+
+        function addUserMessage(message) {
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('message', 'user-message');
+            messageElement.innerHTML = formatMessage(message) + 
+                `<div class="message-time">${new Date().toLocaleTimeString()} ✓</div>`;
+            chatMessages.appendChild(messageElement);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function addBotMessage(message) {
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('message', 'bot-message');
+            messageElement.innerHTML = formatMessage(message) + 
+                `<div class="message-time">${new Date().toLocaleTimeString()}</div>`;
+            
+            // Add link preview if message contains a URL
+            addLinkPreview(messageElement, message);
+            
+            chatMessages.appendChild(messageElement);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function addLinkPreview(messageElement, text) {
+            // Simple URL regex
+            const urlRegex = /(https?:\/\/[^\s]+)/g;
+            const urls = text.match(urlRegex);
+            
+            if (urls && urls.length > 0) {
+                // Just take the first URL for simplicity
+                const url = urls[0];
+                
+                // Create a simple preview element
+                const previewElement = document.createElement('div');
+                previewElement.classList.add('link-preview');
+                previewElement.innerHTML = `
+                    <a href="${url}" target="_blank" rel="noopener noreferrer">
+                        <div class="link-preview-content">
+                            <div class="link-preview-icon">🔗</div>
+                            <div class="link-preview-url">${url}</div>
+                        </div>
+                    </a>
+                `;
+                
+                messageElement.appendChild(previewElement);
+            }
+        }
+
+        function addSuggestedActions(actions) {
+            const actionsContainer = document.createElement('div');
+            actionsContainer.classList.add('suggested-actions');
+            
+            actions.forEach(action => {
+                const actionButton = document.createElement('button');
+                actionButton.classList.add('suggested-action');
+                actionButton.textContent = action;
+                actionButton.addEventListener('click', () => {
+                    messageInput.value = action;
+                    sendMessage();
+                });
+                actionsContainer.appendChild(actionButton);
+            });
+            
+            chatMessages.appendChild(actionsContainer);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function showTypingIndicator() {
+            const typingIndicator = document.createElement('div');
+            typingIndicator.classList.add('typing-indicator');
+            typingIndicator.id = 'typingIndicator';
+            typingIndicator.innerHTML = '<span></span><span></span><span></span>';
+            chatMessages.appendChild(typingIndicator);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function hideTypingIndicator() {
+            const typingIndicator = document.getElementById('typingIndicator');
+            if (typingIndicator) {
+                typingIndicator.remove();
+            }
+        }
+
+        // Response Generation
+        function getResponse(message) {
+            // Convert message to lowercase for matching
+            const lowerMessage = message.toLowerCase();
+            
+            // Check for exact matches first
+            if (knowledgeBase[lowerMessage]) {
+                return knowledgeBase[lowerMessage];
+            }
+            
+            // Check for partial matches
+            for (const key in knowledgeBase) {
+                if (lowerMessage.includes(key)) {
+                    return knowledgeBase[key];
+                }
+            }
+            
+            // Return default response if no match found
+            return knowledgeBase.default;
+        }
+
+        // Chat History Management
+        function saveChatHistory() {
+            const messages = [];
+            
+            // Get all messages
+            const messageElements = chatMessages.querySelectorAll('.message');
+            messageElements.forEach(element => {
+                const isUser = element.classList.contains('user-message');
+                // Get text content without the timestamp
+                const text = element.innerHTML.split('<div class="message-time">')[0];
+                const time = new Date().toISOString();
+                
+                messages.push({
+                    sender: isUser ? 'user' : 'bot',
+                    text,
+                    time
+                });
+            });
+            
+            // Save to localStorage
+            localStorage.setItem('chatHistory', JSON.stringify(messages));
+        }
+
+        function loadChatHistory() {
+            const chatHistory = localStorage.getItem('chatHistory');
+            if (chatHistory) {
+                const messages = JSON.parse(chatHistory);
+                
+                // Clear existing messages
+                chatMessages.innerHTML = '';
+                
+                // Add saved messages
+                messages.forEach(message => {
+                    const messageElement = document.createElement('div');
+                    messageElement.classList.add('message', message.sender === 'user' ? 'user-message' : 'bot-message');
+                    messageElement.innerHTML = message.text + 
+                        `<div class="message-time">${new Date(message.time).toLocaleTimeString()}</div>`;
+                    chatMessages.appendChild(messageElement);
+                });
+                
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            } else {
+                // Add default welcome message if no history
+                addBotMessage("Hello! How can I help you today?");
+                addSuggestedActions([
+                    "What services do you offer?",
+                    "Tell me about pricing",
+                    "How do I contact support?"
+                ]);
+            }
+        }
+
+        function clearConversation() {
+            // Clear chat messages
+            chatMessages.innerHTML = '';
+            
+            // Add welcome message back
+            addBotMessage("Hello! How can I help you today?");
+            addSuggestedActions([
+                "What services do you offer?",
+                "Tell me about pricing",
+                "How do I contact support?"
+            ]);
+            
+            // Clear local storage
+            localStorage.removeItem('chatHistory');
+        }
+
+        function exportConversation() {
+            const chatHistory = localStorage.getItem('chatHistory');
+            if (chatHistory) {
+                const messages = JSON.parse(chatHistory);
+                let conversationText = "Chat Transcript\n\n";
+                
+                messages.forEach(message => {
+                    const sender = message.sender === 'user' ? 'You' : 'AI Assistant';
+                    const time = new Date(message.time).toLocaleString();
+                    
+                    // Extract plain text from HTML
+                    const tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = message.text;
+                    const text = tempDiv.textContent || tempDiv.innerText || '';
+                    
+                    conversationText += `${sender} (${time}):\n${text}\n\n`;
+                });
+                
+                // Create download link
+                const element = document.createElement('a');
+                element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(conversationText));
+                element.setAttribute('download', `chat-transcript-${new Date().toISOString().slice(0, 10)}.txt`);
+                element.style.display = 'none';
+                
+                document.body.appendChild(element);
+                element.click();
+                document.body.removeChild(element);
+            }
+        }
+
+        // Offline Support
+        function isOnline() {
+            return navigator.onLine;
+        }
+
+        function handleOfflineStatus() {
+            if (document.querySelector('.offline-status')) return;
+            
+            const offlineStatus = document.createElement('div');
+            offlineStatus.classList.add('offline-status');
+            offlineStatus.textContent = 'You are currently offline. Some features may be limited.';
+            
+            // Add to chat container
+            chatContainer.insertBefore(offlineStatus, chatContainer.firstChild);
+        }
+
+        function handleOnlineStatus() {
+            const offlineElement = document.querySelector('.offline-status');
+            if (offlineElement) {
+                offlineElement.remove();
+            }
+        }
+
+        // Message Sending
+        function sendMessage() {
+            const message = messageInput.value.trim();
+            
+            if (message) {
+                // Add user message to chat
+                addUserMessage(message);
+                messageInput.value = '';
+                
+                // Show typing indicator
+                showTypingIndicator();
+                
+                // Process message and get response with a delay to simulate thinking
+                setTimeout(() => {
+                    hideTypingIndicator();
+                    
+                    if (isOnline()) {
+                        const response = getResponse(message);
+                        addBotMessage(response);
+                        
+                        // Add suggested actions based on context
+                        if (message.toLowerCase().includes('service')) {
+                            addSuggestedActions([
+                                "Tell me about web development",
+                                "What about mobile apps?",
+                                "Do you offer marketing services?"
+                            ]);
+                        } else if (message.toLowerCase().includes('price') || message.toLowerCase().includes('cost')) {
+                            addSuggestedActions([
+                                "Website pricing",
+                                "App development costs",
+                                "Marketing packages"
+                            ]);
+                        }
+                    } else {
+                        addBotMessage("I'm currently in offline mode. I can only provide basic responses. Please check your internet connection.");
+                    }
+                    
+                    // Save chat history
+                    saveChatHistory();
+                }, 1000);
+            }
+        }
+
+        // Event Listeners
+        chatLauncher.addEventListener('click', toggleChat);
+        minimizeButton.addEventListener('click', minimizeChat);
+        closeButton.addEventListener('click', closeChat);
+        clearButton.addEventListener('click', clearConversation);
+        exportButton.addEventListener('click', exportConversation);
+        
+        sendButton.addEventListener('click', sendMessage);
+        messageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+        
+        // Online/Offline event listeners
+        window.addEventListener('offline', handleOfflineStatus);
+        window.addEventListener('online', handleOnlineStatus);
+        
+        // Check connection on load
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!isOnline()) {
+                handleOfflineStatus();
+            }
+        });
+    </script>
+</body>
+</html>

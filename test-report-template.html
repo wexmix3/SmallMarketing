@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Customer Service Assistant - Test Report</title>
+  <style>
+    :root {
+      --primary-color: #0071e3;
+      --secondary-color: #f5f5f7;
+      --success-color: #34c759;
+      --warning-color: #ff9500;
+      --error-color: #ff3b30;
+      --text-color: #1d1d1f;
+      --text-secondary: #86868b;
+      --border-color: #d2d2d7;
+      --background-color: #ffffff;
+      --card-background: #f5f5f7;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      line-height: 1.5;
+      color: var(--text-color);
+      background-color: var(--background-color);
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    header {
+      margin-bottom: 2rem;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 1rem;
+    }
+
+    h1 {
+      color: var(--primary-color);
+      margin-top: 0;
+      font-weight: 600;
+    }
+
+    h2 {
+      color: var(--primary-color);
+      font-weight: 500;
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    h3 {
+      font-weight: 500;
+      margin-top: 1.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .meta-info {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+      margin-bottom: 2rem;
+      color: var(--text-secondary);
+    }
+
+    .meta-info div {
+      display: flex;
+      align-items: center;
+    }
+
+    .meta-info strong {
+      margin-right: 0.5rem;
+      color: var(--text-color);
+    }
+
+    .summary-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .card {
+      background-color: var(--card-background);
+      border-radius: 10px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .card h3 {
+      margin-top: 0;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 0.75rem;
+      margin-bottom: 1rem;
+    }
+
+    .metric {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.75rem;
+    }
+
+    .metric-value {
+      font-weight: 600;
+    }
+
+    .success {
+      color: var(--success-color);
+    }
+
+    .warning {
+      color: var(--warning-color);
+    }
+
+    .error {
+      color: var(--error-color);
+    }
+
+    .progress-bar {
+      height: 8px;
+      background-color: rgba(0, 0, 0, 0.1);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 0.25rem;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      border-radius: 4px;
+    }
+
+    .progress-bar-fill.success {
+      background-color: var(--success-color);
+    }
+
+    .progress-bar-fill.warning {
+      background-color: var(--warning-color);
+    }
+
+    .progress-bar-fill.error {
+      background-color: var(--error-color);
+    }
+
+    .section {
+      background-color: var(--background-color);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .section h3 {
+      margin-top: 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 1.5rem;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 0.75rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    th {
+      background-color: var(--secondary-color);
+      font-weight: 500;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    .test-result {
+      display: flex;
+      align-items: center;
+    }
+
+    .test-result::before {
+      content: '';
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      margin-right: 0.5rem;
+    }
+
+    .test-result.pass::before {
+      background-color: var(--success-color);
+    }
+
+    .test-result.fail::before {
+      background-color: var(--error-color);
+    }
+
+    .test-result.skip::before {
+      background-color: var(--text-secondary);
+    }
+
+    .links {
+      margin-top: 1.5rem;
+    }
+
+    .links a {
+      display: inline-block;
+      margin-right: 1rem;
+      color: var(--primary-color);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .links a:hover {
+      text-decoration: underline;
+    }
+
+    .chart-container {
+      height: 300px;
+      margin-bottom: 2rem;
+    }
+
+    .footer {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border-color);
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 1rem;
+      }
+      
+      .summary-cards {
+        grid-template-columns: 1fr;
+      }
+      
+      .meta-info {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>AI Customer Service Assistant - Test Report</h1>
+      <div class="meta-info">
+        <div>
+          <strong>Generated:</strong> <span id="generated-date">{{GENERATED_DATE}}</span>
+        </div>
+        <div>
+          <strong>Environment:</strong> <span id="environment">{{ENVIRONMENT}}</span>
+        </div>
+        <div>
+          <strong>Build:</strong> <span id="build-number">{{BUILD_NUMBER}}</span>
+        </div>
+        <div>
+          <strong>Duration:</strong> <span id="duration">{{DURATION}}</span>
+        </div>
+      </div>
+    </header>
+
+    <h2>Test Summary</h2>
+    
+    <div class="summary-cards">
+      <div class="card">
+        <h3>Overall Status</h3>
+        <div class="metric">
+          <span>Status:</span>
+          <span class="metric-value {{OVERALL_STATUS_CLASS}}">{{OVERALL_STATUS}}</span>
+        </div>
+        <div class="metric">
+          <span>Total Tests:</span>
+          <span class="metric-value">{{TOTAL_TESTS}}</span>
+        </div>
+        <div class="metric">
+          <span>Pass Rate:</span>
+          <span class="metric-value {{PASS_RATE_CLASS}}">{{PASS_RATE}}%</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-bar-fill {{PASS_RATE_CLASS}}" style="width: {{PASS_RATE}}%;"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Test Coverage</h3>
+        <div class="metric">
+          <span>Line Coverage:</span>
+          <span class="metric-value {{LINE_COVERAGE_CLASS}}">{{LINE_COVERAGE}}%</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-bar-fill {{LINE_COVERAGE_CLASS}}" style="width: {{LINE_COVERAGE}}%;"></div>
+        </div>
+        <div class="metric">
+          <span>Branch Coverage:</span>
+          <span class="metric-value {{BRANCH_COVERAGE_CLASS}}">{{BRANCH_COVERAGE}}%</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-bar-fill {{BRANCH_COVERAGE_CLASS}}" style="width: {{BRANCH_COVERAGE}}%;"></div>
+        </div>
+        <div class="metric">
+          <span>Function Coverage:</span>
+          <span class="metric-value {{FUNCTION_COVERAGE_CLASS}}">{{FUNCTION_COVERAGE}}%</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-bar-fill {{FUNCTION_COVERAGE_CLASS}}" style="width: {{FUNCTION_COVERAGE}}%;"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Test Results</h3>
+        <div class="metric">
+          <span>Passed:</span>
+          <span class="metric-value success">{{TESTS_PASSED}}</span>
+        </div>
+        <div class="metric">
+          <span>Failed:</span>
+          <span class="metric-value {{TESTS_FAILED_CLASS}}">{{TESTS_FAILED}}</span>
+        </div>
+        <div class="metric">
+          <span>Skipped:</span>
+          <span class="metric-value">{{TESTS_SKIPPED}}</span>
+        </div>
+        <div class="metric">
+          <span>Flaky:</span>
+          <span class="metric-value {{TESTS_FLAKY_CLASS}}">{{TESTS_FLAKY}}</span>
+        </div>
+      </div>
+    </div>
+
+    <h2>Test Results by Type</h2>
+
+    <div class="section">
+      <h3>Unit Tests</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Suite</th>
+            <th>Tests</th>
+            <th>Passed</th>
+            <th>Failed</th>
+            <th>Skipped</th>
+            <th>Duration</th>
+          </tr>
+        </thead>
+        <tbody id="unit-test-results">
+          {{UNIT_TEST_RESULTS}}
+        </tbody>
+      </table>
+      <div class="links">
+        <a href="{{UNIT_TEST_REPORT_URL}}" target="_blank">View Detailed Report</a>
+        <a href="{{COVERAGE_REPORT_URL}}" target="_blank">View Coverage Report</a>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3>Integration Tests</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Suite</th>
+            <th>Tests</th>
+            <th>Passed</th>
+            <th>Failed</th>
+            <th>Skipped</th>
+            <th>Duration</th>
+          </tr>
+        </thead>
+        <tbody id="integration-test-results">
+          {{INTEGRATION_TEST_RESULTS}}
+        </tbody>
+      </table>
+      <div class="links">
+        <a href="{{INTEGRATION_TEST_REPORT_URL}}" target="_blank">View Detailed Report</a>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3>End-to-End Tests</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Suite</th>
+            <th>Tests</th>
+            <th>Passed</th>
+            <th>Failed</th>
+            <th>Skipped</th>
+            <th>Duration</th>
+          </tr>
+        </thead>
+        <tbody id="e2e-test-results">
+          {{E2E_TEST_RESULTS}}
+        </tbody>
+      </table>
+      <div class="links">
+        <a href="{{E2E_TEST_REPORT_URL}}" target="_blank">View Detailed Report</a>
+        <a href="{{E2E_VIDEO_URL}}" target="_blank">View Test Videos</a>
+      </div>
+    </div>
+
+    <h2>Performance Metrics</h2>
+
+    <div class="section">
+      <h3>Response Time</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Metric</th>
+            <th>Value</th>
+            <th>Threshold</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Widget Load Time</td>
+            <td>{{WIDGET_LOAD_TIME}} ms</td>
+            <td>&lt; 1000 ms</td>
+            <td><span class="{{WIDGET_LOAD_TIME_CLASS}}">{{WIDGET_LOAD_TIME_STATUS}}</span></td>
+          </tr>
+          <tr>
+            <td>Chat Window Open Time</td>
+            <td>{{CHAT_OPEN_TIME}} ms</td>
+            <td>&lt; 300 ms</td>
+            <td><span class="{{CHAT_OPEN_TIME_CLASS}}">{{CHAT_OPEN_TIME_STATUS}}</span></td>
+          </tr>
+          <tr>
+            <td>Initial Response Time</td>
+            <td>{{INITIAL_RESPONSE_TIME}} ms</td>
+            <td>&lt; 1000 ms</td>
+            <td><span class="{{INITIAL_RESPONSE_TIME_CLASS}}">{{INITIAL_RESPONSE_TIME_STATUS}}</span></td>
+          </tr>
+          <tr>
+            <td>Average Response Time</td>
+            <td>{{AVG_RESPONSE_TIME}} ms</td>
+            <td>&lt; 2000 ms</td>
+            <td><span class="{{AVG_RESPONSE_TIME_CLASS}}">{{AVG_RESPONSE_TIME_STATUS}}</span></td>
+          </tr>
+          <tr>
+            <td>95th Percentile Response Time</td>
+            <td>{{P95_RESPONSE_TIME}} ms</td>
+            <td>&lt; 3000 ms</td>
+            <td><span class="{{P95_RESPONSE_TIME_CLASS}}">{{P95_RESPONSE_TIME_STATUS}}</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="links">
+        <a href="{{PERFORMANCE_REPORT_URL}}" target="_blank">View Detailed Performance Report</a>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3>Resource Usage</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Metric</th>
+            <th>Value</th>
+            <th>Threshold</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Memory Usage</td>
+            <td>{{MEMORY_USAGE}} MB</td>
+            <td>&lt; 50 MB</td>
+            <td><span class="{{MEMORY_USAGE_CLASS}}">{{MEMORY_USAGE_STATUS}}</span></td>
+          </tr>
+          <tr>
+            <td>CPU Usage</td>
+            <td>{{CPU_USAGE}}%</td>
+            <td>&lt; 15%</td>
+            <td><span class="{{CPU_USAGE_CLASS}}">{{CPU_USAGE_STATUS}}</span></td>
+          </tr>
+          <tr>
+            <td>Network Requests</td>
+            <td>{{NETWORK_REQUESTS}}</td>
+            <td>&lt; 20</td>
+            <td><span class="{{NETWORK_REQUESTS_CLASS}}">{{NETWORK_REQUESTS_STATUS}}</span></td>
+          </tr>
+          <tr>
+            <td>Total Bundle Size</td>
+            <td>{{BUNDLE_SIZE}} KB</td>
+            <td>&lt; 500 KB</td>
+            <td><span class="{{BUNDLE_SIZE_CLASS}}">{{BUNDLE_SIZE_STATUS}}</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>AI Response Quality</h2>
+
+    <div class="section">
+      <h3>Response Metrics</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Metric</th>
+            <th>Value</th>
+            <th>Target</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Response Accuracy</td>
+            <td>{{RESPONSE_ACCURACY}}%</td>
+            <td>&gt; 95%</td>
+            <td><span class="{{RESPONSE_ACCURACY_CLASS}}">{{RESPONSE_ACCURACY_STATUS}}</span></td>
+          </tr>
+          <tr>
+            <td>Context Maintenance</td>
+            <td>{{CONTEXT_MAINTENANCE}}%</td>
+            <td>&gt; 90%</td>
+            <td><span class="{{CONTEXT_MAINTENANCE_CLASS}}">{{CONTEXT_MAINTENANCE_STATUS}}</span></td>
+          </tr>
+          <tr>
+            <td>Fallback Rate</td>
+            <td>{{FALLBACK_RATE}}%</td>
+            <td>&lt; 10%</td>
+            <td><span class="{{FALLBACK_RATE_CLASS}}">{{FALLBACK_RATE_STATUS}}</span></td>
+          </tr>
+          <tr>
+            <td>Human Handoff Rate</td>
+            <td>{{HANDOFF_RATE}}%</td>
+            <td>&lt; 15%</td>
+            <td><span class="{{HANDOFF_RATE_CLASS}}">{{HANDOFF_RATE_STATUS}}</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Accessibility Compliance</h2>
+
+    <div class="section">
+      <h3>WCAG 2.1 Compliance</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Level</th>
+            <th>Issues</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>A (Must Have)</td>
+            <td>{{A11Y_A_ISSUES}}</td>
+            <td><span class="{{A11Y_A_CLASS}}">{{A11Y_A_STATUS}}</span></td>
+          </tr>
+          <tr>
+            <td>AA (Should Have)</td>
+            <td>{{A11Y_AA_ISSUES}}</td>
+            <td><span class="{{A11Y_AA_CLASS}}">{{A11Y_AA_STATUS}}</span></td>
+          </tr>
+          <tr>
+            <td>AAA (Nice to Have)</td>
+            <td>{{A11Y_AAA_ISSUES}}</td>
+            <td><span class="{{A11Y_AAA_CLASS}}">{{A11Y_AAA_STATUS}}</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="links">
+        <a href="{{ACCESSIBILITY_REPORT_URL}}" target="_blank">View Detailed Accessibility Report</a>
+      </div>
+    </div>
+
+    <h2>Security Scan Results</h2>
+
+    <div class="section">
+      <h3>Vulnerability Summary</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Severity</th>
+            <th>Count</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Critical</td>
+            <td>{{SECURITY_CRITICAL}}</td>
+            <td><span class="{{SECURITY_CRITICAL_CLASS}}">{{SECURITY_CRITICAL_STATUS}}</span></td>
+          </tr>
+          <tr>
+            <td>High</td>
+            <td>{{SECURITY_HIGH}}</td>
+            <td><span class="{{SECURITY_HIGH_CLASS}}">{{SECURITY_HIGH_STATUS}}</span></td>
+          </tr>
+          <tr>
+            <td>Medium</td>
+            <td>{{SECURITY_MEDIUM}}</td>
+            <td><span class="{{SECURITY_MEDIUM_CLASS}}">{{SECURITY_MEDIUM_STATUS}}</span></td>
+          </tr>
+          <tr>
+            <td>Low</td>
+            <td>{{SECURITY_LOW}}</td>
+            <td><span class="{{SECURITY_LOW_CLASS}}">{{SECURITY_LOW_STATUS}}</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="links">
+        <a href="{{SECURITY_REPORT_URL}}" target="_blank">View Detailed Security Report</a>
+      </div>
+    </div>
+
+    <div class="footer">
+      <p>Generated by AI Customer Service Assistant Test Framework</p>
+      <p>© 2023 AI Customer Service Assistant</p>
+    </div>
+  </div>
+
+  <script>
+    // This script would normally be used to populate the template with actual data
+    // For this template, we're using placeholders that would be replaced server-side
+    
+    // Example of how you might populate this template with JavaScript:
+    /*
+    document.addEventListener('DOMContentLoaded', function() {
+      // Fetch test data
+      fetch('/api/test-results')
+        .then(response => response.json())
+        .then(data => {
+          // Populate the template with the data
+          document.getElementById('generated-date').textContent = new Date(data.timestamp).toLocaleString();
+          document.getElementById('environment').textContent = data.environment;
+          // ... and so on for all placeholders
+        });
+    });
+    */
+  </script>
+</body>
+</html>

@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Business Setup Wizard | AI Customer Service Assistant</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="setup-wizard.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="container">
+      <div class="logo">
+        <a href="index.html">
+          <i class="fas fa-robot"></i>
+          <span>AI Assistant</span>
+        </a>
+      </div>
+      <nav>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="dashboard.html">Dashboard</a></li>
+          <li><a href="#" class="active">Setup</a></li>
+          <li><a href="#">Help</a></li>
+        </ul>
+      </nav>
+      <div class="user-menu">
+        <button class="user-toggle">
+          <div class="user-avatar">JD</div>
+          <span>John Doe</span>
+          <i class="fas fa-chevron-down"></i>
+        </button>
+        <div class="dropdown-menu">
+          <a href="#"><i class="fas fa-user"></i> Profile</a>
+          <a href="#"><i class="fas fa-cog"></i> Settings</a>
+          <a href="#"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="setup-wizard">
+    <div class="container">
+      <div class="wizard-container">
+        <div class="wizard-sidebar">
+          <div class="wizard-steps">
+            <div class="step active" data-step="1">
+              <div class="step-number">1</div>
+              <div class="step-content">
+                <div class="step-title">Business Information</div>
+                <div class="step-description">Basic details about your business</div>
+              </div>
+            </div>
+            <div class="step" data-step="2">
+              <div class="step-number">2</div>
+              <div class="step-content">
+                <div class="step-title">Chatbot Configuration</div>
+                <div class="step-description">Customize your AI assistant</div>
+              </div>
+            </div>
+            <div class="step" data-step="3">
+              <div class="step-number">3</div>
+              <div class="step-content">
+                <div class="step-title">Knowledge Base</div>
+                <div class="step-description">Add FAQs and information</div>
+              </div>
+            </div>
+            <div class="step" data-step="4">
+              <div class="step-number">4</div>
+              <div class="step-content">
+                <div class="step-title">Integration</div>
+                <div class="step-description">Add to your website</div>
+              </div>
+            </div>
+            <div class="step" data-step="5">
+              <div class="step-number">5</div>
+              <div class="step-content">
+                <div class="step-title">Review & Launch</div>
+                <div class="step-description">Finalize and activate</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="wizard-content">
+          <div class="wizard-header">
+            <h2>Business Setup Wizard</h2>
+            <p>Complete these steps to set up your AI Customer Service Assistant</p>
+          </div>
+
+          <div class="wizard-body">
+            <!-- Step 1: Business Information -->
+            <div class="wizard-step-content active" data-step="1">
+              <h3>Business Information</h3>
+              <p>Please provide basic information about your business.</p>
+
+              <form id="business-info-form">
+                <div class="form-row">
+                  <label class="form-label" for="business-name">Business Name</label>
+                  <input type="text" id="business-name" name="businessName" class="form-input" placeholder="e.g., Acme Corporation" required>
+                </div>
+
+                <div class="form-row">
+                  <label class="form-label" for="business-industry">Industry</label>
+                  <select id="business-industry" name="businessIndustry" class="form-select" required>
+                    <option value="">Select your industry</option>
+                    <option value="retail">Retail</option>
+                    <option value="restaurant">Restaurant</option>
+                    <option value="healthcare">Healthcare</option>
+                    <option value="technology">Technology</option>
+                    <option value="finance">Finance</option>
+                    <option value="education">Education</option>
+                    <option value="professional-services">Professional Services</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+
+                <div class="form-row">
+                  <label class="form-label" for="business-size">Business Size</label>
+                  <select id="business-size" name="businessSize" class="form-select" required>
+                    <option value="">Select your business size</option>
+                    <option value="solo">Solo Entrepreneur</option>
+                    <option value="small">Small (2-10 employees)</option>
+                    <option value="medium">Medium (11-50 employees)</option>
+                    <option value="large">Large (51+ employees)</option>
+                  </select>
+                </div>
+
+                <div class="form-row">
+                  <label class="form-label" for="business-website">Website URL</label>
+                  <input type="url" id="business-website" name="businessWebsite" class="form-input" placeholder="https://www.example.com">
+                </div>
+
+                <div class="form-row">
+                  <label class="form-label" for="business-email">Business Email</label>
+                  <input type="email" id="business-email" name="businessEmail" class="form-input" placeholder="contact@example.com" required>
+                </div>
+
+                <div class="form-row">
+                  <label class="form-label" for="business-phone">Business Phone</label>
+                  <input type="tel" id="business-phone" name="businessPhone" class="form-input" placeholder="(123) 456-7890">
+                </div>
+              </form>
+            </div>
+
+            <!-- Step 2: Chatbot Configuration -->
+            <div class="wizard-step-content" data-step="2">
+              <h3>Chatbot Configuration</h3>
+              <p>Customize how your AI assistant will look and behave.</p>
+
+              <form id="chatbot-config-form">
+                <div class="form-row">
+                  <label class="form-label" for="chatbot-name">Chatbot Name</label>
+                  <input type="text" id="chatbot-name" name="chatbotName" class="form-input" placeholder="e.g., Support Assistant" value="AI Customer Service Assistant" required>
+                  <div class="form-help">This name will be displayed to your customers</div>
+                </div>
+
+                <div class="form-row">
+                  <label class="form-label">Primary Color</label>
+                  <div class="color-picker">
+                    <div class="color-option active" style="background-color: #0071e3;" data-color="#0071e3"></div>
+                    <div class="color-option" style="background-color: #34c759;" data-color="#34c759"></div>
+                    <div class="color-option" style="background-color: #ff9500;" data-color="#ff9500"></div>
+                    <div class="color-option" style="background-color: #ff3b30;" data-color="#ff3b30"></div>
+                    <div class="color-option" style="background-color: #5856d6;" data-color="#5856d6"></div>
+                  </div>
+                  <div class="form-help">This color will be used for the chatbot interface</div>
+                </div>
+
+                <div class="form-row">
+                  <label class="form-label">Chatbot Position</label>
+                  <div class="position-selector">
+                    <div class="position-option active" data-position="bottom-right">
+                      <div class="position-preview">
+                        <div class="position-indicator bottom-right"></div>
+                      </div>
+                      <div class="position-label">Bottom Right</div>
+                    </div>
+                    <div class="position-option" data-position="bottom-left">
+                      <div class="position-preview">
+                        <div class="position-indicator bottom-left"></div>
+                      </div>
+                      <div class="position-label">Bottom Left</div>
+                    </div>
+                    <div class="position-option" data-position="top-right">
+                      <div class="position-preview">
+                        <div class="position-indicator top-right"></div>
+                      </div>
+                      <div class="position-label">Top Right</div>
+                    </div>
+                    <div class="position-option" data-position="top-left">
+                      <div class="position-preview">
+                        <div class="position-indicator top-left"></div>
+                      </div>
+                      <div class="position-label">Top Left</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <label class="form-label" for="welcome-message">Welcome Message</label>
+                  <textarea id="welcome-message" name="welcomeMessage" class="form-textarea" required>Hello! I'm your AI Customer Service Assistant. How can I help you today?</textarea>
+                  <div class="form-help">This message will be shown when a user first opens the chat</div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-checkbox">
+                    <input type="checkbox" id="auto-open" name="autoOpen" checked>
+                    <label for="auto-open">Auto-open chat after 5 seconds</label>
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-checkbox">
+                    <input type="checkbox" id="show-avatar" name="showAvatar" checked>
+                    <label for="show-avatar">Show avatar in messages</label>
+                  </div>
+                </div>
+              </form>
+            </div>
+
+            <!-- Step 3: Knowledge Base -->
+            <div class="wizard-step-content" data-step="3">
+              <h3>Knowledge Base</h3>
+              <p>Add frequently asked questions to help your AI assistant provide accurate responses.</p>
+
+              <form id="knowledge-base-form">
+                <div class="faq-list">
+                  <div class="faq-item">
+                    <div class="faq-header">
+                      <h4>FAQ #1</h4>
+                      <button type="button" class="btn-icon remove-faq"><i class="fas fa-trash"></i></button>
+                    </div>
+                    <div class="form-row">
+                      <label class="form-label" for="faq-question-1">Question</label>
+                      <input type="text" id="faq-question-1" name="faqQuestion1" class="form-input" placeholder="e.g., What are your business hours?" required>
+                    </div>
+                    <div class="form-row">
+                      <label class="form-label" for="faq-answer-1">Answer</label>
+                      <textarea id="faq-answer-1" name="faqAnswer1" class="form-textarea" placeholder="Provide a detailed answer to the question..." required></textarea>
+                    </div>
+                    <div class="form-row">
+                      <label class="form-label" for="faq-category-1">Category</label>
+                      <select id="faq-category-1" name="faqCategory1" class="form-select">
+                        <option value="general">General</option>
+                        <option value="products">Products</option>
+                        <option value="services">Services</option>
+                        <option value="pricing">Pricing</option>
+                        <option value="support">Support</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <button type="button" class="btn-outline" id="add-faq-btn">
+                    <i class="fas fa-plus"></i> Add Another FAQ
+                  </button>
+                </div>
+
+                <div class="form-row">
+                  <div class="import-section">
+                    <h4>Import FAQs</h4>
+                    <p>You can import FAQs from a CSV or JSON file.</p>
+                    <div class="import-actions">
+                      <button type="button" class="btn-outline" id="import-faq-btn">
+                        <i class="fas fa-file-import"></i> Import File
+                      </button>
+                      <a href="#" class="download-template">Download Template</a>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+
+            <!-- Step 4: Integration -->
+            <div class="wizard-step-content" data-step="4">
+              <h3>Website Integration</h3>
+              <p>Set up how your AI assistant will be integrated with your website.</p>
+
+              <form id="integration-form">
+                <div class="form-row">
+                  <label class="form-label">Integration Method</label>
+                  <div class="integration-methods">
+                    <div class="integration-method active" data-method="embed">
+                      <div class="method-icon"><i class="fas fa-code"></i></div>
+                      <div class="method-content">
+                        <h4>Embed Code</h4>
+                        <p>Add a simple code snippet to your website</p>
+                      </div>
+                    </div>
+                    <div class="integration-method" data-method="wordpress">
+                      <div class="method-icon"><i class="fab fa-wordpress"></i></div>
+                      <div class="method-content">
+                        <h4>WordPress Plugin</h4>
+                        <p>Install our plugin on your WordPress site</p>
+                      </div>
+                    </div>
+                    <div class="integration-method" data-method="shopify">
+                      <div class="method-icon"><i class="fab fa-shopify"></i></div>
+                      <div class="method-content">
+                        <h4>Shopify App</h4>
+                        <p>Add our app to your Shopify store</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Embed Code Method -->
+                <div class="integration-details" id="embed-details">
+                  <div class="form-row">
+                    <label class="form-label">Your Embed Code</label>
+                    <div class="code-block">
+                      <pre><code>&lt;script src="https://cdn.aiassistant.com/embed.js" data-assistant-id="your-assistant-id" data-position="bottom-right" data-primary-color="#0071e3"&gt;&lt;/script&gt;</code></pre>
+                    </div>
+                    <button type="button" class="copy-button">
+                      <i class="fas fa-copy"></i> Copy Code
+                    </button>
+                    <div class="form-help">Add this code to your website just before the closing &lt;/body&gt; tag</div>
+                  </div>
+
+                  <div class="form-row">
+                    <label class="form-label">Preview</label>
+                    <div class="embed-preview">
+                      <div class="browser-mockup">
+                        <div class="browser-header">
+                          <div class="browser-actions">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                          </div>
+                          <div class="browser-address">https://www.yourwebsite.com</div>
+                        </div>
+                        <div class="browser-content">
+                          <div class="chatbot-preview">
+                            <div class="chatbot-button">Chat with us</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- WordPress Method -->
+                <div class="integration-details" id="wordpress-details" style="display: none;">
+                  <div class="form-row">
+                    <label class="form-label">WordPress Plugin Installation</label>
+                    <ol class="integration-steps">
+                      <li>Download our WordPress plugin</li>
+                      <li>Log in to your WordPress admin dashboard</li>
+                      <li>Go to Plugins > Add New > Upload Plugin</li>
+                      <li>Upload the plugin file and activate it</li>
+                      <li>Go to AI Assistant settings and enter your API key</li>
+                    </ol>
+                    <button type="button" class="btn-primary">
+                      <i class="fas fa-download"></i> Download Plugin
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Shopify Method -->
+                <div class="integration-details" id="shopify-details" style="display: none;">
+                  <div class="form-row">
+                    <label class="form-label">Shopify App Installation</label>
+                    <ol class="integration-steps">
+                      <li>Go to the Shopify App Store</li>
+                      <li>Search for "AI Customer Service Assistant"</li>
+                      <li>Click "Add app" and follow the installation process</li>
+                      <li>Configure the app with your settings</li>
+                    </ol>
+                    <button type="button" class="btn-primary">
+                      <i class="fas fa-external-link-alt"></i> Go to Shopify App Store
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+
+            <!-- Step 5: Review & Launch -->
+            <div class="wizard-step-content" data-step="5">
+              <h3>Review & Launch</h3>
+              <p>Review your setup and launch your AI Customer Service Assistant.</p>
+
+              <div class="review-summary">
+                <div class="review-section">
+                  <div class="review-header">
+                    <h4>Business Information</h4>
+                    <button type="button" class="btn-link edit-section" data-step="1">
+                      <i class="fas fa-edit"></i> Edit
+                    </button>
+                  </div>
+                  <div class="review-content">
+                    <div class="review-item">
+                      <div class="review-label">Business Name:</div>
+                      <div class="review-value" id="review-business-name">Demo Business</div>
+                    </div>
+                    <div class="review-item">
+                      <div class="review-label">Industry:</div>
+                      <div class="review-value" id="review-business-industry">Retail</div>
+                    </div>
+                    <div class="review-item">
+                      <div class="review-label">Business Size:</div>
+                      <div class="review-value" id="review-business-size">Small (2-10 employees)</div>
+                    </div>
+                    <div class="review-item">
+                      <div class="review-label">Website:</div>
+                      <div class="review-value" id="review-business-website">https://www.demobusiness.com</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="review-section">
+                  <div class="review-header">
+                    <h4>Chatbot Configuration</h4>
+                    <button type="button" class="btn-link edit-section" data-step="2">
+                      <i class="fas fa-edit"></i> Edit
+                    </button>
+                  </div>
+                  <div class="review-content">
+                    <div class="review-item">
+                      <div class="review-label">Chatbot Name:</div>
+                      <div class="review-value" id="review-chatbot-name">AI Customer Service Assistant</div>
+                    </div>
+                    <div class="review-item">
+                      <div class="review-label">Primary Color:</div>
+                      <div class="review-value">
+                        <span class="color-preview" id="review-primary-color" style="background-color: #0071e3;"></span>
+                        #0071e3
+                      </div>
+                    </div>
+                    <div class="review-item">
+                      <div class="review-label">Position:</div>
+                      <div class="review-value" id="review-position">Bottom Right</div>
+                    </div>
+                    <div class="review-item">
+                      <div class="review-label">Welcome Message:</div>
+                      <div class="review-value" id="review-welcome-message">Hello! I'm your AI Customer Service Assistant. How can I help you today?</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="review-section">
+                  <div class="review-header">
+                    <h4>Knowledge Base</h4>
+                    <button type="button" class="btn-link edit-section" data-step="3">
+                      <i class="fas fa-edit"></i> Edit
+                    </button>
+                  </div>
+                  <div class="review-content">
+                    <div class="review-item">
+                      <div class="review-label">FAQs Added:</div>
+                      <div class="review-value" id="review-faq-count">1</div>
+                    </div>
+                    <div class="review-item">
+                      <div class="review-label">Categories:</div>
+                      <div class="review-value" id="review-faq-categories">General</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="review-section">
+                  <div class="review-header">
+                    <h4>Integration</h4>
+                    <button type="button" class="btn-link edit-section" data-step="4">
+                      <i class="fas fa-edit"></i> Edit
+                    </button>
+                  </div>
+                  <div class="review-content">
+                    <div class="review-item">
+                      <div class="review-label">Integration Method:</div>
+                      <div class="review-value" id="review-integration-method">Embed Code</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="launch-section">
+                <div class="launch-header">
+                  <h4>Ready to Launch</h4>
+                  <p>Your AI Customer Service Assistant is ready to be launched. Click the button below to activate it.</p>
+                </div>
+                <div class="launch-actions">
+                  <button type="button" class="btn-primary btn-large" id="launch-button">
+                    <i class="fas fa-rocket"></i> Launch AI Assistant
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="wizard-footer">
+            <div class="wizard-progress">
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: 20%;"></div>
+              </div>
+              <div class="progress-text">Step 1 of 5</div>
+            </div>
+            <div class="wizard-buttons">
+              <button class="btn-outline" id="prev-step" disabled>Previous</button>
+              <button class="btn-primary" id="next-step">Next Step</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="app-footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="copyright">
+          &copy; 2023 AI Customer Service Assistant. All rights reserved.
+        </div>
+        <div class="footer-links">
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Service</a>
+          <a href="#">Contact Us</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Form utilities -->
+  <script src="form-utils.js"></script>
+
+  <!-- Setup wizard functionality -->
+  <script src="setup-wizard.js"></script>
+</body>
+</html>

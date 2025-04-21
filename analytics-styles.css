@@ -1,0 +1,167 @@
+/**
+ * Analytics Styles
+ * AI Customer Service Assistant Dashboard
+ */
+
+/* Chart Type Selector */
+.chart-type-selector {
+  display: flex;
+  gap: 5px;
+}
+
+.chart-type-selector .btn-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+  color: var(--text-light);
+  border: 1px solid var(--border-color);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.chart-type-selector .btn-icon:hover {
+  background-color: var(--background-light);
+}
+
+.chart-type-selector .btn-icon.active {
+  background-color: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+}
+
+/* Chart Container */
+.chart-container {
+  position: relative;
+  transition: opacity 0.3s;
+}
+
+.chart-container.loading {
+  opacity: 0.5;
+}
+
+.chart-container.loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(0, 113, 227, 0.2);
+  border-top: 4px solid var(--primary-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: translate(-50%, -50%) rotate(0deg); }
+  100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* Full Width Card */
+.dashboard-card.full-width {
+  grid-column: 1 / -1;
+}
+
+/* Insights Container */
+.insights-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.insight-card {
+  display: flex;
+  gap: 15px;
+  padding: 20px;
+  background-color: var(--background-light);
+  border-radius: var(--border-radius);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.insight-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+}
+
+.insight-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: rgba(0, 113, 227, 0.1);
+  color: var(--primary-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.insight-content h4 {
+  margin: 0 0 10px 0;
+  font-size: 16px;
+}
+
+.insight-content p {
+  margin: 0;
+  color: var(--text-light);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* Custom Chart Tooltip */
+.chart-tooltip {
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 10px;
+  border-radius: 4px;
+  font-size: 14px;
+  pointer-events: none;
+  position: absolute;
+  z-index: 100;
+  display: none;
+}
+
+.chart-tooltip.show {
+  display: block;
+}
+
+/* Date Range Selector */
+.date-selector {
+  position: relative;
+}
+
+.date-selector .dropdown-menu {
+  min-width: 180px;
+}
+
+.date-selector .dropdown-menu a {
+  padding: 10px 15px;
+}
+
+/* Custom Date Range Modal */
+.date-range-inputs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.date-range-inputs .form-row {
+  margin-bottom: 0;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .insights-container {
+    grid-template-columns: 1fr;
+  }
+  
+  .chart-type-selector {
+    display: none;
+  }
+}

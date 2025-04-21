@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Customer Service Assistant - Integration Tests</title>
+    <style>
+        :root {
+            --primary-color: #0071e3;
+            --secondary-color: #f5f5f7;
+            --text-color: #1d1d1f;
+            --background-color: #ffffff;
+            --border-color: #d2d2d7;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --success-color: #34c759;
+            --warning-color: #ff9500;
+            --error-color: #ff3b30;
+            --info-color: #5ac8fa;
+            --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        }
+
+        body {
+            font-family: var(--font-family);
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        main {
+            display: flex;
+            flex: 1;
+        }
+
+        .test-panel {
+            width: 400px;
+            background-color: var(--secondary-color);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .test-controls {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .test-log-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+        }
+
+        .test-log {
+            font-family: monospace;
+            font-size: 12px;
+            line-height: 1.5;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .log-entry {
+            margin-bottom: 4px;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .log-info {
+            background-color: rgba(90, 200, 250, 0.1);
+        }
+
+        .log-success {
+            background-color: rgba(52, 199, 89, 0.1);
+            color: var(--success-color);
+        }
+
+        .log-warning {
+            background-color: rgba(255, 149, 0, 0.1);
+            color: var(--warning-color);
+        }
+
+        .log-error {
+            background-color: rgba(255, 59, 48, 0.1);
+            color: var(--error-color);
+        }
+
+        .chatbot-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .button:hover {
+            background-color: #005bbf;
+        }
+
+        .button:active {
+            transform: scale(0.98);
+        }
+
+        .button:disabled {
+            background-color: #b0b0b0;
+            cursor: not-allowed;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .test-category {
+            margin-bottom: 8px;
+        }
+
+        .test-category-label {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .test-results {
+            margin-top: 16px;
+            padding: 16px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px var(--shadow-color);
+        }
+
+        .test-results-header {
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .test-stat {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 4px;
+        }
+
+        .test-progress {
+            height: 4px;
+            background-color: #e5e5ea;
+            border-radius: 2px;
+            margin-top: 8px;
+            overflow: hidden;
+        }
+
+        .test-progress-bar {
+            height: 100%;
+            background-color: var(--primary-color);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .test-progress-bar.complete {
+            background-color: var(--success-color);
+        }
+
+        .test-progress-bar.error {
+            background-color: var(--error-color);
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        @media (max-width: 768px) {
+            main {
+                flex-direction: column;
+            }
+
+            .test-panel {
+                width: 100%;
+                height: 300px;
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+            }
+
+            .chatbot-container {
+                flex: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>AI Customer Service Assistant - Integration Tests</h1>
+    </header>
+
+    <main>
+        <div class="test-panel">
+            <div class="test-controls">
+                <div class="button-group">
+                    <button id="runAllTests" class="button">Run All Tests</button>
+                    <button id="resetTests" class="button">Reset</button>
+                    <button id="generateReport" class="button">Generate Report</button>
+                </div>
+
+                <div class="test-categories">
+                    <div class="test-category">
+                        <div class="test-category-label">Test Categories</div>
+                        <div class="button-group">
+                            <button class="button category-button" data-category="Core Functionality">Core</button>
+                            <button class="button category-button" data-category="File Attachment">Files</button>
+                            <button class="button category-button" data-category="Enhanced AI">AI</button>
+                            <button class="button category-button" data-category="Feedback Mechanism">Feedback</button>
+                            <button class="button category-button" data-category="Performance Optimization">Performance</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="test-results">
+                    <div class="test-results-header">Test Results</div>
+                    <div class="test-stat">
+                        <span>Total:</span>
+                        <span id="totalTests">0</span>
+                    </div>
+                    <div class="test-stat">
+                        <span>Passed:</span>
+                        <span id="passedTests">0</span>
+                    </div>
+                    <div class="test-stat">
+                        <span>Failed:</span>
+                        <span id="failedTests">0</span>
+                    </div>
+                    <div class="test-stat">
+                        <span>Pending:</span>
+                        <span id="pendingTests">0</span>
+                    </div>
+                    <div class="test-progress">
+                        <div id="testProgressBar" class="test-progress-bar"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="test-log-container">
+                <div id="test-log" class="test-log"></div>
+            </div>
+        </div>
+
+        <div class="chatbot-container">
+            <iframe id="chatbotFrame" src="integrated-chatbot-basic.html"></iframe>
+        </div>
+    </main>
+
+    <script src="integration-test-runner.js"></script>
+    <script src="integration-test-implementation.js"></script>
+    <script src="generate-test-report.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Elements
+            const runAllTestsButton = document.getElementById('runAllTests');
+            const resetTestsButton = document.getElementById('resetTests');
+            const generateReportButton = document.getElementById('generateReport');
+            const categoryButtons = document.querySelectorAll('.category-button');
+            const totalTestsElement = document.getElementById('totalTests');
+            const passedTestsElement = document.getElementById('passedTests');
+            const failedTestsElement = document.getElementById('failedTests');
+            const pendingTestsElement = document.getElementById('pendingTests');
+            const testProgressBar = document.getElementById('testProgressBar');
+            const chatbotFrame = document.getElementById('chatbotFrame');
+
+            // Wait for chatbot to load
+            chatbotFrame.onload = function() {
+                // Get chatbot window
+                const chatbotWindow = chatbotFrame.contentWindow;
+
+                // Initialize test runner in chatbot window
+                chatbotWindow.testRunner = new ChatbotTestRunner().init('test-log');
+
+                // Setup tests
+                setupIntegrationTests(chatbotWindow.testRunner);
+
+                // Update test count
+                updateTestCounts(chatbotWindow.testRunner.results);
+            };
+
+            // Run all tests
+            runAllTestsButton.addEventListener('click', async function() {
+                const chatbotWindow = chatbotFrame.contentWindow;
+                if (!chatbotWindow.testRunner) return;
+
+                // Disable buttons during test run
+                setButtonsEnabled(false);
+
+                // Run tests
+                await chatbotWindow.testRunner.runAll();
+
+                // Update results
+                updateTestCounts(chatbotWindow.testRunner.results);
+
+                // Re-enable buttons
+                setButtonsEnabled(true);
+            });
+
+            // Reset tests
+            resetTestsButton.addEventListener('click', function() {
+                const chatbotWindow = chatbotFrame.contentWindow;
+                if (!chatbotWindow.testRunner) return;
+
+                // Reset tests
+                chatbotWindow.testRunner.resetResults();
+
+                // Update results
+                updateTestCounts(chatbotWindow.testRunner.results);
+
+                // Clear log
+                document.getElementById('test-log').innerHTML = '';
+
+                // Reload iframe to reset chatbot state
+                chatbotFrame.src = chatbotFrame.src;
+            });
+
+            // Run tests by category
+            categoryButtons.forEach(button => {
+                button.addEventListener('click', async function() {
+                    const category = this.dataset.category;
+                    const chatbotWindow = chatbotFrame.contentWindow;
+                    if (!chatbotWindow.testRunner) return;
+
+                    // Disable buttons during test run
+                    setButtonsEnabled(false);
+
+                    // Run tests for category
+                    await chatbotWindow.testRunner.runCategory(category);
+
+                    // Update results
+                    updateTestCounts(chatbotWindow.testRunner.results);
+
+                    // Re-enable buttons
+                    setButtonsEnabled(true);
+                });
+            });
+
+            // Generate test report
+            generateReportButton.addEventListener('click', function() {
+                const chatbotWindow = chatbotFrame.contentWindow;
+                if (!chatbotWindow.testRunner) return;
+
+                // Get test results
+                const testResults = chatbotWindow.testRunner.getResults();
+
+                // Generate report
+                const report = chatbotWindow.generateTestReport(testResults);
+
+                // Save report
+                chatbotWindow.saveTestReport(report);
+            });
+
+            // Update test counts
+            function updateTestCounts(results) {
+                totalTestsElement.textContent = results.total;
+                passedTestsElement.textContent = results.passed;
+                failedTestsElement.textContent = results.failed;
+                pendingTestsElement.textContent = results.pending;
+
+                // Update progress bar
+                const progress = results.total > 0 ?
+                    ((results.passed + results.failed) / results.total) * 100 : 0;
+                testProgressBar.style.width = `${progress}%`;
+
+                // Update progress bar class
+                testProgressBar.classList.remove('complete', 'error');
+                if (progress === 100) {
+                    if (results.failed > 0) {
+                        testProgressBar.classList.add('error');
+                    } else {
+                        testProgressBar.classList.add('complete');
+                    }
+                }
+            }
+
+            // Enable/disable buttons
+            function setButtonsEnabled(enabled) {
+                runAllTestsButton.disabled = !enabled;
+                resetTestsButton.disabled = !enabled;
+                generateReportButton.disabled = !enabled;
+                categoryButtons.forEach(button => {
+                    button.disabled = !enabled;
+                });
+            }
+        });
+    </script>
+</body>
+</html>

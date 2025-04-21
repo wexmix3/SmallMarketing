@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UAT Dashboard - AI Customer Service Assistant</title>
+    <link rel="stylesheet" href="uat-dashboard.css">
+</head>
+<body>
+    <header>
+        <h1>UAT Dashboard</h1>
+        <p>AI Customer Service Assistant</p>
+    </header>
+
+    <main>
+        <section class="summary-section">
+            <h2>Test Progress Summary</h2>
+            <div class="summary-cards">
+                <div class="summary-card">
+                    <h3>Total Tests</h3>
+                    <p class="count" id="totalTests">0</p>
+                </div>
+                <div class="summary-card">
+                    <h3>Completed</h3>
+                    <p class="count" id="completedTests">0</p>
+                </div>
+                <div class="summary-card">
+                    <h3>Passed</h3>
+                    <p class="count" id="passedTests">0</p>
+                </div>
+                <div class="summary-card">
+                    <h3>Failed</h3>
+                    <p class="count" id="failedTests">0</p>
+                </div>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+        </section>
+
+        <section class="test-cases-section">
+            <h2>Test Cases</h2>
+            <div class="filters">
+                <select id="categoryFilter">
+                    <option value="all">All Categories</option>
+                    <option value="BF">Basic Functionality</option>
+                    <option value="FH">File Handling</option>
+                    <option value="CF">Conversation Flow</option>
+                    <option value="FS">File-Specific Conversations</option>
+                    <option value="PR">Performance and Reliability</option>
+                </select>
+                <select id="statusFilter">
+                    <option value="all">All Statuses</option>
+                    <option value="pending">Pending</option>
+                    <option value="passed">Passed</option>
+                    <option value="failed">Failed</option>
+                </select>
+                <input type="text" id="searchInput" placeholder="Search test cases...">
+            </div>
+            <table class="test-cases-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Test Case</th>
+                        <th>Category</th>
+                        <th>Tester</th>
+                        <th>Status</th>
+                        <th>Severity</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="testCasesTableBody">
+                    <!-- Test cases will be added here dynamically -->
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <footer>
+        <p>UAT Dashboard v1.0 | Last updated: <span id="lastUpdated"></span></p>
+    </footer>
+
+    <!-- Will add JavaScript in a separate file -->
+    <script src="uat-dashboard.js"></script>
+</body>
+</html>

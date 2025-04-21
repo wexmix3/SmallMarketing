@@ -1,0 +1,123 @@
+/**
+ * AI Customer Service Assistant
+ * Chatbot Widget Styles
+ */
+
+/* Embedded chatbot styles */
+.chatbot-widget {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+  width: 360px;
+  height: 500px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--background-color);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-xl);
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+  transition: var(--transition);
+  transform: translateY(20px);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.chatbot-widget.open {
+  transform: translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.chatbot-widget .chat-header {
+  cursor: move;
+}
+
+.chatbot-widget .chat-messages {
+  height: 100%;
+}
+
+.chatbot-toggle {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: var(--primary-color);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: var(--shadow-lg);
+  transition: var(--transition);
+  z-index: 999;
+}
+
+.chatbot-toggle:hover {
+  transform: scale(1.05);
+  box-shadow: var(--shadow-xl);
+}
+
+.chatbot-toggle i {
+  font-size: 24px;
+  transition: var(--transition);
+}
+
+.chatbot-toggle.open i {
+  transform: rotate(45deg);
+}
+
+/* Dark theme */
+body.dark {
+  --background-color: var(--neutral-900);
+  --background-light: var(--neutral-800);
+  --text-color: var(--neutral-200);
+  --text-light: var(--neutral-400);
+  --border-color: var(--neutral-700);
+}
+
+/* Light theme */
+body.light {
+  --background-color: white;
+  --background-light: var(--neutral-50);
+  --text-color: var(--neutral-800);
+  --text-light: var(--neutral-500);
+  --border-color: var(--neutral-200);
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .chatbot-main {
+    flex-direction: column;
+  }
+  
+  .settings-panel {
+    width: 100%;
+    margin-top: 20px;
+  }
+  
+  .message {
+    max-width: 90%;
+  }
+}
+
+/* Chatbot widget responsive */
+@media (max-width: 480px) {
+  .chatbot-widget {
+    width: 100%;
+    height: 100%;
+    max-height: 100vh;
+    bottom: 0;
+    right: 0;
+    border-radius: 0;
+  }
+  
+  .chatbot-toggle {
+    bottom: 20px;
+    right: 20px;
+  }
+}

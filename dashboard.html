@@ -1,0 +1,1149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard | AI Customer Service Assistant</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="dashboard.css">
+  <link rel="stylesheet" href="dashboard-enhanced.css">
+  <link rel="stylesheet" href="analytics-styles.css">
+  <link rel="stylesheet" href="enhanced-design.css">
+  <link rel="stylesheet" href="animations.css">
+  <link rel="stylesheet" href="icon-utilities.css">
+  <link rel="icon" href="public/images/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body class="dashboard-body">
+  <header class="dashboard-header">
+    <div class="container">
+      <div class="logo">
+        <img src="public/images/logo.svg" alt="AI Customer Service Assistant Logo">
+        <h1>AI Customer Service Assistant</h1>
+      </div>
+      <nav>
+        <ul>
+          <li><a href="#" class="active" data-target="dashboard">Dashboard</a></li>
+          <li><a href="#" data-target="analytics">Analytics</a></li>
+          <li><a href="#" data-target="settings">Settings</a></li>
+          <li><a href="#" data-target="help">Help</a></li>
+          <li class="user-menu">
+            <a href="#" class="user-toggle">
+              <span class="user-avatar">JD</span>
+              <span class="user-name">John Doe</span>
+              <i class="fas fa-chevron-down"></i>
+            </a>
+            <div class="dropdown-menu">
+              <a href="#"><i class="fas fa-user"></i> Profile</a>
+              <a href="#"><i class="fas fa-cog"></i> Account Settings</a>
+              <a href="#"><i class="fas fa-credit-card"></i> Billing</a>
+              <a href="index.html"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </div>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <div class="dashboard-container">
+    <aside class="sidebar">
+      <button class="sidebar-toggle" id="sidebar-toggle" data-tooltip="Toggle sidebar">
+        <i class="fas fa-chevron-left"></i>
+      </button>
+      <nav class="sidebar-nav">
+        <ul>
+          <li><a href="#" class="active" data-target="dashboard" data-title="Dashboard"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a></li>
+          <li><a href="#" data-target="conversations" data-title="Conversations"><i class="fas fa-comment-dots"></i> <span>Conversations</span></a></li>
+          <li><a href="#" data-target="knowledge-base" data-title="Knowledge Base"><i class="fas fa-brain"></i> <span>Knowledge Base</span></a></li>
+          <li><a href="#" data-target="analytics" data-title="Analytics"><i class="fas fa-chart-bar"></i> <span>Analytics</span></a></li>
+          <li><a href="#" data-target="settings" data-title="Settings"><i class="fas fa-cog"></i> <span>Settings</span></a></li>
+          <li><a href="#" data-target="integration" data-title="Integration"><i class="fas fa-code"></i> <span>Integration</span></a></li>
+          <li><a href="#" data-target="help" data-title="Help & Support"><i class="fas fa-question-circle"></i> <span>Help & Support</span></a></li>
+        </ul>
+      </nav>
+    </aside>
+
+    <main class="dashboard-main">
+      <!-- Dashboard Section -->
+      <section id="dashboard" class="dashboard-content-section active">
+      <div class="dashboard-header-bar">
+        <div>
+          <div class="breadcrumbs">
+            <a href="#">Home</a>
+            <span class="separator">/</span>
+            <span class="current">Dashboard</span>
+          </div>
+          <h2>Dashboard</h2>
+        </div>
+        <div class="date-selector">
+          <button class="btn-outline" data-tooltip="Select date range">
+            <i class="far fa-calendar-alt"></i>
+            Last 30 Days
+            <i class="fas fa-chevron-down"></i>
+          </button>
+          <div class="dropdown-menu">
+            <a href="#" data-range="today">Today</a>
+            <a href="#" data-range="yesterday">Yesterday</a>
+            <a href="#" data-range="7days">Last 7 Days</a>
+            <a href="#" data-range="30days" class="active">Last 30 Days</a>
+            <a href="#" data-range="90days">Last 90 Days</a>
+            <a href="#" data-range="custom">Custom Range</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fas fa-comments"></i></div>
+          <div class="stat-content">
+            <h3>Total Conversations</h3>
+            <div class="stat-value">1,248</div>
+            <div class="stat-change positive">+12.5% <span>vs last period</span></div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fas fa-users"></i></div>
+          <div class="stat-content">
+            <h3>Unique Users</h3>
+            <div class="stat-value">856</div>
+            <div class="stat-change positive">+8.3% <span>vs last period</span></div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fas fa-clock"></i></div>
+          <div class="stat-content">
+            <h3>Avg. Response Time</h3>
+            <div class="stat-value">1.2s</div>
+            <div class="stat-change negative">+0.3s <span>vs last period</span></div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fas fa-smile"></i></div>
+          <div class="stat-content">
+            <h3>Satisfaction Rate</h3>
+            <div class="stat-value">94%</div>
+            <div class="stat-change positive">+2.1% <span>vs last period</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dashboard-row">
+        <div class="dashboard-card conversation-chart">
+          <div class="card-header">
+            <h3>Conversation Volume</h3>
+            <div class="card-actions">
+              <button class="btn-icon" data-tooltip="More options"><i class="fas fa-ellipsis-h"></i></button>
+              <div class="dropdown-menu">
+                <a href="#"><i class="fas fa-download"></i> Export Chart</a>
+                <a href="#"><i class="fas fa-sync-alt"></i> Refresh Data</a>
+                <a href="#"><i class="fas fa-cog"></i> Chart Settings</a>
+              </div>
+            </div>
+          </div>
+          <div class="card-content">
+            <div class="chart-container" style="position: relative; height: 200px;">
+              <canvas id="conversation-chart"></canvas>
+            </div>
+            <div class="chart-legend">
+              <div class="legend-item">
+                <div class="legend-color" style="background-color: var(--primary-color);"></div>
+                <div class="legend-label">Conversations</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="dashboard-card top-questions">
+          <div class="card-header">
+            <h3>Top Questions</h3>
+            <div class="card-actions">
+              <button class="btn-icon" data-tooltip="More options"><i class="fas fa-ellipsis-h"></i></button>
+              <div class="dropdown-menu">
+                <a href="#"><i class="fas fa-plus"></i> Add Question</a>
+                <a href="#"><i class="fas fa-download"></i> Export Questions</a>
+                <a href="#"><i class="fas fa-sync-alt"></i> Refresh Data</a>
+              </div>
+            </div>
+          </div>
+          <div class="card-content">
+            <ul class="question-list">
+              <li>
+                <div class="question-text">What are your business hours?</div>
+                <div class="question-count">124</div>
+              </li>
+              <li>
+                <div class="question-text">How do I reset my password?</div>
+                <div class="question-count">98</div>
+              </li>
+              <li>
+                <div class="question-text">Do you offer free shipping?</div>
+                <div class="question-count">87</div>
+              </li>
+              <li>
+                <div class="question-text">What is your return policy?</div>
+                <div class="question-count">76</div>
+              </li>
+              <li>
+                <div class="question-text">How can I track my order?</div>
+                <div class="question-count">65</div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="dashboard-row">
+        <div class="dashboard-card recent-conversations">
+          <div class="card-header">
+            <h3>Recent Conversations</h3>
+            <div class="card-actions">
+              <button class="btn-outline btn-sm" data-tooltip="View all conversations">View All</button>
+            </div>
+          </div>
+          <div class="card-content">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>User</th>
+                  <th>Time</th>
+                  <th>Duration</th>
+                  <th>Questions</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <div class="user-cell">
+                      <div class="user-avatar small">EM</div>
+                      <div class="user-info">
+                        <div class="user-name">Emily Martinez</div>
+                        <div class="user-email">emily@example.com</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td>Just now</td>
+                  <td>2m 34s</td>
+                  <td>3</td>
+                  <td><span class="status active">Active</span></td>
+                  <td>
+                    <button class="btn-icon" data-tooltip="View conversation details"><i class="fas fa-eye"></i></button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="user-cell">
+                      <div class="user-avatar small">RJ</div>
+                      <div class="user-info">
+                        <div class="user-name">Robert Johnson</div>
+                        <div class="user-email">robert@example.com</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td>5 minutes ago</td>
+                  <td>4m 12s</td>
+                  <td>5</td>
+                  <td><span class="status completed">Completed</span></td>
+                  <td>
+                    <button class="btn-icon" data-tooltip="View conversation details"><i class="fas fa-eye"></i></button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="user-cell">
+                      <div class="user-avatar small">SK</div>
+                      <div class="user-info">
+                        <div class="user-name">Sarah Kim</div>
+                        <div class="user-email">sarah@example.com</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td>15 minutes ago</td>
+                  <td>1m 45s</td>
+                  <td>2</td>
+                  <td><span class="status completed">Completed</span></td>
+                  <td>
+                    <button class="btn-icon" data-tooltip="View conversation details"><i class="fas fa-eye"></i></button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="user-cell">
+                      <div class="user-avatar small">DW</div>
+                      <div class="user-info">
+                        <div class="user-name">David Wilson</div>
+                        <div class="user-email">david@example.com</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td>30 minutes ago</td>
+                  <td>6m 20s</td>
+                  <td>7</td>
+                  <td><span class="status transferred">Transferred</span></td>
+                  <td>
+                    <button class="btn-icon" data-tooltip="View conversation details"><i class="fas fa-eye"></i></button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="dashboard-row">
+        <div class="dashboard-card quick-actions">
+          <div class="card-header">
+            <h3>Quick Actions</h3>
+          </div>
+          <div class="card-content">
+            <div class="action-grid">
+              <a href="#" class="action-card" data-tooltip="Add frequently asked questions to your knowledge base" data-modal="add-faq-modal">
+                <div class="action-icon"><i class="fas fa-plus"></i></div>
+                <div class="action-title">Add FAQ</div>
+              </a>
+              <a href="#" class="action-card" data-tooltip="Get code to embed the chatbot on your website" data-modal="embed-code-modal">
+                <div class="action-icon"><i class="fas fa-code"></i></div>
+                <div class="action-title">Get Embed Code</div>
+              </a>
+              <a href="#" class="action-card" data-tooltip="Customize your chatbot's appearance and behavior" data-modal="customize-modal">
+                <div class="action-icon"><i class="fas fa-cog"></i></div>
+                <div class="action-title">Configure Bot</div>
+              </a>
+              <a href="#" class="action-card" data-tooltip="Export conversation data and analytics">
+                <div class="action-icon"><i class="fas fa-file-export"></i></div>
+                <div class="action-title">Export Data</div>
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="dashboard-card getting-started">
+          <div class="card-header">
+            <h3>Getting Started</h3>
+            <div class="card-actions">
+              <button class="btn-icon"><i class="fas fa-times"></i></button>
+            </div>
+          </div>
+          <div class="card-content">
+            <div class="progress-bar">
+              <div class="progress" style="width: 60%;"></div>
+            </div>
+            <div class="progress-text">3 of 5 steps completed</div>
+            <ul class="checklist">
+              <li class="checked">
+                <div class="check-icon"><i class="fas fa-check"></i></div>
+                <div class="check-content">
+                  <div class="check-title">Create account</div>
+                  <div class="check-description">Your account has been created successfully.</div>
+                </div>
+              </li>
+              <li class="checked">
+                <div class="check-icon"><i class="fas fa-check"></i></div>
+                <div class="check-content">
+                  <div class="check-title">Set up your profile</div>
+                  <div class="check-description">Your business profile is complete.</div>
+                </div>
+              </li>
+              <li class="checked">
+                <div class="check-icon"><i class="fas fa-check"></i></div>
+                <div class="check-content">
+                  <div class="check-title">Add FAQs</div>
+                  <div class="check-description">You've added 10 FAQs to your knowledge base.</div>
+                </div>
+              </li>
+              <li>
+                <div class="check-icon"><i class="fas fa-circle"></i></div>
+                <div class="check-content">
+                  <div class="check-title">Customize your chatbot</div>
+                  <div class="check-description">Personalize your chatbot's appearance and behavior.</div>
+                </div>
+                <button class="btn-outline btn-sm" data-tooltip="Customize your chatbot appearance" data-modal="customize-modal">Customize</button>
+              </li>
+              <li>
+                <div class="check-icon"><i class="fas fa-circle"></i></div>
+                <div class="check-content">
+                  <div class="check-title">Install on your website</div>
+                  <div class="check-description">Add the chatbot to your website with a simple code snippet.</div>
+                </div>
+                <button class="btn-outline btn-sm" data-tooltip="Get installation code for your website" data-modal="embed-code-modal">Install</button>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      </section>
+
+      <!-- Conversations Section -->
+      <section id="conversations" class="dashboard-content-section">
+        <div class="dashboard-header-bar">
+          <div>
+            <div class="breadcrumbs">
+              <a href="#">Home</a>
+              <span class="separator">/</span>
+              <span class="current">Conversations</span>
+            </div>
+            <h2>Conversations</h2>
+          </div>
+          <div class="date-selector">
+            <button class="btn-outline" data-tooltip="Select date range">
+              <i class="far fa-calendar-alt"></i>
+              Last 30 Days
+              <i class="fas fa-chevron-down"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="dashboard-card recent-conversations">
+          <div class="card-header">
+            <h3>All Conversations</h3>
+            <div class="card-actions">
+              <button class="btn-outline btn-sm">Export</button>
+            </div>
+          </div>
+          <div class="card-content">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>User</th>
+                  <th>Time</th>
+                  <th>Duration</th>
+                  <th>Questions</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <div class="user-cell">
+                      <div class="user-avatar small">EM</div>
+                      <div class="user-info">
+                        <div class="user-name">Emily Martinez</div>
+                        <div class="user-email">emily@example.com</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td>Just now</td>
+                  <td>2m 34s</td>
+                  <td>3</td>
+                  <td><span class="status active">Active</span></td>
+                  <td>
+                    <button class="btn-icon" data-tooltip="View conversation details"><i class="fas fa-eye"></i></button>
+                  </td>
+                </tr>
+                <!-- More conversation rows would go here -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Knowledge Base Section -->
+      <section id="knowledge-base" class="dashboard-content-section">
+        <div class="dashboard-header-bar">
+          <div>
+            <div class="breadcrumbs">
+              <a href="#">Home</a>
+              <span class="separator">/</span>
+              <span class="current">Knowledge Base</span>
+            </div>
+            <h2>Knowledge Base</h2>
+          </div>
+          <div>
+            <button class="btn-primary" onclick="showModal('add-faq-modal')">
+              <i class="fas fa-plus"></i> Add FAQ
+            </button>
+          </div>
+        </div>
+
+        <div class="dashboard-card">
+          <div class="card-header">
+            <h3>Frequently Asked Questions</h3>
+            <div class="card-actions">
+              <button class="btn-outline btn-sm">Import</button>
+              <button class="btn-outline btn-sm">Export</button>
+            </div>
+          </div>
+          <div class="card-content">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Question</th>
+                  <th>Category</th>
+                  <th>Last Updated</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>What are your business hours?</td>
+                  <td>General</td>
+                  <td>2 days ago</td>
+                  <td>
+                    <button class="btn-icon" data-tooltip="Edit FAQ"><i class="fas fa-edit"></i></button>
+                    <button class="btn-icon" data-tooltip="Delete FAQ"><i class="fas fa-trash"></i></button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>How do I reset my password?</td>
+                  <td>Support</td>
+                  <td>3 days ago</td>
+                  <td>
+                    <button class="btn-icon" data-tooltip="Edit FAQ"><i class="fas fa-edit"></i></button>
+                    <button class="btn-icon" data-tooltip="Delete FAQ"><i class="fas fa-trash"></i></button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Do you offer free shipping?</td>
+                  <td>Products</td>
+                  <td>1 week ago</td>
+                  <td>
+                    <button class="btn-icon" data-tooltip="Edit FAQ"><i class="fas fa-edit"></i></button>
+                    <button class="btn-icon" data-tooltip="Delete FAQ"><i class="fas fa-trash"></i></button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Analytics Section -->
+      <section id="analytics" class="dashboard-content-section">
+        <div class="dashboard-header-bar">
+          <div>
+            <div class="breadcrumbs">
+              <a href="#">Home</a>
+              <span class="separator">/</span>
+              <span class="current">Analytics</span>
+            </div>
+            <h2>Analytics</h2>
+          </div>
+          <div class="date-selector">
+            <button class="btn-outline" data-tooltip="Select date range">
+              <i class="far fa-calendar-alt"></i>
+              Last 30 Days
+              <i class="fas fa-chevron-down"></i>
+            </button>
+            <div class="dropdown-menu">
+              <a href="#" data-range="today">Today</a>
+              <a href="#" data-range="yesterday">Yesterday</a>
+              <a href="#" data-range="7days">Last 7 Days</a>
+              <a href="#" data-range="30days" class="active">Last 30 Days</a>
+              <a href="#" data-range="90days">Last 90 Days</a>
+              <a href="#" data-range="custom">Custom Range</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card animate fade-in-up stagger-item">
+            <div class="stat-icon icon-circle-primary-gradient"><i class="fas fa-comments"></i></div>
+            <div class="stat-content">
+              <h3>Total Conversations</h3>
+              <div class="stat-value">1,248</div>
+              <div class="stat-change positive">+12.5% <span>vs last period</span></div>
+            </div>
+          </div>
+          <div class="stat-card animate fade-in-up stagger-item">
+            <div class="stat-icon icon-circle-secondary-gradient"><i class="fas fa-users"></i></div>
+            <div class="stat-content">
+              <h3>Unique Users</h3>
+              <div class="stat-value">856</div>
+              <div class="stat-change positive">+8.3% <span>vs last period</span></div>
+            </div>
+          </div>
+          <div class="stat-card animate fade-in-up stagger-item">
+            <div class="stat-icon icon-circle-primary-gradient"><i class="fas fa-clock"></i></div>
+            <div class="stat-content">
+              <h3>Avg. Response Time</h3>
+              <div class="stat-value">1.2s</div>
+              <div class="stat-change negative">+0.3s <span>vs last period</span></div>
+            </div>
+          </div>
+          <div class="stat-card animate fade-in-up stagger-item">
+            <div class="stat-icon icon-circle-secondary-gradient"><i class="fas fa-smile"></i></div>
+            <div class="stat-content">
+              <h3>Satisfaction Rate</h3>
+              <div class="stat-value">94%</div>
+              <div class="stat-change positive">+2.1% <span>vs last period</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="dashboard-row">
+          <div class="dashboard-card animate fade-in-up" style="animation-delay: 0.2s;">
+            <div class="card-header">
+              <h3>Conversation Volume</h3>
+              <div class="chart-type-selector" data-chart="volume">
+                <button class="btn-icon active" data-type="bar" data-tooltip="Bar Chart"><i class="fas fa-chart-bar"></i></button>
+                <button class="btn-icon" data-type="line" data-tooltip="Line Chart"><i class="fas fa-chart-line"></i></button>
+              </div>
+            </div>
+            <div class="card-content">
+              <div class="chart-container" style="position: relative; height: 300px;">
+                <canvas id="volume-chart"></canvas>
+              </div>
+            </div>
+          </div>
+          <div class="dashboard-card animate fade-in-up" style="animation-delay: 0.3s;">
+            <div class="card-header">
+              <h3>User Satisfaction</h3>
+              <div class="chart-type-selector" data-chart="satisfaction">
+                <button class="btn-icon active" data-type="doughnut" data-tooltip="Doughnut Chart"><i class="fas fa-chart-pie"></i></button>
+                <button class="btn-icon" data-type="bar" data-tooltip="Bar Chart"><i class="fas fa-chart-bar"></i></button>
+              </div>
+            </div>
+            <div class="card-content">
+              <div class="chart-container" style="position: relative; height: 300px;">
+                <canvas id="satisfaction-chart"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="dashboard-row">
+          <div class="dashboard-card animate fade-in-up" style="animation-delay: 0.4s;">
+            <div class="card-header">
+              <h3>Popular Topics</h3>
+              <div class="chart-type-selector" data-chart="topics">
+                <button class="btn-icon active" data-type="pie" data-tooltip="Pie Chart"><i class="fas fa-chart-pie"></i></button>
+                <button class="btn-icon" data-type="bar" data-tooltip="Bar Chart"><i class="fas fa-chart-bar"></i></button>
+              </div>
+            </div>
+            <div class="card-content">
+              <div class="chart-container" style="position: relative; height: 300px;">
+                <canvas id="topics-chart"></canvas>
+              </div>
+            </div>
+          </div>
+          <div class="dashboard-card animate fade-in-up" style="animation-delay: 0.5s;">
+            <div class="card-header">
+              <h3>Response Time Trend</h3>
+              <div class="chart-type-selector" data-chart="responseTime">
+                <button class="btn-icon active" data-type="line" data-tooltip="Line Chart"><i class="fas fa-chart-line"></i></button>
+                <button class="btn-icon" data-type="bar" data-tooltip="Bar Chart"><i class="fas fa-chart-bar"></i></button>
+              </div>
+            </div>
+            <div class="card-content">
+              <div class="chart-container" style="position: relative; height: 300px;">
+                <canvas id="response-time-chart"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="dashboard-row">
+          <div class="dashboard-card full-width animate fade-in-up" style="animation-delay: 0.6s;">
+            <div class="card-header">
+              <h3>Analytics Insights</h3>
+            </div>
+            <div class="card-content">
+              <div class="insights-container">
+                <div class="insight-card animate fade-in-right" style="animation-delay: 0.7s;">
+                  <div class="insight-icon icon-circle-success-solid"><i class="fas fa-arrow-up"></i></div>
+                  <div class="insight-content">
+                    <h4>Conversation Increase</h4>
+                    <p>Conversations have increased by 12.5% compared to the previous period. This indicates growing user engagement with your chatbot.</p>
+                  </div>
+                </div>
+                <div class="insight-card animate fade-in-right" style="animation-delay: 0.8s;">
+                  <div class="insight-icon icon-circle-primary-solid"><i class="fas fa-star"></i></div>
+                  <div class="insight-content">
+                    <h4>High Satisfaction</h4>
+                    <p>Your chatbot maintains a 94% satisfaction rate, showing that users are finding the responses helpful and relevant.</p>
+                  </div>
+                </div>
+                <div class="insight-card animate fade-in-right" style="animation-delay: 0.9s;">
+                  <div class="insight-icon icon-circle-warning-solid"><i class="fas fa-lightbulb"></i></div>
+                  <div class="insight-content">
+                    <h4>Popular Topic: Product Info</h4>
+                    <p>The most common questions are about product information. Consider expanding your knowledge base with more detailed product descriptions.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Settings Section -->
+      <section id="settings" class="dashboard-content-section">
+        <div class="dashboard-header-bar">
+          <div>
+            <div class="breadcrumbs">
+              <a href="#">Home</a>
+              <span class="separator">/</span>
+              <span class="current">Settings</span>
+            </div>
+            <h2>Settings</h2>
+          </div>
+          <div>
+            <button class="btn-primary" onclick="saveAllSettings()">
+              <i class="fas fa-save"></i> Save Changes
+            </button>
+          </div>
+        </div>
+
+        <div class="dashboard-card">
+          <div class="card-header">
+            <h3>Account Settings</h3>
+          </div>
+          <div class="card-content">
+            <form id="account-settings-form">
+              <div class="form-row">
+                <label class="form-label" for="business-name">Business Name</label>
+                <input type="text" id="business-name" name="businessName" class="form-input" value="Demo Business" required minlength="2">
+              </div>
+              <div class="form-row">
+                <label class="form-label" for="business-email">Business Email</label>
+                <input type="email" id="business-email" name="businessEmail" class="form-input" value="contact@demobusiness.com" required>
+              </div>
+              <div class="form-row">
+                <label class="form-label" for="business-phone">Business Phone</label>
+                <input type="tel" id="business-phone" name="businessPhone" class="form-input" value="(555) 123-4567" required>
+              </div>
+              <div class="form-row">
+                <label class="form-label" for="business-website">Website</label>
+                <input type="url" id="business-website" name="businessWebsite" class="form-input" value="https://demobusiness.com" required>
+              </div>
+              <div class="form-row">
+                <button type="button" id="save-account-settings" class="btn-primary">
+                  <i class="fas fa-save"></i> Save Changes
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <div class="dashboard-card">
+          <div class="card-header">
+            <h3>Notification Settings</h3>
+          </div>
+          <div class="card-content">
+            <form id="notification-settings-form">
+              <div class="form-row">
+                <div class="form-checkbox">
+                  <input type="checkbox" id="email-notifications" name="emailNotifications" checked>
+                  <label for="email-notifications">Email Notifications</label>
+                </div>
+                <div class="form-help">Receive email notifications for new conversations and important events</div>
+              </div>
+              <div class="form-row">
+                <div class="form-checkbox">
+                  <input type="checkbox" id="daily-summary" name="dailySummary" checked>
+                  <label for="daily-summary">Daily Summary</label>
+                </div>
+                <div class="form-help">Receive a daily summary of all conversations and analytics</div>
+              </div>
+              <div class="form-row">
+                <div class="form-checkbox">
+                  <input type="checkbox" id="browser-notifications" name="browserNotifications">
+                  <label for="browser-notifications">Browser Notifications</label>
+                </div>
+                <div class="form-help">Receive browser notifications when you're logged in</div>
+              </div>
+              <div class="form-row">
+                <button type="button" id="save-notification-settings" class="btn-primary">
+                  <i class="fas fa-save"></i> Save Notification Settings
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <!-- Integration Section -->
+      <section id="integration" class="dashboard-content-section">
+        <div class="dashboard-header-bar">
+          <div>
+            <div class="breadcrumbs">
+              <a href="#">Home</a>
+              <span class="separator">/</span>
+              <span class="current">Integration</span>
+            </div>
+            <h2>Integration</h2>
+          </div>
+        </div>
+
+        <div class="dashboard-card">
+          <div class="card-header">
+            <h3>Website Integration</h3>
+          </div>
+          <div class="card-content">
+            <p>Add the AI Customer Service Assistant to your website by copying and pasting this code snippet just before the closing <code>&lt;/body&gt;</code> tag:</p>
+            <div class="code-block">
+              <pre><code>&lt;script src="https://cdn.aiassistant.com/embed.js" data-assistant-id="your-assistant-id" data-position="bottom-right" data-primary-color="#0071e3"&gt;&lt;/script&gt;</code></pre>
+            </div>
+            <button class="copy-button" onclick="copyEmbedCode()">
+              <i class="fas fa-copy"></i> Copy Code
+            </button>
+
+            <div class="form-row" style="margin-top: 20px;">
+              <label class="form-label">Customize Position</label>
+              <div class="tabs">
+                <div class="tab active" data-position="bottom-right">Bottom Right</div>
+                <div class="tab" data-position="bottom-left">Bottom Left</div>
+                <div class="tab" data-position="top-right">Top Right</div>
+                <div class="tab" data-position="top-left">Top Left</div>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <label class="form-label">Primary Color</label>
+              <div class="color-picker">
+                <div class="color-option active" style="background-color: #0071e3;" data-color="#0071e3"></div>
+                <div class="color-option" style="background-color: #34c759;" data-color="#34c759"></div>
+                <div class="color-option" style="background-color: #ff9500;" data-color="#ff9500"></div>
+                <div class="color-option" style="background-color: #ff3b30;" data-color="#ff3b30"></div>
+                <div class="color-option" style="background-color: #5856d6;" data-color="#5856d6"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="dashboard-card">
+          <div class="card-header">
+            <h3>Platform Integrations</h3>
+          </div>
+          <div class="card-content">
+            <div class="integration-grid">
+              <div class="integration-card">
+                <img src="public/images/shopify-logo.svg" alt="Shopify" class="integration-logo">
+                <h4>Shopify</h4>
+                <p>Add the AI assistant to your Shopify store</p>
+                <button class="btn-outline">Connect</button>
+              </div>
+              <div class="integration-card">
+                <img src="public/images/wordpress-logo.svg" alt="WordPress" class="integration-logo">
+                <h4>WordPress</h4>
+                <p>Add the AI assistant to your WordPress site</p>
+                <button class="btn-outline">Connect</button>
+              </div>
+              <div class="integration-card">
+                <img src="public/images/wix-logo.svg" alt="Wix" class="integration-logo">
+                <h4>Wix</h4>
+                <p>Add the AI assistant to your Wix site</p>
+                <button class="btn-outline">Connect</button>
+              </div>
+              <div class="integration-card">
+                <img src="public/images/zapier-logo.svg" alt="Zapier" class="integration-logo">
+                <h4>Zapier</h4>
+                <p>Connect with 3,000+ apps via Zapier</p>
+                <button class="btn-outline">Connect</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Help Section -->
+      <section id="help" class="dashboard-content-section">
+        <div class="dashboard-header-bar">
+          <div>
+            <div class="breadcrumbs">
+              <a href="#">Home</a>
+              <span class="separator">/</span>
+              <span class="current">Help & Support</span>
+            </div>
+            <h2>Help & Support</h2>
+          </div>
+        </div>
+
+        <div class="dashboard-card">
+          <div class="card-header">
+            <h3>Getting Started</h3>
+          </div>
+          <div class="card-content">
+            <div class="help-grid">
+              <a href="#" class="help-card">
+                <div class="help-icon"><i class="fas fa-rocket"></i></div>
+                <h4>Quick Start Guide</h4>
+                <p>Learn how to set up your AI assistant in minutes</p>
+              </a>
+              <a href="#" class="help-card">
+                <div class="help-icon"><i class="fas fa-book"></i></div>
+                <h4>User Manual</h4>
+                <p>Detailed documentation for all features</p>
+              </a>
+              <a href="#" class="help-card">
+                <div class="help-icon"><i class="fas fa-video"></i></div>
+                <h4>Video Tutorials</h4>
+                <p>Step-by-step video guides for common tasks</p>
+              </a>
+              <a href="#" class="help-card">
+                <div class="help-icon"><i class="fas fa-question-circle"></i></div>
+                <h4>FAQ</h4>
+                <p>Answers to frequently asked questions</p>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="dashboard-card">
+          <div class="card-header">
+            <h3>Contact Support</h3>
+          </div>
+          <div class="card-content">
+            <form id="support-form">
+              <div class="form-row">
+                <label class="form-label" for="support-subject">Subject</label>
+                <input type="text" id="support-subject" name="subject" class="form-input" placeholder="e.g., Integration Issue" required minlength="5">
+              </div>
+              <div class="form-row">
+                <label class="form-label" for="support-message">Message</label>
+                <textarea id="support-message" name="message" class="form-textarea" placeholder="Describe your issue in detail..." required minlength="20"></textarea>
+              </div>
+              <div class="form-row">
+                <button type="button" id="submit-support-ticket" class="btn-primary">Submit Ticket</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Chart.js for data visualization -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Form utilities -->
+  <script src="form-utils.js"></script>
+
+  <!-- Form handlers -->
+  <script src="form-handlers.js"></script>
+
+  <!-- Modal utilities -->
+  <script src="modal-utils.js"></script>
+
+  <!-- Dropdown utilities -->
+  <script src="dropdown-utils.js"></script>
+
+  <!-- Table action utilities -->
+  <script src="table-actions.js"></script>
+
+  <!-- Dashboard functionality -->
+  <script src="dashboard.js"></script>
+
+  <!-- Advanced analytics -->
+  <script src="analytics-charts.js"></script>
+
+  <!-- Animation utilities -->
+  <script src="animation-utils.js"></script>
+  <!-- Modals -->
+  <!-- Add FAQ Modal -->
+  <div id="add-faq-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Add FAQ</h3>
+        <button class="close-modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="add-faq-form">
+          <div class="form-row">
+            <label class="form-label" for="faq-question">Question</label>
+            <input type="text" id="faq-question" name="question" class="form-input" placeholder="e.g., What are your business hours?" required minlength="5">
+          </div>
+          <div class="form-row">
+            <label class="form-label" for="faq-answer">Answer</label>
+            <textarea id="faq-answer" name="answer" class="form-textarea" placeholder="Provide a detailed answer to the question..." required minlength="10"></textarea>
+          </div>
+          <div class="form-row">
+            <label class="form-label" for="faq-category">Category</label>
+            <select id="faq-category" name="category" class="form-select" required>
+              <option value="general">General</option>
+              <option value="products">Products</option>
+              <option value="services">Services</option>
+              <option value="pricing">Pricing</option>
+              <option value="support">Support</option>
+            </select>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-outline" data-dismiss="modal">Cancel</button>
+        <button class="btn-primary" id="save-faq-btn">Save FAQ</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Embed Code Modal -->
+  <div id="embed-code-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Get Embed Code</h3>
+        <button class="close-modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p>Copy and paste this code snippet into your website's HTML, just before the closing <code>&lt;/body&gt;</code> tag:</p>
+        <div class="code-block">
+          <pre><code>&lt;script src="https://cdn.aiassistant.com/embed.js" data-assistant-id="your-assistant-id" data-position="bottom-right" data-primary-color="#0071e3"&gt;&lt;/script&gt;</code></pre>
+        </div>
+        <button class="copy-button" onclick="copyEmbedCode()">
+          <i class="fas fa-copy"></i> Copy Code
+        </button>
+
+        <div class="form-row" style="margin-top: 20px;">
+          <label class="form-label">Customize Position</label>
+          <div class="tabs">
+            <div class="tab active" data-position="bottom-right">Bottom Right</div>
+            <div class="tab" data-position="bottom-left">Bottom Left</div>
+            <div class="tab" data-position="top-right">Top Right</div>
+            <div class="tab" data-position="top-left">Top Left</div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <label class="form-label">Primary Color</label>
+          <div class="color-picker">
+            <div class="color-option active" style="background-color: #0071e3;" data-color="#0071e3"></div>
+            <div class="color-option" style="background-color: #34c759;" data-color="#34c759"></div>
+            <div class="color-option" style="background-color: #ff9500;" data-color="#ff9500"></div>
+            <div class="color-option" style="background-color: #ff3b30;" data-color="#ff3b30"></div>
+            <div class="color-option" style="background-color: #5856d6;" data-color="#5856d6"></div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-outline" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Configure Bot Modal -->
+  <div id="customize-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Customize Chatbot</h3>
+        <button class="close-modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="tabs">
+          <div class="tab active" data-tab="appearance">Appearance</div>
+          <div class="tab" data-tab="behavior">Behavior</div>
+          <div class="tab" data-tab="messages">Messages</div>
+        </div>
+
+        <div class="tab-content active" data-tab="appearance">
+          <div class="form-row">
+            <label class="form-label" for="bot-name">Chatbot Name</label>
+            <input type="text" id="bot-name" name="botName" class="form-input" value="AI Customer Service Assistant" required minlength="3">
+          </div>
+
+          <div class="form-row">
+            <label class="form-label">Primary Color</label>
+            <div class="color-picker">
+              <div class="color-option active" style="background-color: #0071e3;" data-color="#0071e3"></div>
+              <div class="color-option" style="background-color: #34c759;" data-color="#34c759"></div>
+              <div class="color-option" style="background-color: #ff9500;" data-color="#ff9500"></div>
+              <div class="color-option" style="background-color: #ff3b30;" data-color="#ff3b30"></div>
+              <div class="color-option" style="background-color: #5856d6;" data-color="#5856d6"></div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <label class="form-label" for="bot-logo">Logo URL</label>
+            <input type="url" id="bot-logo" name="botLogo" class="form-input" placeholder="https://example.com/logo.png">
+            <div class="form-help">Leave blank to use the default logo</div>
+          </div>
+
+          <div class="form-row">
+            <label class="form-label">Position</label>
+            <div class="tabs">
+              <div class="tab active" data-position="bottom-right">Bottom Right</div>
+              <div class="tab" data-position="bottom-left">Bottom Left</div>
+              <div class="tab" data-position="top-right">Top Right</div>
+              <div class="tab" data-position="top-left">Top Left</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-content" data-tab="behavior">
+          <div class="form-row">
+            <label class="form-label" for="greeting-delay">Greeting Delay (seconds)</label>
+            <input type="number" id="greeting-delay" class="form-input" value="5" min="0" max="60">
+            <div class="form-help">How long to wait before showing the greeting message</div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-checkbox">
+              <input type="checkbox" id="auto-open" checked>
+              <label for="auto-open">Auto-open chat after delay</label>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-checkbox">
+              <input type="checkbox" id="show-avatar" checked>
+              <label for="show-avatar">Show avatar in messages</label>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-checkbox">
+              <input type="checkbox" id="save-history" checked>
+              <label for="save-history">Save chat history for returning visitors</label>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <label class="form-label">After Hours Behavior</label>
+            <select id="after-hours" class="form-select">
+              <option value="online">Stay online</option>
+              <option value="offline">Show offline message</option>
+              <option value="email">Collect email for follow-up</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="tab-content" data-tab="messages">
+          <div class="form-row">
+            <label class="form-label" for="welcome-message">Welcome Message</label>
+            <textarea id="welcome-message" name="welcomeMessage" class="form-textarea" required minlength="10">Hello! I'm your AI Customer Service Assistant. How can I help you today?</textarea>
+          </div>
+
+          <div class="form-row">
+            <label class="form-label" for="offline-message">Offline Message</label>
+            <textarea id="offline-message" name="offlineMessage" class="form-textarea" required minlength="10">Sorry, we're currently offline. Please leave a message and we'll get back to you as soon as possible.</textarea>
+          </div>
+
+          <div class="form-row">
+            <label class="form-label" for="fallback-message">Fallback Message</label>
+            <textarea id="fallback-message" name="fallbackMessage" class="form-textarea" required minlength="10">I'm not sure I understand. Could you please rephrase your question?</textarea>
+            <div class="form-help">Shown when the AI doesn't understand the user's message</div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-outline" data-dismiss="modal">Cancel</button>
+        <button class="btn-primary" id="save-customization-btn">Save Changes</button>
+      </div>
+    </div>
+  </div>
+  <!-- Custom Date Range Modal -->
+  <div id="date-range-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Custom Date Range</h3>
+        <button class="close-modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="date-range-inputs">
+          <div class="form-row">
+            <label class="form-label" for="start-date">Start Date</label>
+            <input type="date" id="start-date" class="form-input" required>
+          </div>
+          <div class="form-row">
+            <label class="form-label" for="end-date">End Date</label>
+            <input type="date" id="end-date" class="form-input" required>
+          </div>
+        </div>
+        <div class="form-help">Select a date range to view analytics data for a specific period.</div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-outline" data-dismiss="modal">Cancel</button>
+        <button class="btn-primary" id="apply-date-range-btn">Apply</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

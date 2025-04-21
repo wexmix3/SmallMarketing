@@ -1,0 +1,512 @@
+# AI Customer Service Assistant - Test Automation Framework
+
+This document describes the test automation framework for the AI Customer Service Assistant.
+
+## Overview
+
+The test automation framework provides a structured approach to automating tests for the AI Customer Service Assistant. It includes tools, libraries, and patterns for creating and executing automated tests across different layers of the application.
+
+## Framework Architecture
+
+The test automation framework follows a layered architecture:
+
+1. **Test Runner Layer**: Manages test execution and reporting
+2. **Test Suite Layer**: Organizes tests by feature or component
+3. **Test Case Layer**: Defines individual test scenarios
+4. **Page Object Layer**: Abstracts UI interactions
+5. **API Client Layer**: Abstracts API interactions
+6. **Test Data Layer**: Manages test data
+7. **Configuration Layer**: Manages environment-specific settings
+
+## Technologies Used
+
+- **Test Runner**: Jest
+- **UI Automation**: Cypress
+- **API Testing**: Supertest
+- **Mobile Testing**: Appium
+- **Performance Testing**: JMeter
+- **Security Testing**: OWASP ZAP
+- **Mocking**: Mock Service Worker (MSW)
+- **Assertions**: Chai
+- **Reporting**: Allure
+
+## Directory Structure
+
+```
+/test
+  /automation
+    /config           # Configuration files
+    /data             # Test data
+    /e2e              # End-to-end tests
+      /pages          # Page objects
+      /specs          # Test specifications
+    /api              # API tests
+      /clients        # API clients
+      /specs          # Test specifications
+    /unit             # Unit tests
+    /integration      # Integration tests
+    /performance      # Performance tests
+    /security         # Security tests
+    /mobile           # Mobile tests
+    /utils            # Utility functions
+    /reports          # Test reports
+```
+
+## Test Types
+
+### Unit Tests
+
+Unit tests verify the functionality of individual components in isolation.
+
+Example unit test:
+
+```javascript
+// test/unit/ai-engine/response-generator.test.js
+describe('Response Generator', () => {
+  it('should generate appropriate response for known question', () => {
+    const generator = new ResponseGenerator();
+    const question = 'What are your business hours?';
+    const knowledgeBase = [
+      { question: 'What are your business hours?', answer: 'We are open 9-5.' }
+    ];
+    
+    const response = generator.generateResponse(question, knowledgeBase);
+    
+    expect(response).to.equal('We are open 9-5.');
+  });
+  
+  it('should generate fallback response for unknown question', () => {
+    const generator = new ResponseGenerator();
+    const question = 'Do you sell helicopters?';
+    const knowledgeBase = [
+      { question: 'What are your business hours?', answer: 'We are open 9-5.' }
+    ];
+    
+    const response = generator.generateResponse(question, knowledgeBase);
+    
+    expect(response).to.include('I don\'t have information about that');
+  });
+});
+```
+
+### API Tests
+
+API tests verify the functionality of backend API endpoints.
+
+Example API test:
+
+```javascript
+// test/api/specs/knowledge-base.test.js
+describe('Knowledge Base API', () => {
+  it('should return knowledge base entries', async () => {
+    const response = await request(app)
+      .get('/api/knowledge-base')
+      .set('Authorization', `Bearer ${testToken}`)
+      .expect(200);
+    
+    expect(response.body).to.be.an('array');
+    expect(response.body.length).to.be.greaterThan(0);
+  });
+  
+  it('should create a new knowledge base entry', async () => {
+    const newEntry = {
+      question: 'What is your return policy?',
+      answer: '30 days return policy for unused items.',
+      category: 'Returns'
+    };
+    
+    const response = await request(app)
+      .post('/api/knowledge-base')
+      .set('Authorization', `Bearer ${testToken}`)
+      .send(newEntry)
+      .expect(201);
+    
+    expect(response.body).to.have.property('id');
+    expect(response.body.question).to.equal(newEntry.question);
+  });
+});
+```
+
+### End-to-End Tests
+
+End-to-end tests verify the functionality of the entire application from the user's perspective.
+
+Example E2E test:
+
+```javascript
+// test/e2e/specs/chat-interaction.spec.js
+describe('Chat Interaction', () => {
+  beforeEach(() => {
+    cy.visit('/test-page.html');
+    cy.get('#ai-assistant-button').click();
+  });
+  
+  it('should send and receive messages', () => {
+    // Type and send a message
+    cy.get('#ai-assistant-input')
+      .type('Hello, I have a question');
+    cy.get('#ai-assistant-send-button').click();
+    
+    // Verify message appears in chat
+    cy.get('.user-message').last()
+      .should('contain', 'Hello, I have a question');
+    
+    // Verify response is received
+    cy.get('.assistant-message').should('exist');
+  });
+  
+  it('should maintain conversation history', () => {
+    // Send multiple messages
+    const messages = [
+      'What products do you offer?',
+      'Do you have any discounts?',
+      'How can I contact support?'
+    ];
+    
+    messages.forEach(message => {
+      cy.get('#ai-assistant-input').type(message);
+      cy.get('#ai-assistant-send-button').click();
+      cy.wait(1000); // Wait for response
+    });
+    
+    // Verify all messages are in the history
+    messages.forEach(message => {
+      cy.get('.user-message').contains(message).should('exist');
+    });
+    
+    // Verify responses for all messages
+    cy.get('.assistant-message').should('have.length.at.least', 3);
+  });
+});
+```
+
+## Page Objects
+
+Page objects abstract UI interactions to make tests more maintainable.
+
+Example page object:
+
+```javascript
+// test/e2e/pages/chat-widget.js
+class ChatWidget {
+  constructor() {
+    this.widgetButton = '#ai-assistant-button';
+    this.chatWindow = '#ai-assistant-chat-window';
+    this.inputField = '#ai-assistant-input';
+    this.sendButton = '#ai-assistant-send-button';
+    this.closeButton = '#ai-assistant-close-button';
+    this.userMessages = '.user-message';
+    this.assistantMessages = '.assistant-message';
+    this.typingIndicator = '.typing-indicator';
+  }
+  
+  open() {
+    cy.get(this.widgetButton).click();
+    cy.get(this.chatWindow).should('be.visible');
+    return this;
+  }
+  
+  close() {
+    cy.get(this.closeButton).click();
+    cy.get(this.chatWindow).should('not.be.visible');
+    return this;
+  }
+  
+  sendMessage(message) {
+    cy.get(this.inputField).type(message);
+    cy.get(this.sendButton).click();
+    return this;
+  }
+  
+  waitForResponse() {
+    cy.get(this.typingIndicator).should('be.visible');
+    cy.get(this.typingIndicator).should('not.exist', { timeout: 10000 });
+    return this;
+  }
+  
+  getLastUserMessage() {
+    return cy.get(this.userMessages).last();
+  }
+  
+  getLastAssistantMessage() {
+    return cy.get(this.assistantMessages).last();
+  }
+  
+  getAllMessages() {
+    return {
+      user: cy.get(this.userMessages),
+      assistant: cy.get(this.assistantMessages)
+    };
+  }
+}
+
+export default new ChatWidget();
+```
+
+## API Clients
+
+API clients abstract API interactions to make tests more maintainable.
+
+Example API client:
+
+```javascript
+// test/api/clients/knowledge-base-client.js
+class KnowledgeBaseClient {
+  constructor(baseUrl, token) {
+    this.baseUrl = baseUrl || process.env.API_URL;
+    this.token = token;
+  }
+  
+  async getEntries() {
+    const response = await request(this.baseUrl)
+      .get('/api/knowledge-base')
+      .set('Authorization', `Bearer ${this.token}`);
+    
+    return response.body;
+  }
+  
+  async getEntry(id) {
+    const response = await request(this.baseUrl)
+      .get(`/api/knowledge-base/${id}`)
+      .set('Authorization', `Bearer ${this.token}`);
+    
+    return response.body;
+  }
+  
+  async createEntry(entry) {
+    const response = await request(this.baseUrl)
+      .post('/api/knowledge-base')
+      .set('Authorization', `Bearer ${this.token}`)
+      .send(entry);
+    
+    return response.body;
+  }
+  
+  async updateEntry(id, entry) {
+    const response = await request(this.baseUrl)
+      .put(`/api/knowledge-base/${id}`)
+      .set('Authorization', `Bearer ${this.token}`)
+      .send(entry);
+    
+    return response.body;
+  }
+  
+  async deleteEntry(id) {
+    const response = await request(this.baseUrl)
+      .delete(`/api/knowledge-base/${id}`)
+      .set('Authorization', `Bearer ${this.token}`);
+    
+    return response.body;
+  }
+}
+
+export default KnowledgeBaseClient;
+```
+
+## Test Data Management
+
+Test data is managed through a combination of:
+
+1. **Static Test Data**: Predefined data in JSON files
+2. **Generated Test Data**: Dynamically generated data using libraries like Faker
+3. **Test Data API**: API for creating and managing test data
+4. **Data Cleanup**: Automatic cleanup of test data after tests
+
+Example test data management:
+
+```javascript
+// test/data/knowledge-base.js
+import faker from 'faker';
+
+export const staticEntries = [
+  {
+    question: 'What are your business hours?',
+    answer: 'We are open Monday to Friday from 9am to 5pm.',
+    category: 'General'
+  },
+  {
+    question: 'Do you offer refunds?',
+    answer: 'Yes, we offer refunds within 30 days of purchase.',
+    category: 'Returns'
+  }
+];
+
+export function generateEntry() {
+  return {
+    question: `${faker.hacker.phrase()}?`,
+    answer: faker.lorem.paragraph(),
+    category: faker.random.arrayElement(['General', 'Products', 'Returns', 'Shipping'])
+  };
+}
+
+export function generateEntries(count) {
+  return Array.from({ length: count }, generateEntry);
+}
+```
+
+## Configuration Management
+
+Configuration is managed through environment-specific configuration files.
+
+Example configuration:
+
+```javascript
+// test/config/environments.js
+const environments = {
+  development: {
+    apiUrl: 'https://dev-api.aiassistant.com/v1',
+    webUrl: 'https://dev.aiassistant.com',
+    adminUrl: 'https://dev-admin.aiassistant.com',
+    testUsers: {
+      admin: {
+        username: 'admin@example.com',
+        password: 'testpassword'
+      },
+      user: {
+        username: 'user@example.com',
+        password: 'testpassword'
+      }
+    }
+  },
+  testing: {
+    apiUrl: 'https://test-api.aiassistant.com/v1',
+    webUrl: 'https://test.aiassistant.com',
+    adminUrl: 'https://test-admin.aiassistant.com',
+    testUsers: {
+      admin: {
+        username: 'admin@example.com',
+        password: 'testpassword'
+      },
+      user: {
+        username: 'user@example.com',
+        password: 'testpassword'
+      }
+    }
+  },
+  production: {
+    apiUrl: 'https://api.aiassistant.com/v1',
+    webUrl: 'https://aiassistant.com',
+    adminUrl: 'https://admin.aiassistant.com',
+    testUsers: {
+      admin: {
+        username: 'admin@example.com',
+        password: 'testpassword'
+      },
+      user: {
+        username: 'user@example.com',
+        password: 'testpassword'
+      }
+    }
+  }
+};
+
+export default environments[process.env.NODE_ENV || 'development'];
+```
+
+## Test Execution
+
+Tests can be executed using npm scripts:
+
+```json
+{
+  "scripts": {
+    "test": "jest",
+    "test:unit": "jest --testPathPattern=test/unit",
+    "test:api": "jest --testPathPattern=test/api",
+    "test:e2e": "cypress run",
+    "test:e2e:open": "cypress open",
+    "test:performance": "jmeter -n -t test/performance/chat-load-test.jmx -l results.jtl",
+    "test:security": "zap-baseline.py -t https://test.aiassistant.com -g gen.conf -r security-report.html"
+  }
+}
+```
+
+## Continuous Integration
+
+Tests are integrated into the CI/CD pipeline:
+
+1. **Unit and API Tests**: Run on every pull request and commit to main branch
+2. **E2E Tests**: Run on every pull request and commit to main branch
+3. **Performance Tests**: Run nightly
+4. **Security Tests**: Run weekly
+
+Example GitHub Actions workflow:
+
+```yaml
+name: Test Suite
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  unit-and-api-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+      - name: Install dependencies
+        run: npm ci
+      - name: Run unit tests
+        run: npm run test:unit
+      - name: Run API tests
+        run: npm run test:api
+
+  e2e-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+      - name: Install dependencies
+        run: npm ci
+      - name: Run E2E tests
+        uses: cypress-io/github-action@v2
+        with:
+          browser: chrome
+          headless: true
+```
+
+## Reporting
+
+Test results are reported using Allure:
+
+1. **Test Results**: Pass/fail status of each test
+2. **Screenshots**: Captured on test failure
+3. **Videos**: Recorded for E2E tests
+4. **Logs**: Captured during test execution
+5. **Metrics**: Performance metrics for performance tests
+
+Example Allure report generation:
+
+```bash
+# Generate Allure report
+allure generate allure-results -o allure-report
+
+# Open Allure report
+allure open allure-report
+```
+
+## Best Practices
+
+1. **Test Independence**: Each test should be independent and not rely on the state from other tests
+2. **Test Data Management**: Use fresh test data for each test
+3. **Page Objects**: Use page objects to abstract UI interactions
+4. **API Clients**: Use API clients to abstract API interactions
+5. **Assertions**: Use explicit assertions with meaningful error messages
+6. **Waiting**: Use explicit waits instead of fixed timeouts
+7. **Test Size**: Keep tests small and focused on a single behavior
+8. **Test Naming**: Use descriptive names that explain the behavior being tested
+9. **Test Organization**: Organize tests by feature or component
+10. **Test Coverage**: Aim for high test coverage, but focus on critical paths
+
+## Conclusion
+
+This test automation framework provides a comprehensive approach to testing the AI Customer Service Assistant. By following the patterns and practices outlined in this document, we can ensure high-quality, reliable software that meets the needs of our users.

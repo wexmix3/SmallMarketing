@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="200" height="60" viewBox="0 0 200 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="200" height="60" fill="white"/>
+  <rect x="70" y="15" width="60" height="30" rx="5" fill="#0A1626"/>
+  <path d="M85 25L82 35H84L87 25H85Z" fill="white"/>
+  <path d="M89 25L92 35H94L91 25H89Z" fill="white"/>
+  <path d="M97 25L94 35H96L99 25H97Z" fill="white"/>
+  <path d="M103 25L106 35H108L105 25H103Z" fill="white"/>
+  <path d="M111 25L108 35H110L113 25H111Z" fill="white"/>
+  <path d="M117 25L114 35H116L119 25H117Z" fill="white"/>
+</svg>

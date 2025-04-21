@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Customer Service Assistant Test</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    h1 {
+      color: #333;
+      margin-top: 0;
+    }
+    
+    .chat-container {
+      height: 400px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      padding: 10px;
+      overflow-y: auto;
+      margin-bottom: 10px;
+      background-color: #f9f9f9;
+    }
+    
+    .message {
+      margin-bottom: 10px;
+      padding: 8px 12px;
+      border-radius: 18px;
+      max-width: 70%;
+      word-wrap: break-word;
+    }
+    
+    .user-message {
+      background-color: #0070f3;
+      color: white;
+      margin-left: auto;
+      border-bottom-right-radius: 4px;
+    }
+    
+    .bot-message {
+      background-color: #e5e5ea;
+      color: #333;
+      margin-right: auto;
+      border-bottom-left-radius: 4px;
+    }
+    
+    .input-container {
+      display: flex;
+      gap: 10px;
+    }
+    
+    input {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 16px;
+    }
+    
+    button {
+      padding: 10px 20px;
+      background-color: #0070f3;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    
+    button:hover {
+      background-color: #0051a8;
+    }
+    
+    .suggested-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    
+    .action-button {
+      background-color: #f0f0f0;
+      border: 1px solid #ddd;
+      border-radius: 16px;
+      padding: 6px 12px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    
+    .action-button:hover {
+      background-color: #e0e0e0;
+    }
+    
+    .typing-indicator {
+      display: inline-block;
+      padding: 8px 12px;
+      background-color: #e5e5ea;
+      border-radius: 18px;
+      margin-bottom: 10px;
+      border-bottom-left-radius: 4px;
+    }
+    
+    .typing-indicator span {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      background-color: #999;
+      border-radius: 50%;
+      margin-right: 5px;
+      animation: typing 1s infinite;
+    }
+    
+    .typing-indicator span:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+    
+    .typing-indicator span:nth-child(3) {
+      animation-delay: 0.4s;
+      margin-right: 0;
+    }
+    
+    @keyframes typing {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>AI Customer Service Assistant</h1>
+    <p>This is a simple test interface for the AI Customer Service Assistant. Type a message below to start chatting.</p>
+    
+    <div class="chat-container" id="chatContainer"></div>
+    
+    <div class="input-container">
+      <input type="text" id="messageInput" placeholder="Type your message here..." autocomplete="off">
+      <button id="sendButton">Send</button>
+    </div>
+  </div>
+
+  <script>
+    // Mock data
+    const businessId = 'business-1';
+    const visitorId = 'visitor-' + Date.now();
+    const conversationId = 'conv-' + Date.now();
+    
+    // Chat elements
+    const chatContainer = document.getElementById('chatContainer');
+    const messageInput = document.getElementById('messageInput');
+    const sendButton = document.getElementById('sendButton');
+    
+    // Conversation context
+    let context = {
+      conversationId,
+      businessId,
+      recentMessages: [],
+      identifiedIntents: []
+    };
+    
+    // Add event listeners
+    sendButton.addEventListener('click', sendMessage);
+    messageInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        sendMessage();
+      }
+    });
+    
+    // Initialize chat with welcome message
+    window.addEventListener('DOMContentLoaded', () => {
+      setTimeout(() => {
+        addBotMessage("Hello! Welcome to our customer service chat. How can I assist you today?");
+        
+        // Add suggested initial actions
+        const suggestedActions = [
+          'What are your business hours?',
+          'Tell me about your products',
+          'Do you offer free shipping?',
+          'What is your return policy?'
+        ];
+        
+        addSuggestedActions(suggestedActions);
+      }, 500);
+    });
+    
+    // Send message function
+    function sendMessage() {
+      const message = messageInput.value.trim();
+      if (!message) return;
+      
+      // Add user message to chat
+      addUserMessage(message);
+      
+      // Clear input
+      messageInput.value = '';
+      
+      // Update context
+      context.recentMessages.push({ role: 'user', content: message });
+      
+      // Show typing indicator
+      showTypingIndicator();
+      
+      // Process message (mock implementation)
+      setTimeout(() => {
+        processMessage(message);
+      }, 1000);
+    }
+    
+    // Process message function (mock implementation)
+    function processMessage(message) {
+      // Hide typing indicator
+      hideTypingIndicator();
+      
+      // Simple keyword-based responses
+      const normalizedMessage = message.toLowerCase();
+      let response = {
+        text: "I'm here to help! What would you like to know about our products or services?",
+        confidence: 0.7,
+        intent: 'general_inquiry',
+        suggestedActions: [
+          'Tell me about your products',
+          'What are your business hours?',
+          'I need help with a return',
+          'I want to schedule an appointment'
+        ]
+      };
+      
+      if (normalizedMessage.includes('hour') || normalizedMessage.includes('open')) {
+        response = {
+          text: "We are open Monday to Friday from 9 AM to 5 PM, and Saturday from 10 AM to 2 PM. We are closed on Sundays.",
+          confidence: 0.9,
+          intent: 'business_hours',
+          suggestedActions: ['Do you need directions to our location?', 'Would you like to schedule an appointment?']
+        };
+      } else if (normalizedMessage.includes('return') || normalizedMessage.includes('refund')) {
+        response = {
+          text: "We accept returns within 30 days of purchase. Items must be unused and in original packaging. For standard returns, customers are responsible for return shipping costs. However, if you received a defective item, we'll provide a prepaid shipping label.",
+          confidence: 0.9,
+          intent: 'return_policy',
+          suggestedActions: ['Do you need to initiate a return?', 'Would you like information about our exchange policy?']
+        };
+      } else if (normalizedMessage.includes('ship') || normalizedMessage.includes('delivery')) {
+        response = {
+          text: "We offer standard shipping (3-5 business days), expedited shipping (2-3 business days), and overnight shipping. Free standard shipping is available on all orders over $50 within the continental United States.",
+          confidence: 0.9,
+          intent: 'shipping_info',
+          suggestedActions: ['Do you need to track an existing order?', 'Would you like to place a new order?']
+        };
+      } else if (normalizedMessage.includes('price') || normalizedMessage.includes('cost')) {
+        response = {
+          text: "Our pricing varies by product. Is there a specific item you're interested in?",
+          confidence: 0.8,
+          intent: 'pricing',
+          suggestedActions: ['View our product catalog', 'Ask about current promotions']
+        };
+      } else if (normalizedMessage.includes('appointment') || normalizedMessage.includes('schedule')) {
+        response = {
+          text: "I'd be happy to help you schedule an appointment. What day and time works best for you?",
+          confidence: 0.85,
+          intent: 'appointment_scheduling',
+          suggestedActions: ['View available times', 'Learn about our services']
+        };
+      } else if ((normalizedMessage.includes('speak') && normalizedMessage.includes('human')) || 
+                normalizedMessage.includes('agent') || normalizedMessage.includes('representative')) {
+        response = {
+          text: "I'll connect you with a human customer service representative right away. Please hold for a moment while I transfer you.",
+          confidence: 0.95,
+          intent: 'human_handoff',
+          requiresHumanIntervention: true
+        };
+      } else if (normalizedMessage.includes('product') || normalizedMessage.includes('item')) {
+        response = {
+          text: "We offer a variety of high-quality products. Our most popular items include our Premium T-shirts, Wireless Earbuds, and Hoodies.",
+          confidence: 0.85,
+          intent: 'product_information',
+          suggestedActions: ['Tell me more about T-shirts', 'Tell me more about Earbuds', 'Tell me more about Hoodies']
+        };
+      } else if (normalizedMessage.includes('thank')) {
+        response = {
+          text: "You're welcome! Is there anything else I can help you with today?",
+          confidence: 0.95,
+          intent: 'gratitude',
+          suggestedActions: ['Yes, I have another question', 'No, that\'s all for now']
+        };
+      } else if (normalizedMessage.includes('help')) {
+        response = {
+          text: "I can help with information about our products, services, business hours, shipping, returns, or scheduling an appointment. What would you like to know?",
+          confidence: 0.9,
+          intent: 'help',
+          suggestedActions: ['Tell me about your products', 'What are your business hours?', 'I need help with a return']
+        };
+      }
+      
+      // Add bot message to chat
+      addBotMessage(response.text);
+      
+      // Update context
+      context.recentMessages.push({ role: 'assistant', content: response.text });
+      context.identifiedIntents.push(response.intent);
+      
+      // Keep only the last 10 messages
+      if (context.recentMessages.length > 10) {
+        context.recentMessages = context.recentMessages.slice(-10);
+      }
+      
+      // Add suggested actions
+      if (response.suggestedActions && response.suggestedActions.length > 0) {
+        addSuggestedActions(response.suggestedActions);
+      }
+      
+      // Handle human intervention
+      if (response.requiresHumanIntervention) {
+        setTimeout(() => {
+          addBotMessage("(This would transfer to a human agent in the real application)");
+        }, 1000);
+      }
+    }
+    
+    // Add user message to chat
+    function addUserMessage(message) {
+      const messageElement = document.createElement('div');
+      messageElement.className = 'message user-message';
+      messageElement.textContent = message;
+      chatContainer.appendChild(messageElement);
+      scrollToBottom();
+    }
+    
+    // Add bot message to chat
+    function addBotMessage(message) {
+      const messageElement = document.createElement('div');
+      messageElement.className = 'message bot-message';
+      messageElement.textContent = message;
+      chatContainer.appendChild(messageElement);
+      scrollToBottom();
+    }
+    
+    // Add suggested actions
+    function addSuggestedActions(actions) {
+      const actionsContainer = document.createElement('div');
+      actionsContainer.className = 'suggested-actions';
+      
+      actions.forEach(action => {
+        const actionButton = document.createElement('button');
+        actionButton.className = 'action-button';
+        actionButton.textContent = action;
+        actionButton.addEventListener('click', () => {
+          messageInput.value = action;
+          sendMessage();
+        });
+        
+        actionsContainer.appendChild(actionButton);
+      });
+      
+      chatContainer.appendChild(actionsContainer);
+      scrollToBottom();
+    }
+    
+    // Show typing indicator
+    function showTypingIndicator() {
+      const typingIndicator = document.createElement('div');
+      typingIndicator.className = 'typing-indicator';
+      typingIndicator.id = 'typingIndicator';
+      
+      for (let i = 0; i < 3; i++) {
+        const dot = document.createElement('span');
+        typingIndicator.appendChild(dot);
+      }
+      
+      chatContainer.appendChild(typingIndicator);
+      scrollToBottom();
+    }
+    
+    // Hide typing indicator
+    function hideTypingIndicator() {
+      const typingIndicator = document.getElementById('typingIndicator');
+      if (typingIndicator) {
+        typingIndicator.remove();
+      }
+    }
+    
+    // Scroll to bottom of chat container
+    function scrollToBottom() {
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UAT Dashboard - AI Customer Service Assistant</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+            color: #1d1d1f;
+            line-height: 1.5;
+        }
+        
+        header {
+            background-color: #0071e3;
+            color: white;
+            padding: 1rem 2rem;
+            text-align: center;
+        }
+        
+        header h1 {
+            margin: 0;
+            font-size: 2rem;
+        }
+        
+        header p {
+            margin: 0.5rem 0 0;
+            opacity: 0.9;
+        }
+        
+        main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        section {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+        }
+        
+        h2 {
+            margin-top: 0;
+            color: #1d1d1f;
+            border-bottom: 1px solid #d2d2d7;
+            padding-bottom: 0.5rem;
+        }
+        
+        .summary-cards {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+        
+        .summary-card {
+            flex: 1;
+            background-color: #f5f5f7;
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .summary-card h3 {
+            margin: 0;
+            font-size: 1rem;
+            color: #1d1d1f;
+        }
+        
+        .summary-card .count {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin: 0.5rem 0 0;
+            color: #0071e3;
+        }
+        
+        .summary-card:nth-child(3) .count {
+            color: #34c759;
+        }
+        
+        .summary-card:nth-child(4) .count {
+            color: #ff3b30;
+        }
+        
+        .progress-bar-container {
+            height: 10px;
+            background-color: #e5e5ea;
+            border-radius: 5px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background-color: #0071e3;
+            width: 40%;
+            transition: width 0.3s ease;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+        
+        th, td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid #d2d2d7;
+        }
+        
+        th {
+            background-color: #f5f5f7;
+            font-weight: 600;
+        }
+        
+        tr:hover {
+            background-color: #f5f5f7;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .status-pending {
+            background-color: #e5e5ea;
+            color: #8e8e93;
+        }
+        
+        .status-passed {
+            background-color: #e6f7ed;
+            color: #34c759;
+        }
+        
+        .status-failed {
+            background-color: #ffebeb;
+            color: #ff3b30;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 1rem;
+            background-color: #f5f5f7;
+            color: #86868b;
+            font-size: 0.8rem;
+            margin-top: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>UAT Dashboard</h1>
+        <p>AI Customer Service Assistant</p>
+    </header>
+
+    <main>
+        <section class="summary-section">
+            <h2>Test Progress Summary</h2>
+            <div class="summary-cards">
+                <div class="summary-card">
+                    <h3>Total Tests</h3>
+                    <p class="count">25</p>
+                </div>
+                <div class="summary-card">
+                    <h3>Completed</h3>
+                    <p class="count">10</p>
+                </div>
+                <div class="summary-card">
+                    <h3>Passed</h3>
+                    <p class="count">8</p>
+                </div>
+                <div class="summary-card">
+                    <h3>Failed</h3>
+                    <p class="count">2</p>
+                </div>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar"></div>
+            </div>
+        </section>
+
+        <section class="test-cases-section">
+            <h2>Test Cases</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Test Case</th>
+                        <th>Category</th>
+                        <th>Tester</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>BF-01</td>
+                        <td>Open Chat and Send a Message</td>
+                        <td>Basic Functionality</td>
+                        <td>Sarah Johnson</td>
+                        <td><span class="status-badge status-passed">Passed</span></td>
+                    </tr>
+                    <tr>
+                        <td>BF-02</td>
+                        <td>Minimize and Maximize Chat</td>
+                        <td>Basic Functionality</td>
+                        <td>Sarah Johnson</td>
+                        <td><span class="status-badge status-passed">Passed</span></td>
+                    </tr>
+                    <tr>
+                        <td>BF-03</td>
+                        <td>Close Chat and Reopen</td>
+                        <td>Basic Functionality</td>
+                        <td>Sarah Johnson</td>
+                        <td><span class="status-badge status-passed">Passed</span></td>
+                    </tr>
+                    <tr>
+                        <td>BF-04</td>
+                        <td>Send Multiple Messages</td>
+                        <td>Basic Functionality</td>
+                        <td>Michael Chen</td>
+                        <td><span class="status-badge status-passed">Passed</span></td>
+                    </tr>
+                    <tr>
+                        <td>BF-05</td>
+                        <td>Test All UI Controls</td>
+                        <td>Basic Functionality</td>
+                        <td>Michael Chen</td>
+                        <td><span class="status-badge status-passed">Passed</span></td>
+                    </tr>
+                    <tr>
+                        <td>FH-01</td>
+                        <td>Upload a Single Image</td>
+                        <td>File Handling</td>
+                        <td>Sarah Johnson</td>
+                        <td><span class="status-badge status-passed">Passed</span></td>
+                    </tr>
+                    <tr>
+                        <td>FH-02</td>
+                        <td>Upload Multiple Files</td>
+                        <td>File Handling</td>
+                        <td>Sarah Johnson</td>
+                        <td><span class="status-badge status-passed">Passed</span></td>
+                    </tr>
+                    <tr>
+                        <td>FH-03</td>
+                        <td>Upload a Large File</td>
+                        <td>File Handling</td>
+                        <td>Michael Chen</td>
+                        <td><span class="status-badge status-passed">Passed</span></td>
+                    </tr>
+                    <tr>
+                        <td>FH-04</td>
+                        <td>Upload Different File Types</td>
+                        <td>File Handling</td>
+                        <td>Michael Chen</td>
+                        <td><span class="status-badge status-failed">Failed</span></td>
+                    </tr>
+                    <tr>
+                        <td>FH-05</td>
+                        <td>Upload File and Continue Conversation</td>
+                        <td>File Handling</td>
+                        <td>Michael Chen</td>
+                        <td><span class="status-badge status-failed">Failed</span></td>
+                    </tr>
+                    <tr>
+                        <td>CF-01</td>
+                        <td>Ask About Business Hours</td>
+                        <td>Conversation Flow</td>
+                        <td>Jessica Rodriguez</td>
+                        <td><span class="status-badge status-pending">Pending</span></td>
+                    </tr>
+                    <tr>
+                        <td>CF-02</td>
+                        <td>Ask About Shipping</td>
+                        <td>Conversation Flow</td>
+                        <td>Jessica Rodriguez</td>
+                        <td><span class="status-badge status-pending">Pending</span></td>
+                    </tr>
+                    <tr>
+                        <td>CF-03</td>
+                        <td>Ask About Products</td>
+                        <td>Conversation Flow</td>
+                        <td>Jessica Rodriguez</td>
+                        <td><span class="status-badge status-pending">Pending</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <footer>
+        <p>UAT Dashboard v1.0 | Last updated: August 28, 2023</p>
+    </footer>
+</body>
+</html>

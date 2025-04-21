@@ -1,0 +1,103 @@
+{
+  "businessInfo": {
+    "name": "Demo Business",
+    "description": "A sample business for demonstration purposes",
+    "website": "https://example.com",
+    "phone": "+1 (555) 123-4567",
+    "email": "contact@example.com",
+    "address": "123 Main Street, Anytown, USA",
+    "hours": {
+      "monday": "9:00 AM - 5:00 PM",
+      "tuesday": "9:00 AM - 5:00 PM",
+      "wednesday": "9:00 AM - 5:00 PM",
+      "thursday": "9:00 AM - 5:00 PM",
+      "friday": "9:00 AM - 5:00 PM",
+      "saturday": "10:00 AM - 3:00 PM",
+      "sunday": "Closed"
+    }
+  },
+  "faqs": [
+    {
+      "question": "What services do you offer?",
+      "answer": "We offer a wide range of services including web design, digital marketing, and business consulting. Our team of experts can help you grow your business online and reach more customers."
+    },
+    {
+      "question": "How can I contact customer support?",
+      "answer": "You can reach our customer support team by phone at +1 (555) 123-4567, by email at support@example.com, or through the live chat on our website. We're available Monday through Friday from 9:00 AM to 5:00 PM."
+    },
+    {
+      "question": "Do you offer refunds?",
+      "answer": "Yes, we offer a 30-day money-back guarantee on all our services. If you're not satisfied with our work, please contact our customer support team to request a refund."
+    },
+    {
+      "question": "How long does it take to complete a project?",
+      "answer": "Project timelines vary depending on the scope and complexity. A typical website project takes 4-6 weeks, while marketing campaigns can be set up in 1-2 weeks. We'll provide you with a detailed timeline during our initial consultation."
+    },
+    {
+      "question": "What payment methods do you accept?",
+      "answer": "We accept all major credit cards (Visa, MasterCard, American Express), PayPal, and bank transfers. For larger projects, we offer flexible payment plans."
+    }
+  ],
+  "products": [
+    {
+      "id": "prod-001",
+      "name": "Basic Website Package",
+      "description": "A simple 5-page website perfect for small businesses",
+      "price": 999,
+      "features": [
+        "5 custom pages",
+        "Mobile responsive design",
+        "Contact form",
+        "Basic SEO setup",
+        "1 month of support"
+      ]
+    },
+    {
+      "id": "prod-002",
+      "name": "E-commerce Website Package",
+      "description": "A complete online store solution with up to 50 products",
+      "price": 2499,
+      "features": [
+        "Custom e-commerce website",
+        "Up to 50 product listings",
+        "Secure payment processing",
+        "Inventory management",
+        "Order tracking",
+        "3 months of support"
+      ]
+    },
+    {
+      "id": "prod-003",
+      "name": "Digital Marketing Package",
+      "description": "Comprehensive digital marketing services to grow your online presence",
+      "price": 1499,
+      "features": [
+        "Social media management",
+        "Google Ads campaign",
+        "SEO optimization",
+        "Content creation",
+        "Monthly performance reports"
+      ]
+    }
+  ],
+  "testimonials": [
+    {
+      "name": "John Smith",
+      "company": "Smith & Co.",
+      "text": "Working with this team has been an absolute pleasure. They delivered our website on time and exceeded our expectations. Our online sales have increased by 40% since the launch!",
+      "rating": 5
+    },
+    {
+      "name": "Sarah Johnson",
+      "company": "Johnson Consulting",
+      "text": "The digital marketing package has transformed our business. We're now ranking on the first page of Google for our key search terms, and our lead generation has doubled.",
+      "rating": 5
+    },
+    {
+      "name": "Michael Brown",
+      "company": "Brown's Bakery",
+      "text": "As a small business owner, I was hesitant to invest in a professional website. But it's been one of the best decisions I've made. The team was patient, professional, and delivered a beautiful site that perfectly represents my brand.",
+      "rating": 4
+    }
+  ]
+}

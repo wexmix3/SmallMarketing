@@ -1,0 +1,78 @@
+[
+  {
+    "id": "service-1",
+    "businessId": "business-1",
+    "name": "Basic Consultation",
+    "description": "A one-hour consultation to discuss your needs and provide recommendations.",
+    "price": 99.99,
+    "currency": "USD",
+    "duration": 60,
+    "imageUrl": "https://example.com/images/consultation.jpg",
+    "category": "Consulting",
+    "tags": [
+      "consultation",
+      "advice"
+    ],
+    "availability": [
+      {
+        "day": "monday",
+        "open": "09:00",
+        "close": "17:00",
+        "isClosed": false
+      },
+      {
+        "day": "tuesday",
+        "open": "09:00",
+        "close": "17:00",
+        "isClosed": false
+      },
+      {
+        "day": "wednesday",
+        "open": "09:00",
+        "close": "17:00",
+        "isClosed": false
+      },
+      {
+        "day": "thursday",
+        "open": "09:00",
+        "close": "17:00",
+        "isClosed": false
+      },
+      {
+        "day": "friday",
+        "open": "09:00",
+        "close": "17:00",
+        "isClosed": false
+      }
+    ],
+    "attributes": {
+      "location": "In-person or virtual",
+      "cancellation": "24 hours notice required"
+    },
+    "createdAt": "2025-04-13T23:35:06.330Z",
+    "updatedAt": "2025-04-13T23:35:06.330Z"
+  },
+  {
+    "id": "service-2",
+    "businessId": "business-1",
+    "name": "Premium Support",
+    "description": "Priority support with 24/7 availability and guaranteed response times.",
+    "price": 199.99,
+    "currency": "USD",
+    "duration": null,
+    "imageUrl": "https://example.com/images/support.jpg",
+    "category": "Support",
+    "tags": [
+      "support",
+      "priority"
+    ],
+    "availability": null,
+    "attributes": {
+      "responseTime": "1 hour",
+      "availability": "24/7",
+      "channels": "Phone, Email, Chat"
+    },
+    "createdAt": "2025-04-13T23:35:06.330Z",
+    "updatedAt": "2025-04-13T23:35:06.330Z"
+  }
+]

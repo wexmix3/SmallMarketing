@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auto-Run Integration Tests</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f7;
+            color: #1d1d1f;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            color: #0071e3;
+            margin-top: 0;
+        }
+        
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        
+        .status.info {
+            background-color: #e7f3ff;
+            border-left: 4px solid #0071e3;
+        }
+        
+        .status.success {
+            background-color: #e6f7ed;
+            border-left: 4px solid #34c759;
+        }
+        
+        .status.error {
+            background-color: #ffebeb;
+            border-left: 4px solid #ff3b30;
+        }
+        
+        .log {
+            height: 300px;
+            overflow-y: auto;
+            background-color: #f5f5f7;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            margin: 10px 0;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+        
+        .buttons {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        
+        button {
+            background-color: #0071e3;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        button:hover {
+            background-color: #0058b0;
+        }
+        
+        button:disabled {
+            background-color: #b0b0b0;
+            cursor: not-allowed;
+        }
+        
+        .progress-container {
+            width: 100%;
+            height: 10px;
+            background-color: #e5e5ea;
+            border-radius: 5px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background-color: #0071e3;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .progress-bar.complete {
+            background-color: #34c759;
+        }
+        
+        .progress-bar.error {
+            background-color: #ff3b30;
+        }
+        
+        .summary {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        
+        .summary-item {
+            text-align: center;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #f5f5f7;
+            flex: 1;
+            margin: 0 5px;
+        }
+        
+        .summary-item.passed {
+            background-color: #e6f7ed;
+        }
+        
+        .summary-item.failed {
+            background-color: #ffebeb;
+        }
+        
+        .summary-item.pending {
+            background-color: #e7f3ff;
+        }
+        
+        .summary-value {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        .summary-label {
+            font-size: 12px;
+            color: #86868b;
+        }
+        
+        iframe {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>AI Customer Service Assistant - Integration Tests</h1>
+        
+        <div class="status info" id="statusMessage">
+            Ready to run tests. Click "Start Tests" to begin.
+        </div>
+        
+        <div class="summary">
+            <div class="summary-item total">
+                <div class="summary-value" id="totalTests">0</div>
+                <div class="summary-label">Total</div>
+            </div>
+            <div class="summary-item passed">
+                <div class="summary-value" id="passedTests">0</div>
+                <div class="summary-label">Passed</div>
+            </div>
+            <div class="summary-item failed">
+                <div class="summary-value" id="failedTests">0</div>
+                <div class="summary-label">Failed</div>
+            </div>
+            <div class="summary-item pending">
+                <div class="summary-value" id="pendingTests">0</div>
+                <div class="summary-label">Pending</div>
+            </div>
+        </div>
+        
+        <div class="progress-container">
+            <div id="progressBar" class="progress-bar"></div>
+        </div>
+        
+        <div class="log" id="logOutput"></div>
+        
+        <div class="buttons">
+            <button id="startButton">Start Tests</button>
+            <button id="generateReportButton" disabled>Generate Report</button>
+            <button id="viewReportButton" disabled>View Report</button>
+        </div>
+    </div>
+    
+    <iframe id="testFrame" src="integration-test-runner.html"></iframe>
+    
+    <script>
+        // Elements
+        const statusMessage = document.getElementById('statusMessage');
+        const logOutput = document.getElementById('logOutput');
+        const startButton = document.getElementById('startButton');
+        const generateReportButton = document.getElementById('generateReportButton');
+        const viewReportButton = document.getElementById('viewReportButton');
+        const progressBar = document.getElementById('progressBar');
+        const testFrame = document.getElementById('testFrame');
+        const totalTestsElement = document.getElementById('totalTests');
+        const passedTestsElement = document.getElementById('passedTests');
+        const failedTestsElement = document.getElementById('failedTests');
+        const pendingTestsElement = document.getElementById('pendingTests');
+        
+        // Variables
+        let testResults = null;
+        let testReport = null;
+        
+        // Log function
+        function log(message, level = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.className = `log-entry log-${level}`;
+            logEntry.textContent = `[${timestamp}] [${level.toUpperCase()}] ${message}`;
+            logOutput.appendChild(logEntry);
+            logOutput.scrollTop = logOutput.scrollHeight;
+            
+            console.log(`[${level.toUpperCase()}] ${message}`);
+        }
+        
+        // Update status
+        function updateStatus(message, type = 'info') {
+            statusMessage.textContent = message;
+            statusMessage.className = `status ${type}`;
+        }
+        
+        // Update progress
+        function updateProgress(current, total) {
+            const percentage = total > 0 ? (current / total) * 100 : 0;
+            progressBar.style.width = `${percentage}%`;
+            
+            if (percentage === 100) {
+                if (current === total) {
+                    progressBar.classList.add('complete');
+                } else {
+                    progressBar.classList.add('error');
+                }
+            } else {
+                progressBar.classList.remove('complete', 'error');
+            }
+        }
+        
+        // Update test counts
+        function updateTestCounts(results) {
+            totalTestsElement.textContent = results.total;
+            passedTestsElement.textContent = results.passed;
+            failedTestsElement.textContent = results.failed;
+            pendingTestsElement.textContent = results.pending;
+            
+            updateProgress(results.passed + results.failed, results.total);
+        }
+        
+        // Wait for test frame to load
+        testFrame.onload = function() {
+            log('Test frame loaded');
+            
+            // Check if test runner is available
+            if (testFrame.contentWindow.ChatbotTestRunner) {
+                log('Test runner found');
+                startButton.disabled = false;
+            } else {
+                log('Test runner not found', 'error');
+                updateStatus('Error: Test runner not found', 'error');
+            }
+        };
+        
+        // Start tests
+        startButton.addEventListener('click', async function() {
+            try {
+                // Disable button
+                startButton.disabled = true;
+                generateReportButton.disabled = true;
+                viewReportButton.disabled = true;
+                
+                // Update status
+                updateStatus('Running tests...', 'info');
+                log('Starting tests');
+                
+                // Get test runner from iframe
+                const testRunner = testFrame.contentWindow.testRunner;
+                if (!testRunner) {
+                    throw new Error('Test runner not found');
+                }
+                
+                // Initialize test runner if needed
+                if (!testRunner.tests || testRunner.tests.length === 0) {
+                    log('Initializing test runner');
+                    testFrame.contentWindow.setupIntegrationTests(testRunner);
+                }
+                
+                // Update initial counts
+                updateTestCounts(testRunner.results);
+                
+                // Run tests
+                log('Running all tests');
+                await testRunner.runAll();
+                
+                // Get results
+                testResults = testRunner.getResults();
+                log(`Tests completed: ${testResults.summary.passed} passed, ${testResults.summary.failed} failed`);
+                
+                // Update counts
+                updateTestCounts(testResults.summary);
+                
+                // Update status
+                if (testResults.summary.failed === 0) {
+                    updateStatus(`All tests passed (${testResults.summary.passed}/${testResults.summary.total})`, 'success');
+                } else {
+                    updateStatus(`Tests completed with ${testResults.summary.failed} failures`, 'error');
+                }
+                
+                // Enable report button
+                generateReportButton.disabled = false;
+            } catch (error) {
+                log(`Error running tests: ${error.message}`, 'error');
+                updateStatus('Error running tests', 'error');
+            }
+        });
+        
+        // Generate report
+        generateReportButton.addEventListener('click', function() {
+            try {
+                // Check if we have results
+                if (!testResults) {
+                    throw new Error('No test results available');
+                }
+                
+                // Update status
+                updateStatus('Generating report...', 'info');
+                log('Generating test report');
+                
+                // Generate report
+                testReport = testFrame.contentWindow.generateTestReport(testResults);
+                
+                // Create a blob and download link
+                const blob = new Blob([testReport], { type: 'text/markdown' });
+                const url = URL.createObjectURL(blob);
+                
+                // Create download link
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `integration-test-report-${new Date().toISOString().split('T')[0]}.md`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                
+                // Update status
+                updateStatus('Report generated and downloaded', 'success');
+                log('Report generated and downloaded');
+                
+                // Enable view report button
+                viewReportButton.disabled = false;
+            } catch (error) {
+                log(`Error generating report: ${error.message}`, 'error');
+                updateStatus('Error generating report', 'error');
+            }
+        });
+        
+        // View report
+        viewReportButton.addEventListener('click', function() {
+            try {
+                // Check if we have a report
+                if (!testReport) {
+                    throw new Error('No report available');
+                }
+                
+                // Create a blob and open in new tab
+                const blob = new Blob([testReport], { type: 'text/markdown' });
+                const url = URL.createObjectURL(blob);
+                window.open(url, '_blank');
+                
+                log('Report opened in new tab');
+            } catch (error) {
+                log(`Error viewing report: ${error.message}`, 'error');
+                updateStatus('Error viewing report', 'error');
+            }
+        });
+        
+        // Initialize
+        log('Auto-run test page loaded');
+        updateStatus('Ready to run tests', 'info');
+    </script>
+</body>
+</html>

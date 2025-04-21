@@ -1,0 +1,45 @@
+[
+  {
+    "id": "conversation-1",
+    "businessId": "business-1",
+    "visitorId": "visitor-123",
+    "visitorName": "John Doe",
+    "visitorEmail": "john@example.com",
+    "startTime": "2025-04-13T22:35:06.330Z",
+    "endTime": null,
+    "status": "active",
+    "source": "website",
+    "messages": [
+      {
+        "id": "message-1",
+        "conversationId": "conversation-1",
+        "content": "Hello! How can I help you today?",
+        "sender": "assistant",
+        "timestamp": "2025-04-13T22:35:06.330Z",
+        "isRead": true
+      },
+      {
+        "id": "message-2",
+        "conversationId": "conversation-1",
+        "content": "I have a question about your return policy.",
+        "sender": "user",
+        "timestamp": "2025-04-13T22:36:06.330Z",
+        "isRead": true
+      },
+      {
+        "id": "message-3",
+        "conversationId": "conversation-1",
+        "content": "We accept returns within 30 days of purchase. Items must be unused and in original packaging. Is there anything specific you'd like to know about our return policy?",
+        "sender": "assistant",
+        "timestamp": "2025-04-13T22:36:16.330Z",
+        "isRead": true
+      }
+    ],
+    "tags": [
+      "returns",
+      "policy"
+    ],
+    "createdAt": "2025-04-13T22:35:06.330Z",
+    "updatedAt": "2025-04-13T22:36:16.330Z"
+  }
+]

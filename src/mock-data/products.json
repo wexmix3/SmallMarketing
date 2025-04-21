@@ -1,0 +1,71 @@
+[
+  {
+    "id": "product-1",
+    "businessId": "business-1",
+    "name": "Basic T-Shirt",
+    "description": "A comfortable cotton t-shirt available in various colors.",
+    "price": 19.99,
+    "currency": "USD",
+    "imageUrl": "https://example.com/images/tshirt.jpg",
+    "category": "Apparel",
+    "tags": [
+      "clothing",
+      "t-shirt",
+      "casual"
+    ],
+    "inStock": true,
+    "attributes": {
+      "material": "Cotton",
+      "sizes": "S, M, L, XL",
+      "colors": "Black, White, Blue, Red"
+    },
+    "createdAt": "2025-04-13T23:35:06.330Z",
+    "updatedAt": "2025-04-13T23:35:06.330Z"
+  },
+  {
+    "id": "product-2",
+    "businessId": "business-1",
+    "name": "Premium Hoodie",
+    "description": "A warm and stylish hoodie perfect for cool weather.",
+    "price": 49.99,
+    "currency": "USD",
+    "imageUrl": "https://example.com/images/hoodie.jpg",
+    "category": "Apparel",
+    "tags": [
+      "clothing",
+      "hoodie",
+      "casual"
+    ],
+    "inStock": true,
+    "attributes": {
+      "material": "Cotton Blend",
+      "sizes": "S, M, L, XL, XXL",
+      "colors": "Black, Gray, Navy"
+    },
+    "createdAt": "2025-04-13T23:35:06.330Z",
+    "updatedAt": "2025-04-13T23:35:06.330Z"
+  },
+  {
+    "id": "product-3",
+    "businessId": "business-1",
+    "name": "Wireless Earbuds",
+    "description": "High-quality wireless earbuds with noise cancellation.",
+    "price": 129.99,
+    "currency": "USD",
+    "imageUrl": "https://example.com/images/earbuds.jpg",
+    "category": "Electronics",
+    "tags": [
+      "audio",
+      "earbuds",
+      "wireless"
+    ],
+    "inStock": true,
+    "attributes": {
+      "battery": "8 hours",
+      "colors": "Black, White",
+      "waterproof": "IPX5"
+    },
+    "createdAt": "2025-04-13T23:35:06.330Z",
+    "updatedAt": "2025-04-13T23:35:06.330Z"
+  }
+]

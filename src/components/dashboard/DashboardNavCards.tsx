@@ -1,13 +1,14 @@
 'use client';
 
 import Link from 'next/link';
-import { 
+import {
   EnvelopeIcon,
   ChatBubbleLeftRightIcon,
   ChartBarIcon,
   ArrowsPointingOutIcon,
   DocumentTextIcon,
-  CalendarIcon
+  CalendarIcon,
+  TrophyIcon
 } from '@heroicons/react/24/outline';
 
 const navCards = [
@@ -42,6 +43,14 @@ const navCards = [
     iconColor: 'text-green-600',
     bgColor: 'bg-green-50',
     href: '/dashboard/social/calendar'
+  },
+  {
+    title: 'Sports Gambling',
+    description: 'Daily sports betting picks',
+    icon: TrophyIcon,
+    iconColor: 'text-orange-600',
+    bgColor: 'bg-orange-50',
+    href: '/dashboard/sports'
   },
   {
     title: 'Website Analytics',

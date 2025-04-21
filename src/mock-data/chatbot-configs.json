@@ -1,0 +1,45 @@
+[
+  {
+    "id": "chatbot-1",
+    "businessId": "business-1",
+    "name": "Customer Support Assistant",
+    "welcomeMessage": "Hello! How can I help you today?",
+    "fallbackMessage": "I'm sorry, I couldn't understand that. Could you rephrase your question?",
+    "transferMessage": "I'll connect you with a human agent shortly.",
+    "offlineMessage": "We're currently offline. Please leave a message and we'll get back to you soon.",
+    "appearance": {
+      "theme": "light",
+      "position": "right",
+      "primaryColor": "#0070f3",
+      "secondaryColor": "#ffffff",
+      "fontFamily": "Arial, sans-serif"
+    },
+    "behaviors": {
+      "autoShowDelay": 5,
+      "collectName": true,
+      "collectEmail": true,
+      "requireContactInfo": false,
+      "showTypingIndicator": true,
+      "enableFileUploads": false,
+      "maxAttachmentSize": 5242880
+    },
+    "integrations": {
+      "calendarType": null,
+      "calendarId": null,
+      "crmType": null,
+      "crmId": null,
+      "emailMarketing": false,
+      "emailMarketingProvider": null
+    },
+    "aiSettings": {
+      "model": "gpt-3.5-turbo",
+      "temperature": 0.7,
+      "maxTokens": 150,
+      "topP": 1,
+      "presencePenalty": 0,
+      "frequencyPenalty": 0
+    },
+    "createdAt": "2025-04-13T23:35:06.330Z",
+    "updatedAt": "2025-04-13T23:35:06.330Z"
+  }
+]

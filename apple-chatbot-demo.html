@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apple-Inspired AI Chat Interface Demo</title>
+    <style>
+        /* Basic reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "San Francisco", "Helvetica Neue", Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, #f5f5f7 0%, #ffffff 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            color: #1d1d1f;
+        }
+        
+        /* Demo page header */
+        .demo-header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+        
+        .demo-title {
+            font-size: 36px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            background: linear-gradient(90deg, #0071e3 0%, #42a1ec 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .demo-subtitle {
+            font-size: 20px;
+            color: #6e6e73;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        /* Theme toggle */
+        .theme-toggle {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            background: #ffffff;
+            color: #1d1d1f;
+            border: 1px solid #e8e8ed;
+            border-radius: 20px;
+            padding: 8px 16px;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .theme-toggle:hover {
+            background: #f5f5f7;
+        }
+        
+        /* Chat container */
+        .chat-container {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 380px;
+            height: 600px;
+            display: flex;
+            flex-direction: column;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 20px 25px rgba(0, 0, 0, 0.1), 0 10px 10px rgba(0, 0, 0, 0.04);
+            background-color: #ffffff;
+            border: 1px solid #e8e8ed;
+        }
+        
+        /* Chat header */
+        .chat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px;
+            background: linear-gradient(135deg, #f5f5f7 0%, #ffffff 100%);
+            border-bottom: 1px solid #e8e8ed;
+        }
+        
+        .business-info {
+            display: flex;
+            align-items: center;
+        }
+        
+        .business-logo {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 12px;
+            background-color: #0071e3;
+        }
+        
+        .business-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1d1d1f;
+        }
+        
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .icon-button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            color: #6e6e73;
+            transition: all 150ms cubic-bezier(0.25, 0.1, 0.25, 1);
+        }
+        
+        .icon-button:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+            color: #1d1d1f;
+        }
+        
+        /* Messages container */
+        .messages-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            background-color: #f5f5f7;
+        }
+        
+        /* Message bubbles */
+        .message-group {
+            margin-bottom: 16px;
+            animation: fadeIn 300ms cubic-bezier(0.25, 0.1, 0.25, 1);
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .message-bubble {
+            max-width: 80%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+            line-height: 1.5;
+            word-break: break-word;
+            position: relative;
+            margin-bottom: 4px;
+        }
+        
+        .user-message {
+            background-color: #0071e3;
+            color: #ffffff;
+            margin-left: auto;
+            border-bottom-right-radius: 4px;
+        }
+        
+        .assistant-message {
+            background-color: #e8e8ed;
+            color: #1d1d1f;
+            margin-right: auto;
+            border-bottom-left-radius: 4px;
+        }
+        
+        .system-message {
+            background-color: #d2d2d7;
+            color: #424245;
+            font-size: 14px;
+            text-align: center;
+            margin-left: auto;
+            margin-right: auto;
+            max-width: 90%;
+            border-radius: 8px;
+        }
+        
+        .message-time {
+            font-size: 12px;
+            color: rgba(0, 0, 0, 0.5);
+            margin-top: 4px;
+            display: block;
+            text-align: right;
+        }
+        
+        .user-message .message-time {
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        /* Typing indicator */
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            padding: 8px;
+        }
+        
+        .typing-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background-color: #6e6e73;
+            opacity: 0.7;
+            animation: typing 1.4s infinite ease-in-out;
+        }
+        
+        @keyframes typing {
+            0% { opacity: 0.3; transform: translateY(0); }
+            50% { opacity: 1; transform: translateY(-2px); }
+            100% { opacity: 0.3; transform: translateY(0); }
+        }
+        
+        .typing-dot:nth-child(1) {
+            animation-delay: 0s;
+        }
+        
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        
+        /* Suggested actions */
+        .suggested-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 8px;
+            margin-bottom: 12px;
+            animation: fadeIn 300ms cubic-bezier(0.25, 0.1, 0.25, 1);
+        }
+        
+        .action-button {
+            background-color: rgba(0, 0, 0, 0.05);
+            color: #1d1d1f;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 9999px;
+            padding: 8px 16px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 150ms cubic-bezier(0.25, 0.1, 0.25, 1);
+        }
+        
+        .action-button:hover {
+            background-color: rgba(0, 0, 0, 0.1);
+            transform: translateY(-1px);
+        }
+        
+        .action-button:active {
+            transform: translateY(0);
+        }
+        
+        /* Input container */
+        .input-container {
+            display: flex;
+            align-items: flex-end;
+            padding: 12px 16px;
+            background-color: #ffffff;
+            border-top: 1px solid #e8e8ed;
+        }
+        
+        .text-input {
+            flex: 1;
+            border: 1px solid #e8e8ed;
+            border-radius: 12px;
+            padding: 12px 16px;
+            font-family: -apple-system, BlinkMacSystemFont, "San Francisco", "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-size: 16px;
+            line-height: 1.5;
+            background-color: #f5f5f7;
+            color: #1d1d1f;
+            resize: none;
+            transition: all 150ms cubic-bezier(0.25, 0.1, 0.25, 1);
+            min-height: 24px;
+            max-height: 120px;
+        }
+        
+        .text-input:focus {
+            outline: none;
+            border-color: #0071e3;
+            box-shadow: 0 0 0 2px rgba(0, 113, 227, 0.3);
+        }
+        
+        .text-input::placeholder {
+            color: #86868b;
+        }
+        
+        .send-button {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 8px;
+            background-color: #0071e3;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: all 150ms cubic-bezier(0.25, 0.1, 0.25, 1);
+        }
+        
+        .send-button:hover {
+            background-color: #0077ed;
+            transform: translateY(-1px);
+        }
+        
+        .send-button:active {
+            transform: translateY(0);
+        }
+        
+        .send-button:disabled {
+            background-color: rgba(0, 113, 227, 0.5);
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        
+        /* Dark mode */
+        body.dark-mode {
+            background: linear-gradient(135deg, #1d1d1f 0%, #000000 100%);
+            color: #ffffff;
+        }
+        
+        body.dark-mode .theme-toggle {
+            background: #424245;
+            color: #ffffff;
+            border-color: #6e6e73;
+        }
+        
+        body.dark-mode .theme-toggle:hover {
+            background: #6e6e73;
+        }
+        
+        body.dark-mode .chat-container {
+            background-color: #000000;
+            border-color: #424245;
+        }
+        
+        body.dark-mode .chat-header {
+            background: linear-gradient(135deg, #1d1d1f 0%, #2d2d30 100%);
+            border-bottom-color: #424245;
+        }
+        
+        body.dark-mode .business-name {
+            color: #ffffff;
+        }
+        
+        body.dark-mode .icon-button {
+            color: #d2d2d7;
+        }
+        
+        body.dark-mode .icon-button:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+        }
+        
+        body.dark-mode .messages-container {
+            background-color: #000000;
+        }
+        
+        body.dark-mode .assistant-message {
+            background-color: #424245;
+            color: #ffffff;
+        }
+        
+        body.dark-mode .system-message {
+            background-color: #6e6e73;
+            color: #f5f5f7;
+        }
+        
+        body.dark-mode .message-time {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        body.dark-mode .typing-dot {
+            background-color: #d2d2d7;
+        }
+        
+        body.dark-mode .action-button {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        body.dark-mode .action-button:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        body.dark-mode .input-container {
+            background-color: #1d1d1f;
+            border-top-color: #424245;
+        }
+        
+        body.dark-mode .text-input {
+            background-color: #424245;
+            color: #ffffff;
+            border-color: #6e6e73;
+        }
+        
+        body.dark-mode .text-input:focus {
+            border-color: #2997ff;
+            box-shadow: 0 0 0 2px rgba(41, 151, 255, 0.3);
+        }
+        
+        body.dark-mode .text-input::placeholder {
+            color: #d2d2d7;
+        }
+        
+        body.dark-mode .send-button {
+            background-color: #2997ff;
+        }
+        
+        body.dark-mode .send-button:hover {
+            background-color: #3aa3ff;
+        }
+        
+        body.dark-mode .send-button:disabled {
+            background-color: rgba(41, 151, 255, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <button class="theme-toggle" id="themeToggle">
+        ☀️ Light
+    </button>
+    
+    <div class="demo-header">
+        <h1 class="demo-title">AI Customer Service Assistant</h1>
+        <p class="demo-subtitle">
+            A sleek, high-tech chat interface inspired by Apple's design aesthetic
+        </p>
+    </div>
+    
+    <div class="chat-container">
+        <div class="chat-header">
+            <div class="business-info">
+                <div class="business-logo"></div>
+                <h3 class="business-name">AI Assistant</h3>
+            </div>
+            <div class="header-actions">
+                <button class="icon-button" id="closeButton">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+        
+        <div class="messages-container" id="messagesContainer">
+            <!-- Messages will be added here -->
+        </div>
+        
+        <div class="input-container">
+            <textarea 
+                class="text-input" 
+                id="messageInput" 
+                placeholder="Type your message..." 
+                rows="1"
+            ></textarea>
+            <button class="send-button" id="sendButton" disabled>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Sample data
+        const sampleMessages = [
+            {
+                id: '1',
+                content: 'Hello! How can I help you today?',
+                sender: 'assistant',
+                timestamp: new Date(Date.now() - 60000 * 5)
+            }
+        ];
+        
+        const suggestedActions = [
+            { id: '1', label: 'Tell me about your products' },
+            { id: '2', label: 'I need technical support' },
+            { id: '3', label: 'What are your business hours?' }
+        ];
+        
+        // DOM elements
+        const messagesContainer = document.getElementById('messagesContainer');
+        const messageInput = document.getElementById('messageInput');
+        const sendButton = document.getElementById('sendButton');
+        const themeToggle = document.getElementById('themeToggle');
+        const closeButton = document.getElementById('closeButton');
+        
+        // Theme toggle
+        let currentTheme = 'light';
+        
+        themeToggle.addEventListener('click', () => {
+            if (currentTheme === 'light') {
+                document.body.classList.add('dark-mode');
+                themeToggle.innerHTML = '🌙 Dark';
+                currentTheme = 'dark';
+            } else {
+                document.body.classList.remove('dark-mode');
+                themeToggle.innerHTML = '☀️ Light';
+                currentTheme = 'light';
+            }
+        });
+        
+        // Check system preference for dark mode
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.body.classList.add('dark-mode');
+            themeToggle.innerHTML = '🌙 Dark';
+            currentTheme = 'dark';
+        }
+        
+        // Format timestamp
+        function formatTime(date) {
+            return new Date(date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }
+        
+        // Render messages
+        function renderMessages() {
+            messagesContainer.innerHTML = '';
+            
+            sampleMessages.forEach((message, index) => {
+                const messageGroup = document.createElement('div');
+                messageGroup.className = 'message-group';
+                
+                const messageBubble = document.createElement('div');
+                messageBubble.className = `message-bubble ${message.sender}-message`;
+                
+                const messageText = document.createElement('div');
+                messageText.textContent = message.content;
+                
+                const messageTime = document.createElement('span');
+                messageTime.className = 'message-time';
+                messageTime.textContent = formatTime(message.timestamp);
+                if (message.sender === 'assistant') {
+                    messageTime.textContent += ' • AI';
+                }
+                
+                messageBubble.appendChild(messageText);
+                messageBubble.appendChild(messageTime);
+                messageGroup.appendChild(messageBubble);
+                
+                // Add suggested actions after the last assistant message
+                if (message.sender === 'assistant' && index === sampleMessages.length - 1) {
+                    const actionsContainer = document.createElement('div');
+                    actionsContainer.className = 'suggested-actions';
+                    
+                    suggestedActions.forEach(action => {
+                        const actionButton = document.createElement('button');
+                        actionButton.className = 'action-button';
+                        actionButton.textContent = action.label;
+                        actionButton.addEventListener('click', () => {
+                            handleSendMessage(action.label);
+                        });
+                        
+                        actionsContainer.appendChild(actionButton);
+                    });
+                    
+                    messageGroup.appendChild(actionsContainer);
+                }
+                
+                messagesContainer.appendChild(messageGroup);
+            });
+            
+            // Scroll to bottom
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+        
+        // Simple AI response generator
+        function getAIResponse(message) {
+            const lowerMessage = message.toLowerCase();
+            
+            if (lowerMessage.includes('hello') || lowerMessage.includes('hi')) {
+                return 'Hello! How can I assist you today?';
+            }
+            
+            if (lowerMessage.includes('product')) {
+                return 'We offer a range of innovative products designed to simplify your life. Our flagship product is the AI Customer Service Assistant, which provides 24/7 support for your customers.';
+            }
+            
+            if (lowerMessage.includes('support') || lowerMessage.includes('help')) {
+                return 'I\'d be happy to help with any technical issues. Could you please describe the problem you\'re experiencing in detail?';
+            }
+            
+            if (lowerMessage.includes('hour') || lowerMessage.includes('open')) {
+                return 'Our business hours are Monday to Friday, 9 AM to 6 PM Eastern Time. We\'re closed on weekends and major holidays.';
+            }
+            
+            if (lowerMessage.includes('price') || lowerMessage.includes('cost')) {
+                return 'We offer flexible pricing plans starting at $29/month for small businesses. Would you like me to provide more details about our pricing tiers?';
+            }
+            
+            return 'Thank you for your message. Is there anything specific you\'d like to know about our services or products?';
+        }
+        
+        // Handle sending a message
+        function handleSendMessage(text) {
+            const message = text || messageInput.value.trim();
+            
+            if (!message) return;
+            
+            // Add user message
+            sampleMessages.push({
+                id: `user-${Date.now()}`,
+                content: message,
+                sender: 'user',
+                timestamp: new Date()
+            });
+            
+            // Clear input
+            messageInput.value = '';
+            messageInput.style.height = 'auto';
+            sendButton.disabled = true;
+            
+            // Render messages
+            renderMessages();
+            
+            // Show typing indicator
+            const typingGroup = document.createElement('div');
+            typingGroup.className = 'message-group';
+            
+            const typingBubble = document.createElement('div');
+            typingBubble.className = 'message-bubble assistant-message';
+            
+            const typingIndicator = document.createElement('div');
+            typingIndicator.className = 'typing-indicator';
+            
+            for (let i = 0; i < 3; i++) {
+                const dot = document.createElement('span');
+                dot.className = 'typing-dot';
+                typingIndicator.appendChild(dot);
+            }
+            
+            typingBubble.appendChild(typingIndicator);
+            typingGroup.appendChild(typingBubble);
+            messagesContainer.appendChild(typingGroup);
+            
+            // Scroll to bottom
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            
+            // Simulate AI response after a delay
+            setTimeout(() => {
+                // Remove typing indicator
+                messagesContainer.removeChild(typingGroup);
+                
+                // Add AI response
+                sampleMessages.push({
+                    id: `ai-${Date.now()}`,
+                    content: getAIResponse(message),
+                    sender: 'assistant',
+                    timestamp: new Date()
+                });
+                
+                // Render messages
+                renderMessages();
+            }, 1500);
+        }
+        
+        // Handle input changes
+        messageInput.addEventListener('input', () => {
+            // Enable/disable send button
+            sendButton.disabled = !messageInput.value.trim();
+            
+            // Auto-resize textarea
+            messageInput.style.height = 'auto';
+            messageInput.style.height = `${Math.min(messageInput.scrollHeight, 120)}px`;
+        });
+        
+        // Handle key press (Enter to send)
+        messageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                if (!sendButton.disabled) {
+                    handleSendMessage();
+                }
+            }
+        });
+        
+        // Handle send button click
+        sendButton.addEventListener('click', handleSendMessage);
+        
+        // Initialize
+        renderMessages();
+    </script>
+</body>
+</html>

@@ -1,0 +1,5 @@
+{
+  "uatDashboard": "http://localhost:8080/uat/uat-dashboard.html",
+  "uatChatbot": "http://localhost:8080/uat/integrated-chatbot-uat.html",
+  "monitoringServer": "http://localhost:8081"
+}

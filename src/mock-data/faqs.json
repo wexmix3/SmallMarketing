@@ -1,0 +1,68 @@
+[
+  {
+    "id": "faq-1",
+    "businessId": "business-1",
+    "question": "What are your business hours?",
+    "answer": "We are open Monday to Friday from 9 AM to 5 PM, and Saturday from 10 AM to 2 PM. We are closed on Sundays.",
+    "category": "General",
+    "tags": [
+      "hours",
+      "schedule"
+    ],
+    "createdAt": "2025-04-13T23:35:06.330Z",
+    "updatedAt": "2025-04-13T23:35:06.330Z"
+  },
+  {
+    "id": "faq-2",
+    "businessId": "business-1",
+    "question": "Do you offer free shipping?",
+    "answer": "Yes, we offer free shipping on all orders over $50 within the continental United States.",
+    "category": "Shipping",
+    "tags": [
+      "shipping",
+      "delivery"
+    ],
+    "createdAt": "2025-04-13T23:35:06.330Z",
+    "updatedAt": "2025-04-13T23:35:06.330Z"
+  },
+  {
+    "id": "faq-3",
+    "businessId": "business-1",
+    "question": "What is your return policy?",
+    "answer": "We accept returns within 30 days of purchase. Items must be unused and in original packaging.",
+    "category": "Returns",
+    "tags": [
+      "returns",
+      "refunds"
+    ],
+    "createdAt": "2025-04-13T23:35:06.330Z",
+    "updatedAt": "2025-04-13T23:35:06.330Z"
+  },
+  {
+    "id": "faq-4",
+    "businessId": "business-1",
+    "question": "How can I track my order?",
+    "answer": "You can track your order by logging into your account and viewing your order history, or by using the tracking number provided in your shipping confirmation email.",
+    "category": "Orders",
+    "tags": [
+      "tracking",
+      "orders",
+      "shipping"
+    ],
+    "createdAt": "2025-04-13T23:35:06.330Z",
+    "updatedAt": "2025-04-13T23:35:06.330Z"
+  },
+  {
+    "id": "faq-5",
+    "businessId": "business-1",
+    "question": "Do you have a physical store?",
+    "answer": "Yes, our flagship store is located at 123 Main Street, Anytown, CA 12345. We also have several other locations throughout the country. Please check our website for the store nearest you.",
+    "category": "General",
+    "tags": [
+      "store",
+      "location"
+    ],
+    "createdAt": "2025-04-13T23:35:06.330Z",
+    "updatedAt": "2025-04-13T23:35:06.330Z"
+  }
+]

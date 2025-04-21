@@ -1,0 +1,11 @@
+This is a placeholder for test image files.
+
+In a real UAT environment, you would have actual image files here:
+
+1. test-image-small.jpg (50 KB)
+2. test-image-medium.jpg (500 KB)
+3. test-image-large.jpg (5 MB)
+4. test-image.png (200 KB)
+5. test-image.gif (300 KB)
+
+For testing purposes, you can use any image files you have available, or download sample images from stock photo websites.
