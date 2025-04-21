@@ -1,20 +1,9 @@
 {
   "version": 2,
-  "buildCommand": "cd customer-service-ai && npm install && npm run build",
-  "installCommand": "cd customer-service-ai && npm install",
+  "buildCommand": "npm install && npm run build",
+  "installCommand": "npm install",
   "framework": "nextjs",
-  "outputDirectory": "customer-service-ai/.next",
   "regions": ["iad1"],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "/customer-service-ai/$1"
-    },
-    {
-      "src": "/api/(.*)",
-      "dest": "/customer-service-ai/api/$1"
-    }
-  ],
   "env": {
     "OPENAI_API_KEY": "${OPENAI_API_KEY}",
     "SUPABASE_URL": "${SUPABASE_URL}",
